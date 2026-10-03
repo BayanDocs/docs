@@ -1,0 +1,44 @@
+# ADR-0008: CRDT engine (Loro) and local-first architecture
+
+- **Status:** Accepted — validation gate (CORE-004)
+- **Date:** 2026-10-03
+- **Deciders:** Planner
+- **Related:** COL-01…COL-08, ADR-0007, ADR-0016, CORE-004
+
+## Context
+
+Co-authoring must work without locks, offline, and through a server that cannot read the data (so the server cannot transform or merge operations, ruling out server-centric operational transformation). Conflict-free replicated data types (CRDTs) meet these needs. Writing our own rich-text CRDT would be a multi-year research effort. Candidates verified on 2026-10-03:
+
+| Library | Facts |
+|---|---|
+| **Loro** (`loro` 1.16.2, MIT) | Rust core with WebAssembly bindings (about 1.1 MB gzipped); encoding stable since 1.0 (Oct 2024); Peritext-style rich text with per-key mark expansion (`before`/`after`/`both`/`none`); maps, movable lists, movable trees; undo manager; shallow snapshots for history trimming; ephemeral presence store; checkout of past versions. Small team; recent releases still fix crashes on malformed imports. |
+| **Automerge 3** (Rust 0.12, MIT) | Mature; 3.0 (July 2025) cut memory use more than tenfold; rich text with marks and block markers; built-in sync protocol; **no undo in the core library**. |
+| **Yjs / yrs** (MIT) | Very widely used, but formatting is stored as inline markers with known concurrent-formatting anomalies, and yrs removed list move support in 0.27. |
+
+## Decision
+
+1. **Use Loro** as the CRDT engine, accessed only through the `bayan-crdt` adapter crate, which exposes BayanDocs-shaped primitives (story sequences with marks, property maps, movable row and cell lists, an undo manager, snapshots, version checkout). No other crate imports Loro directly.
+2. **Mapping:** stories map to rich-text sequences in which special atoms are placeholder code points that cannot occur in imported text, with their payload referenced through marks or keyed maps; paragraph and object properties map to maps; table rows and cells map to movable lists. Do **not** adopt nested-tree editor bindings (such as ProseMirror-style trees); the flat story model is the point (ADR-0007).
+3. **Local-first by default.** Every document, even a single user's local file, is edited through the CRDT. The `.docx` file is the interchange and save format; CRDT state is kept in the auto-recovery journal, the local version history, and (when collaborating) the encrypted sync log.
+4. **Untrusted updates:** CRDT updates from other clients are untrusted input. They are authenticated (signed through MLS, ADR-0016) before import, imported with resource limits, and the import path is fuzzed. On the web, import runs inside the engine worker.
+5. **Undo** uses the CRDT's local undo manager so that undo affects only the user's own changes, as users expect in collaborative editors.
+6. **History** is trimmed with shallow snapshots according to a retention policy; named versions are kept.
+7. **Fallback:** if CORE-004 fails its criteria, Automerge 3 behind the same adapter is the alternative (requiring our own undo implementation).
+
+## Consequences
+
+- Offline editing and merge come from the architecture rather than special cases.
+- The core inherits Loro's encoding format; the adapter and the 1.x stability promise contain that risk.
+- WebAssembly size grows by roughly 1 MB gzipped; acceptable within PERF-06.
+
+## Alternatives considered
+
+- Automerge 3 (fallback), Yjs/yrs, our own CRDT, server-ordered operational transformation (incompatible with zero-knowledge servers and long offline periods). See context.
+
+## Validation gate
+
+CORE-004 must show, on the BDM mapping: convergence and valid normalization in 100% of 1,000 randomized three-replica runs of 10,000 operations; correct mark-expansion behavior for Word-style formatting, hyperlinks and comments (including many concurrent comment ranges); undo that reverts only local changes; and, for a synthetic 500-page document in WebAssembly, load time, memory and update sizes within the limits recorded in the work package. A comparison run on Automerge 3 is included for reference.
+
+## Revisit when
+
+The validation gate fails; Loro's maintenance falters (no release for 12 months, or the encoding stability promise is broken); or Automerge gains capabilities that change the comparison.
