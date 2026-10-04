@@ -2,7 +2,7 @@
 
 BayanDocs is a free, open-source word processor built to match or exceed Microsoft Word in document fidelity, features and speed, while adding what Word cannot offer: layout that is identical on every platform, local-first editing, and zero-knowledge end-to-end-encrypted collaboration that anyone can self-host.
 
-This repository is the project's single source of truth. Today it holds the master plan, the architecture decision records, the technical specifications and the work packages that agents execute. Over time it will also hold the user handbook, the developer onboarding guide, the self-hosting guide and the API reference.
+This repository is the project's single source of truth. Today it holds the master plan, the architecture decision records, the technical specifications and the work packages that agents execute. Over time it will also hold the user handbook, the developer onboarding guide, the self-hosting guide and the API reference. The same files are also built into a searchable website with mdBook: `SUMMARY.md` is its table of contents, and `scripts/verify.sh` builds it and checks every link and spelling.
 
 > **Status (2026-10-03): Phase 0 — Foundations.** No product code exists yet. The plan, decisions and first work packages are in place. See [plan/04-roadmap.md](plan/04-roadmap.md).
 
@@ -20,11 +20,11 @@ This repository is the project's single source of truth. Today it holds the mast
 
 | Folder | What lives there |
 |---|---|
-| [plan/](plan/) | The master plan: vision, requirements, architecture, roadmap, work breakdown, agent workflow, quality and security, risks, owner checklist, learning path, glossary. |
+| [plan/](plan/00-start-here.md) | The master plan: vision, requirements, architecture, roadmap, work breakdown, agent workflow, quality and security, risks, owner checklist, learning path, glossary. |
 | [adr/](adr/README.md) | Architecture Decision Records. Every significant technical decision, why it was made, and what would make us revisit it. Accepted ADRs are binding on all work. |
 | [specs/](specs/README.md) | Technical specifications that several repositories depend on: the document model, the engine protocol, the fidelity lab, font compatibility, the Word feature coverage matrix, the threat model, and Word Behavior Notes. |
 | [workpackages/](workpackages/README.md) | Self-contained task briefs that can be handed to an agent, with scope, acceptance criteria and verification steps. |
-| `handbook/`, `developer/`, `deploy/`, `api/` | Planned. Created as the product grows (see work package DOCS-001). |
+| [handbook/](handbook/README.md), [developer/](developer/README.md), [deploy/](deploy/README.md), [api/](api/README.md) | The user handbook, the contributor and developer guides, the self-hosting guide and the API reference. Placeholders for now; they fill up as the product grows. |
 
 ## The repositories
 
@@ -38,4 +38,4 @@ This repository is the project's single source of truth. Today it holds the mast
 
 ## License
 
-The engine, desktop app and web app are licensed GPL-3.0-or-later with the BayanDocs App Store Permission; the server AGPL-3.0-or-later; protocol specifications and integration kits Apache-2.0; this documentation CC BY 4.0 ([LICENSE](LICENSE)), with its scripts under MIT-0. What that means for users, hosts, integrators and contributors is explained in plain language in [LICENSING.md](LICENSING.md); the decision is [ADR-0003](adr/0003-licensing-and-contribution-model.md). [REUSE.toml](REUSE.toml) records which license applies to which files, and [LICENSES/](LICENSES) holds the full texts.
+The engine, desktop app and web app are licensed GPL-3.0-or-later with the BayanDocs App Store Permission; the server AGPL-3.0-or-later; protocol specifications and integration kits Apache-2.0; this documentation CC BY 4.0 ([LICENSE](LICENSE)), with its scripts, configuration files and CI workflows under MIT-0. What that means for users, hosts, integrators and contributors is explained in plain language in [LICENSING.md](LICENSING.md); the decision is [ADR-0003](adr/0003-licensing-and-contribution-model.md). [REUSE.toml](REUSE.toml) records which license applies to which files, and [LICENSES/](https://github.com/BayanDocs/docs/tree/main/LICENSES) holds the full texts.

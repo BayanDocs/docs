@@ -8,7 +8,7 @@ You do not need to become an expert in Rust, C++, TypeScript, typography and cry
 |---|---|
 | Read Rust comfortably | [The Rust Programming Language](https://doc.rust-lang.org/book/) chapters 1–10, with [Rustlings](https://github.com/rust-lang/rustlings) exercises alongside. Then [Rust by Example](https://doc.rust-lang.org/rust-by-example/) as a reference. |
 | Understand why text is hard | Alexis Beingessner's essays "Text Rendering Hates You" and "Text Editing Hates You Too" (search the titles); Nikita Prokopov's "The Absolute Minimum Every Software Developer Must Know About Unicode in 2023". |
-| Understand what a `.docx` is | Unzip any `.docx` and look inside `word/document.xml`, `styles.xml` and `numbering.xml`. Then skim the WordprocessingML introduction in ECMA-376 Part 1 (free from Ecma International) and the examples on [officeopenxml.com](http://officeopenxml.com/). |
+| Understand what a `.docx` is | Unzip any `.docx` and look inside `word/document.xml`, `styles.xml` and `numbering.xml`. Then skim the WordprocessingML introduction in ECMA-376 Part 1, free from [Ecma International](https://ecma-international.org/publications-and-standards/standards/ecma-376/). |
 | Know how decisions are made here | [adr/README.md](../adr/README.md) and three ADRs of your choice; [06-agent-workflow.md](06-agent-workflow.md). |
 
 ## Phase 1 — while the viewer is built
