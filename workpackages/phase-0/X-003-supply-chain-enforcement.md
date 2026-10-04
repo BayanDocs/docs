@@ -67,6 +67,7 @@ One pull request per code repository plus one to docs for the runbook.
 
 - Until the workspace toolchain is Rust 1.100 or later, Cargo ignores `global-min-publish-age`; the lockfile-age check is what protects us meanwhile.
 - The crates.io sparse index is the cheapest source of `pubtime`; cache responses within a CI run.
+- 2026-10-04: bayan-desktop no longer uses aqtinstall ([ADR-0017](../../adr/0017-supply-chain-and-dependency-policy.md), amendment of 2026-10-04). Its pin file, `deps/qt.json`, records the Qt version and release date but no aqtinstall version, and the Qt install step is `scripts/install-qt.py`, whose checksum verification is covered by its own tests.
 
 ## Escalate if
 
