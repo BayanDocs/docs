@@ -1,0 +1,57 @@
+# Builds the knowledge base website with mdBook and publishes it to GitHub Pages after every push to main (work package DOCS-001).
+# The owner must once set Settings → Pages → Source to "GitHub Actions". Conventions as in verify.yml: SHA-pinned actions, no default permissions, and each job gets only what it needs.
+name: Deploy website
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+# One deployment at a time; a newer push waits for the running deployment instead of cancelling it halfway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build the website
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read # check out the repository
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install the pinned tools
+        run: scripts/dev-setup.sh
+
+      # Builds book/ and runs every check except external links, so a broken page is never published. The Verify workflow checks external links.
+      - name: Build and check the website
+        run: scripts/verify.sh --offline
+
+      - name: Upload the website
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: book
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write # publish the uploaded website to GitHub Pages
+      id-token: write # prove to GitHub Pages that the deployment comes from this workflow
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
