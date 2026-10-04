@@ -1,0 +1,41 @@
+# Runs the knowledge base's verification gate, scripts/verify.sh, on every pull request and every push to main (work package DOCS-001).
+# Conventions: actions pinned to full commit SHAs (version in the trailing comment), no permissions by default, read-only checkout without stored credentials, and tools installed by scripts/dev-setup.sh at pinned versions with checked SHA-256 hashes.
+name: Verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: scripts/verify.sh
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read # check out the repository
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install the pinned tools
+        run: scripts/dev-setup.sh
+
+      # lychee remembers external link results for a day (max_cache_age in lychee.toml), so each external page is fetched about once a day rather than on every run.
+      - name: Restore the external link cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lycheecache
+          key: lychee-${{ github.run_id }}
+          restore-keys: lychee-
+
+      - name: Run the verification gate
+        run: scripts/verify.sh

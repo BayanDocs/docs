@@ -1,0 +1,35 @@
+# mdBook configuration for the BayanDocs knowledge base website (ADR-0027, work package DOCS-001).
+# The Markdown files stay where they are, so they read the same on GitHub; SUMMARY.md is the website's navigation.
+# Build and check everything with `scripts/verify.sh` (the website ends up in `book/`, which Git ignores). The script builds
+# from a copy of the files Git tracks, so nothing else in the working folder (such as `.git`) can end up on the website.
+
+[book]
+title = "BayanDocs Knowledge Base"
+authors = ["BayanDocs contributors"]
+description = "Plan, architecture decisions, specifications and work packages for BayanDocs, an open-source, Word-compatible word processor."
+language = "en"
+src = "."
+
+[build]
+build-dir = "book"
+# A page listed in SUMMARY.md that does not exist is an error, not a silently created empty page.
+create-missing = false
+# mdBook's default "index" preprocessor renames README.md pages to index.html, which breaks links written for GitHub
+# (they point to README.md, which mdBook turns into README.html). Turning the default preprocessors off keeps README.html.
+use-default-preprocessors = false
+
+[output.html]
+# GitHub Pages serves the site from https://bayandocs.github.io/docs/; the 404 page needs this to find its styles and links.
+# Change it if the site moves to a custom domain.
+site-url = "/docs/"
+git-repository-url = "https://github.com/BayanDocs/docs"
+edit-url-template = "https://github.com/BayanDocs/docs/edit/main/{path}"
+# The page titles already carry their own numbers (for example "03 — Architecture"), so mdBook's numbering is turned off.
+no-section-label = true
+# Draws Mermaid diagrams with the pinned copy in site/mermaid/ (see site/mermaid/README.md).
+additional-js = ["site/mermaid/mermaid-init.js"]
+
+[output.html.fold]
+# Long sections (the ADR list, the work packages) start folded below the first level.
+enable = true
+level = 1
