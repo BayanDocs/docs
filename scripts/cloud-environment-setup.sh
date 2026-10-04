@@ -4,20 +4,12 @@
 #
 # BayanDocs cloud environment setup script, version 2026-10-04.
 #
-# Installs the tools that BayanDocs agent sessions need in a Claude Code cloud environment (Ubuntu 24.04, x86-64, run as root
-# before Claude Code starts). Paste this whole file into the environment's settings: the cloud environment menu in the session's
-# title bar, then Edit, then "Setup script". The result is cached for about seven days, or until this script or the network
-# settings change. Canonical copy: https://github.com/BayanDocs/docs/blob/main/scripts/cloud-environment-setup.sh
+# Installs the tools that BayanDocs agent sessions need in a Claude Code cloud environment (Ubuntu 24.04, x86-64, run as root before Claude Code starts). Paste this whole file into the environment's settings: the cloud environment menu in the session's title bar, then Edit, then "Setup script". The result is cached for about seven days, or until this script or the network settings change. Canonical copy: https://github.com/BayanDocs/docs/blob/main/scripts/cloud-environment-setup.sh
 #
-# Supply-chain rules (ADR-0017): every version below is pinned exactly and was at least 24 hours old when it was pinned, and
-# every download is verified: release archives against the SHA-256 hashes in this file, Python packages with
-# `pip --require-hashes`, Qt by aqtinstall against hashes from download.qt.io, Rust toolchains by rustup against the hashes in the
-# official release manifests, and Ubuntu packages by apt from the signed archive frozen at a snapshot date. Pins change only in the
-# monthly dependency session (docs/plan/06-agent-workflow.md), which then asks the owner to paste the new version here.
+# Supply-chain rules (ADR-0017): every version below is pinned exactly and was at least 24 hours old when it was pinned, and every download is verified: release archives against the SHA-256 hashes in this file, Python packages with `pip --require-hashes`, Qt by aqtinstall against hashes from download.qt.io, Rust toolchains by rustup against the hashes in the official release manifests, and Ubuntu packages by apt from the signed archive frozen at a snapshot date. Pins change only in the monthly dependency session (docs/plan/06-agent-workflow.md), which then asks the owner to paste the new version here.
 #
 # Network: everything comes from the default "Trusted" list except Qt, which needs download.qt.io and master.qt.io.
-# The script never blocks a session: a failed step is reported, and the script still exits 0. Run `bayandocs-tools` in a
-# session to see what was installed; full logs are in /var/log/bayandocs-setup/.
+# The script never blocks a session: a failed step is reported, and the script still exits 0. Run `bayandocs-tools` in a session to see what was installed; full logs are in /var/log/bayandocs-setup/.
 
 # The steps below are called indirectly through start(), which ShellCheck cannot follow.
 # shellcheck disable=SC2317
@@ -25,8 +17,7 @@ set -uo pipefail
 umask 022
 export HOME="${HOME:-/root}" DEBIAN_FRONTEND=noninteractive PIP_DISABLE_PIP_VERSION_CHECK=1
 export PATH="/root/.cargo/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-# The cloud network inspects TLS with a certificate authority that is in the system trust store. pip, Python's requests
-# library and Node.js bring their own lists of authorities, so point them at the system store (curl, apt, rustup and Go use it).
+# The cloud network inspects TLS with a certificate authority that is in the system trust store. pip, Python's requests library and Node.js bring their own lists of authorities, so point them at the system store (curl, apt, rustup and Go use it).
 SYSTEM_CA=/etc/ssl/certs/ca-certificates.crt
 export PIP_CERT="${PIP_CERT:-$SYSTEM_CA}" REQUESTS_CA_BUNDLE="${REQUESTS_CA_BUNDLE:-$SYSTEM_CA}"
 export NODE_EXTRA_CA_CERTS="${NODE_EXTRA_CA_CERTS:-$SYSTEM_CA}"
@@ -46,8 +37,7 @@ PNPM_SHA512=a5941679663d952c5f0ecc38ba98af98b4dc01b95780354f6894f2f873973cef2f7e
 QT_VERSION=6.12.0                # released 2026-09-30; LGPL modules only (ADR-0013)
 QT_ARCHIVES="qtbase qtdeclarative qtsvg qttranslations icu"
 
-# Release binaries: name, version, URL, SHA-256, path of the binary inside the archive, and the source to build from if the
-# download is refused. Dates are publish dates; "published hash" means the hash matches the checksum file of the release.
+# Release binaries: name, version, URL, SHA-256, path of the binary inside the archive, and the source to build from if the download is refused. Dates are publish dates; "published hash" means the hash matches the checksum file of the release.
 BINARIES=(
   # 2026-07-09, published hash
   "cargo-deny 0.20.2 https://github.com/EmbarkStudios/cargo-deny/releases/download/0.20.2/cargo-deny-0.20.2-x86_64-unknown-linux-musl.tar.gz 9f12ed4c49936e09b48bf862b595cde2fe64fcbd9d74dfacac6131ca824c8d5f cargo-deny-0.20.2-x86_64-unknown-linux-musl/cargo-deny crate:cargo-deny"
@@ -61,8 +51,7 @@ BINARIES=(
   "pinact 4.1.1 https://github.com/suzuki-shunsuke/pinact/releases/download/v4.1.1/pinact_linux_amd64.tar.gz d1cffebe5704b74e2e5f8a864efb9f7e54768972dc686188c008033fb1797841 pinact go:github.com/suzuki-shunsuke/pinact/v4/cmd/pinact"
 )
 
-# Python tools, one virtual environment each. Generated with scripts/python-tool-hashes.py (cutoff 2026-10-03T00:00:00Z):
-# only wheels that CPython 3.11-3.14 can install on Ubuntu 24.04 are listed, plus a source archive where no wheel fits.
+# Python tools, one virtual environment each. Generated with scripts/python-tool-hashes.py (cutoff 2026-10-03T00:00:00Z): only wheels that CPython 3.11-3.14 can install on Ubuntu 24.04 are listed, plus a source archive where no wheel fits.
 req_poetry_core() { cat <<'EOF'
 poetry-core==2.5.0 \
     --hash=sha256:98ee465b66f7e14bb9fbe68fb5e00d0cff184f036993ec94610ae4b5612f3add
@@ -275,8 +264,7 @@ install_binary() {
   note ok "$name" "$version"
 }
 
-# Fallback: build a tool from source when its release download was refused. Cargo checks every crate against Cargo.lock
-# (`--locked`), and Go checks every module against the checksum database, so integrity still holds.
+# Fallback: build a tool from source when its release download was refused. Cargo checks every crate against Cargo.lock (`--locked`), and Go checks every module against the checksum database, so integrity still holds.
 build_from_source() {
   local name=$1 version=$2 source=$3 dir="$TOOLS/$1-$2"
   case "$source" in
@@ -303,8 +291,7 @@ step_node() {
     rm -rf -- "$tmp"
   fi
   ln -sfn "$dir" "$TOOLS/node"
-  # Corepack runs the exact pnpm version pinned in each repository's packageManager field. Elsewhere it uses the pinned
-  # default below instead of looking up the newest release (COREPACK_DEFAULT_TO_LATEST=0), which could be too young.
+  # Corepack runs the exact pnpm version pinned in each repository's packageManager field. Elsewhere it uses the pinned default below instead of looking up the newest release (COREPACK_DEFAULT_TO_LATEST=0), which could be too young.
   export PATH="$dir/bin:$PATH" COREPACK_ENABLE_DOWNLOAD_PROMPT=0 COREPACK_DEFAULT_TO_LATEST=0
   corepack enable pnpm
   corepack install --global "pnpm@$PNPM_VERSION+sha512.$PNPM_SHA512"
@@ -314,8 +301,7 @@ step_node() {
   note ok node "$NODE_VERSION (default node); pnpm $PNPM_VERSION by default, through Corepack"
 }
 
-# Create a virtual environment for one Python tool from hash-pinned requirements and link its commands. The environment's
-# directory name includes a hash of the requirements, so changing a pin always produces a fresh environment.
+# Create a virtual environment for one Python tool from hash-pinned requirements and link its commands. The environment's directory name includes a hash of the requirements, so changing a pin always produces a fresh environment.
 install_python_tool() {
   local name=$1 commands=$2 requirements=$3 from_source=${4:-} version digest venv command
   version=$("$requirements" | sed -n "s/^$name==\([^ ]*\).*/\1/p")
