@@ -2,11 +2,11 @@
 # SPDX-FileCopyrightText: 2026 BayanDocs contributors
 # SPDX-License-Identifier: MIT-0
 #
-# BayanDocs cloud environment setup script, version 2026-10-04.
+# BayanDocs cloud environment setup script, version 2026-10-04.2.
 #
 # Installs the tools that BayanDocs agent sessions need in a Claude Code cloud environment (Ubuntu 24.04, x86-64, run as root before Claude Code starts). Paste this whole file into the environment's settings: the cloud environment menu in the session's title bar, then Edit, then "Setup script". The result is cached for about seven days, or until this script or the network settings change. Canonical copy: https://github.com/BayanDocs/docs/blob/main/scripts/cloud-environment-setup.sh
 #
-# Supply-chain rules (ADR-0017): every version below is pinned exactly and was at least 24 hours old when it was pinned, and every download is verified: release archives against the SHA-256 hashes in this file, Python packages with `pip --require-hashes`, Qt by aqtinstall against hashes from download.qt.io, Rust toolchains by rustup against the hashes in the official release manifests, and Ubuntu packages by apt from the signed archive frozen at a snapshot date. Pins change only in the monthly dependency session (docs/plan/06-agent-workflow.md), which then asks the owner to paste the new version here.
+# Supply-chain rules (ADR-0017): every version below is pinned exactly and was at least 24 hours old when it was pinned, and every download is verified: release archives against the SHA-256 hashes in this file, pnpm's native binary against the SHA-512 hash in this file, Python packages with `pip --require-hashes`, Qt by aqtinstall against hashes from download.qt.io, Rust toolchains by rustup against the hashes in the official release manifests, and Ubuntu packages by apt from the signed archive frozen at a snapshot date. Pins change only in the monthly dependency session (docs/plan/06-agent-workflow.md), which then asks the owner to paste the new version here.
 #
 # Network: everything comes from the default "Trusted" list except Qt, which needs download.qt.io and master.qt.io.
 # The script never blocks a session: a failed step is reported, and the script still exits 0. Run `bayandocs-tools` in a session to see what was installed; full logs are in /var/log/bayandocs-setup/.
@@ -25,15 +25,16 @@ export NODE_EXTRA_CA_CERTS="${NODE_EXTRA_CA_CERTS:-$SYSTEM_CA}"
 # ---------------------------------------------------------------------------------------------------------------------
 # Pins. Update only in the monthly dependency session, checking each publish date (at least 24 hours old) and hash.
 # ---------------------------------------------------------------------------------------------------------------------
-SCRIPT_VERSION=2026-10-04
+SCRIPT_VERSION=2026-10-04.2
 APT_SNAPSHOT=20261003T000000Z    # Ubuntu archive as of 2026-10-03 00:00 UTC (snapshot.ubuntu.com)
 APT_PACKAGES="libgl-dev libegl-dev libvulkan-dev libxkbcommon-dev libfontconfig-dev libdbus-1-dev shellcheck"
 RUST_STABLE=1.99.0               # released 2026-10-01; keep equal to rust-toolchain.toml in bayan-core and bayan-server
 RUST_NIGHTLY=nightly-2026-10-02  # only for fuzzing with cargo-fuzz
 NODE_VERSION=24.21.0             # Active LTS, released 2026-09-07
 NODE_SHA256=fd8e59d5a511510f6a298afb548f18c7d2b1be404d8b4a27d94fbe49f56cb2d6
-PNPM_VERSION=12.8.2              # released 2026-09-30 (12.9.x was younger than 24 hours); default where no packageManager is set
-PNPM_SHA512=a5941679663d952c5f0ecc38ba98af98b4dc01b95780354f6894f2f873973cef2f7e2989d7db3ee5393938ae21f62fe06bcdf685d475ddad829a62095d2b8b11
+PNPM_VERSION=12.8.2              # released 2026-09-30 (12.9.x was younger than 24 hours); inside a repository, pnpm switches itself to that repository's pinned version
+# SHA-512 of pnpm's native Linux binary package, @pnpm/exe.linux-x64 12.8.2 (the npm registry's integrity sha512-2rjP1HbpSMeSyfbP2CcGG0L2+r+9gHKAjYCZZQj/3SdQBywugJ9aa5OWyPp6yz0Z5xd7tKdUtQJh09TnZOUhwA==, in hex)
+PNPM_SHA512=dab8cfd476e948c792c9f6cfd827061b42f6fabfbd8072808d80996508ffdd2750072c2e809f5a6b9396c8fa7acb3d19e7177bb4a754b50261d3d4e764e521c0
 QT_VERSION=6.12.0                # released 2026-09-30; LGPL modules only (ADR-0013)
 QT_ARCHIVES="qtbase qtdeclarative qtsvg qttranslations icu"
 
@@ -208,6 +209,14 @@ fetch() {
   echo "$sha  $out" | sha256sum --check --status || { echo "SHA-256 mismatch for $url" >&2; return 3; }
 }
 
+# The same, for downloads whose publisher states a SHA-512 hash (npm packages). Returns 2 if the download fails and 3 if the hash does not match.
+fetch_sha512() {
+  local url=$1 sha=$2 out=$3
+  curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 3 --retry-delay 2 \
+    --connect-timeout 20 --max-time 300 --output "$out" "$url" || return 2
+  echo "$sha  $out" | sha512sum --check --status || { echo "SHA-512 mismatch for $url" >&2; return 3; }
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Steps
 # ---------------------------------------------------------------------------------------------------------------------
@@ -283,7 +292,7 @@ build_from_source() {
 }
 
 step_node() {
-  local dir="/opt/node-v$NODE_VERSION-linux-x64" tmp
+  local dir="/opt/node-v$NODE_VERSION-linux-x64" pnpm_dir="/opt/pnpm-$PNPM_VERSION" tmp
   if [ "$("$dir/bin/node" --version 2>/dev/null)" != "v$NODE_VERSION" ]; then
     tmp=$(mktemp -d)
     fetch "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" "$NODE_SHA256" "$tmp/node.tar.xz"
@@ -291,14 +300,21 @@ step_node() {
     rm -rf -- "$tmp"
   fi
   ln -sfn "$dir" "$TOOLS/node"
-  # Corepack runs the exact pnpm version pinned in each repository's packageManager field. Elsewhere it uses the pinned default below instead of looking up the newest release (COREPACK_DEFAULT_TO_LATEST=0), which could be too young.
-  export PATH="$dir/bin:$PATH" COREPACK_ENABLE_DOWNLOAD_PROMPT=0 COREPACK_DEFAULT_TO_LATEST=0
-  corepack enable pnpm
-  corepack install --global "pnpm@$PNPM_VERSION+sha512.$PNPM_SHA512"
-  (cd "$(mktemp -d)" && pnpm --version) # pnpm fetches its native binary on first use; do it now so it is cached
+  # pnpm's native binary, from its npm package @pnpm/exe.linux-x64, checked against the SHA-512 pinned above. Corepack is not used: Node.js 25 and later no longer ship it, and it checked only pnpm's small JavaScript wrapper, not the native binary that does the work. Inside each repository, this pnpm switches itself to the version pinned in the repository's packageManager field, verified against the repository's lockfile and npm's signature.
+  if [ "$(cat "$pnpm_dir/.bayandocs-sha512" 2>/dev/null)" != "$PNPM_SHA512" ] || [ ! -x "$pnpm_dir/pnpm" ]; then
+    tmp=$(mktemp -d)
+    fetch_sha512 "https://registry.npmjs.org/@pnpm/exe.linux-x64/-/exe.linux-x64-$PNPM_VERSION.tgz" "$PNPM_SHA512" "$tmp/pnpm.tgz"
+    tar -xzf "$tmp/pnpm.tgz" -C "$tmp" package/pnpm
+    rm -rf -- "$pnpm_dir"
+    mkdir -p "$pnpm_dir"
+    install -m 0755 "$tmp/package/pnpm" "$pnpm_dir/pnpm"
+    echo "$PNPM_SHA512" >"$pnpm_dir/.bayandocs-sha512"
+    rm -rf -- "$tmp"
+  fi
+  ln -sfn "$pnpm_dir" "$TOOLS/pnpm"
   # Passive fence: never run dependency install scripts (pnpm also blocks dependency builds by default).
   grep -qsx 'ignore-scripts=true' "$HOME/.npmrc" || echo 'ignore-scripts=true' >>"$HOME/.npmrc"
-  note ok node "$NODE_VERSION (default node); pnpm $PNPM_VERSION by default, through Corepack"
+  note ok node "$NODE_VERSION (default node); pnpm $PNPM_VERSION native binary, SHA-512 checked (switches to each repository's pinned pnpm)"
 }
 
 # Create a virtual environment for one Python tool from hash-pinned requirements and link its commands. The environment's directory name includes a hash of the requirements, so changing a pin always produces a fresh environment.
@@ -342,8 +358,7 @@ write_profile() {
   cat >/etc/profile.d/zz-bayandocs.sh <<EOF
 # Written by the BayanDocs cloud environment setup script ($SCRIPT_VERSION).
 case ":\$PATH:" in *":\$HOME/.cargo/bin:"*) ;; *) export PATH="\$HOME/.cargo/bin:\$PATH" ;; esac
-export PATH="$TOOLS/node/bin:\$PATH"
-export COREPACK_ENABLE_DOWNLOAD_PROMPT=0 COREPACK_DEFAULT_TO_LATEST=0
+export PATH="$TOOLS/pnpm:$TOOLS/node/bin:\$PATH"
 export QT_ROOT_DIR="/opt/Qt/$QT_VERSION/gcc_64"
 export CMAKE_PREFIX_PATH="/opt/Qt/$QT_VERSION/gcc_64\${CMAKE_PREFIX_PATH:+:\$CMAKE_PREFIX_PATH}"
 export QT_QPA_PLATFORM=offscreen
@@ -405,4 +420,5 @@ write_profile
   grep -v '^later' "$LOG_DIR/status.txt" | sort -k2,2
 } >"$LOG_DIR/summary.txt"
 cat "$LOG_DIR/summary.txt"
+if [ -x /home/user/bayan-web/scripts/dev-setup.sh ]; then /home/user/bayan-web/scripts/dev-setup.sh >/var/log/bayandocs-setup/bayan-web.log 2>&1 || echo "bayan-web dev-setup failed; see /var/log/bayandocs-setup/bayan-web.log"; fi
 exit 0
