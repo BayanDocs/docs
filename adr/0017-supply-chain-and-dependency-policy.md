@@ -78,6 +78,22 @@ Agent sessions run in a Claude Code cloud environment whose setup script, [scrip
 - **No silent upgrades:** rustup self-update is disabled, and Corepack must not resolve "latest" (`COREPACK_DEFAULT_TO_LATEST=0`). On 2026-10-04 Corepack's default resolved pnpm 12.9.1, published about eight hours earlier, which is why the pin is explicit. npm's user configuration sets `ignore-scripts=true`. Once the pinned Rust toolchain is 1.100 or later, the script also sets Cargo's `global-min-publish-age` globally (earlier versions only warn about it).
 - **Updates:** only in the monthly dependency session, together with the repositories' own pins; Python hash lists are regenerated with [scripts/python-tool-hashes.py](../scripts/python-tool-hashes.py). The owner then pastes the new script into the environment settings ([plan/06](../plan/06-agent-workflow.md#cloud-environment-for-agent-sessions)).
 
+## Amendment 2026-10-04: installing Qt for bayan-desktop
+
+Decided by the owner on 2026-10-04 during DESK-001, choosing option A of the escalation in the DESK-001 pull request (BayanDocs/bayan-desktop pull request 1).
+
+**Context.** aqtinstall 3.3.0 (published 2025-06-02), its newest release, cannot install Qt 6.11 or later on Windows: Qt's repository now has a separate sub-repository for each Windows compiler, which only aqtinstall's development branch supports. Waiting for a release would leave the Windows build unverified for an unknown time, and pinning an unreleased commit would mean running code that was never released. Qt's official online installer needs a Qt account login, which CI would have to store as a secret.
+
+**Decision.** bayan-desktop installs Qt with its own installer, `scripts/install-qt.py`, which uses only the Python standard library. In the mechanisms table above, "installed with aqtinstall" in the C++ (desktop) row now reads "installed with bayan-desktop's `scripts/install-qt.py`"; the rest of that row is unchanged.
+
+- **Pins:** `deps/qt.json` records the exact Qt version, its release date and, for each platform, the repository path, the package and the archives to install. The 24-hour rule and the release-date check that X-003 adds apply as before.
+- **Verification, with the same trust model as aqtinstall:** the repository index and every archive are checked over HTTPS against the SHA-256 hashes that Qt publishes on download.qt.io; archives are downloaded from Qt's master server (master.qt.io), never from third-party mirrors, and nothing is extracted unless its hash matches.
+- **Extraction:** every archive entry is checked before anything is extracted (no absolute paths, no "..", only plain files, directories and symbolic links that stay inside the installation, and no paths through links); links are checked again after extraction, and the installation is moved into place only when it is complete. Archives are extracted with the pinned CMake (`cmake -E tar`).
+- **Tests:** the installer has its own tests, which run against a fake repository on disk, as part of bayan-desktop's verification gate.
+- **Agent environment:** `scripts/cloud-environment-setup.sh` keeps installing its Linux Qt with aqtinstall (which supports Linux) until a monthly dependency session decides whether to switch it to this installer. When bayan-desktop is attached to a session, the setup script also runs that repository's `scripts/dev-setup.sh`, which installs its hash-pinned CMake, Ninja, clang-format and clang-tidy and reuses the preinstalled Qt.
+
+**Consequences.** CI and developer machines no longer need aqtinstall's 25 third-party Python packages (some compiled, some LGPL-licensed) to install Qt. In exchange, the project maintains about 350 lines of Python (comments included) and must adapt them when Qt changes its repository layout again; the installer fails with a clear message, and installs nothing, when the index does not match the pins. `deps/qt.json` gains fields that change with every Qt version, so updating Qt in the monthly session means updating all of them and running bayan-desktop's verification gate.
+
 ## Revisit when
 
 Ecosystem tools change (for example Cargo re-checking lockfile ages natively, or lockfile-lint supporting pnpm), a supply-chain incident affects us, or the owner changes the policy.

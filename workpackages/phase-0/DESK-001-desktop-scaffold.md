@@ -61,6 +61,7 @@ The repository's verify workflow; CI links.
 
 - Use `qmlcachegen`, not the commercial `qmlsc`.
 - Link Qt dynamically on every platform (LGPL compliance).
+- 2026-10-04: aqtinstall 3.3.0 cannot install Qt 6.11 or later on Windows. The owner decided that bayan-desktop installs Qt with its own verifying installer, `scripts/install-qt.py` ([ADR-0017](../../adr/0017-supply-chain-and-dependency-policy.md), amendment of 2026-10-04). Read "aqtinstall" in the scope and in AC-5 as that installer.
 
 ## Escalate if
 
