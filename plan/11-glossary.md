@@ -3,7 +3,7 @@
 | Term | Meaning |
 |---|---|
 | **ADR** | Architecture Decision Record: a short document recording one decision, its context, alternatives and consequences. See [adr/](../adr/README.md). |
-| **Additional permission** | An extra permission that copyright holders attach to a GPL license (GPLv3 section 7), for example the proposed app-store permission in ADR-0003. |
+| **Additional permission** | An extra permission that copyright holders attach to a GPL license (GPLv3 section 7), for example the BayanDocs App Store Permission in ADR-0003 §4. |
 | **AGPL** | GNU Affero General Public License: the GPL plus a rule that people who modify the software and offer it over a network must share their changes with its users. License of bayan-server. |
 | **Apache-2.0** | A permissive license with an explicit patent license. Used for the protocol specifications and integration kits so anyone can integrate with BayanDocs. |
 | **Anchor (object)** | The position in text a floating picture or shape is attached to; it moves with the text even though the object is drawn elsewhere on the page. |

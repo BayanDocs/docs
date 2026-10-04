@@ -1,0 +1,24 @@
+# REUSE configuration (https://reuse.software): which license applies to which files in the BayanDocs knowledge base.
+# Decision and reasons: ADR-0003 (adr/0003-licensing-and-contribution-model.md); plain-language FAQ: LICENSING.md.
+# Full license texts are in LICENSES/. When several annotations match a file, the last one wins, so specific areas come after the default.
+# A file's own SPDX header, if it has one, takes precedence over this file.
+version = 1
+
+# Default: documentation is CC-BY-4.0. Code snippets inside the documentation are also available under MIT-0 (LICENSING.md).
+[[annotations]]
+path = "**"
+SPDX-FileCopyrightText = "2026 BayanDocs contributors"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+# Scripts: MIT-0, so they can be reused anywhere without conditions.
+[[annotations]]
+path = "scripts/**"
+SPDX-FileCopyrightText = "2026 BayanDocs contributors"
+SPDX-License-Identifier = "MIT-0"
+
+# Protocol specifications: Apache-2.0, so anyone can implement BayanDocs clients and integrations under any license.
+# They must never copy text or code from the GPL engine or the AGPL server.
+[[annotations]]
+path = "specs/protocols/**"
+SPDX-FileCopyrightText = "2026 BayanDocs contributors"
+SPDX-License-Identifier = "Apache-2.0"

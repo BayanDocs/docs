@@ -16,8 +16,8 @@
 
 ### SRV-104 — Sync protocol specification v1 and reference client
 - **Size:** M · **Depends on:** SRV-103, CORE-004
-- **Scope:** write `specs/protocols/sync-protocol.md` (contract-first, Apache-2.0): message types, ordering, resumption, snapshots, compaction by clients, presence; create the Apache-2.0 protocol definitions crate `bayan-core/crates/bayan-protocol` (message types and schemas, no GPL or AGPL dependencies) used by both core and server; implement a Rust reference client used by tests and later by bayan-core's `bayan-sync`.
+- **Scope:** write `specs/protocols/sync-protocol.md` (contract-first, Apache-2.0): message types, ordering, resumption, snapshots, compaction by clients, presence; create the Apache-2.0 protocol definitions crate `bayan-core/crates/bayan-protocol` (message types and schemas, no GPL or AGPL dependencies) used by both core and server, adding `LICENSES/Apache-2.0.txt` to bayan-core (`reuse download Apache-2.0`; `REUSE.toml` already declares the crate Apache-2.0) and a crate-level `LICENSE`; implement a Rust reference client used by tests and later by bayan-core's `bayan-sync`.
 
 ### SRV-105 — Operations
 - **Size:** M · **Depends on:** SRV-001
-- **Scope:** Prometheus and OpenTelemetry metrics; structured security audit log; backup and restore tooling with tests; compose profiles (SQLite single node; PostgreSQL plus S3-compatible storage); load-test harness and first PERF-07 measurements; machine-readable API descriptions and a first integration kit in the Apache-2.0 `integrations/` directory, with `specs/protocols/server-api.md`; the "Source code" link setting (OPS-08).
+- **Scope:** Prometheus and OpenTelemetry metrics; structured security audit log; backup and restore tooling with tests; compose profiles (SQLite single node; PostgreSQL plus S3-compatible storage); load-test harness and first PERF-07 measurements; machine-readable API descriptions and a first integration kit in the Apache-2.0 `integrations/` directory (it already holds a README and the Apache-2.0 `LICENSE`), with `specs/protocols/server-api.md`; the "Source code" link setting (OPS-08).

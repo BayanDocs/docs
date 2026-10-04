@@ -26,7 +26,7 @@ A Cargo workspace with the crate skeletons needed in Phase 0, strict lints that 
 
 ### In scope
 
-- `Cargo.toml` workspace: edition 2024, resolver 3, `[workspace.package]` (repository URL, `rust-version` matching the toolchain; `license` per ADR-0003 only if Accepted, otherwise left for X-001), `[workspace.dependencies]` with exact `=x.y.z` requirements, `[workspace.lints]` with `unsafe_code = "forbid"` (overridden only in `bayan-ffi` and `bayan-wasm`), and a curated Clippy set (all warnings denied in CI, a pedantic subset).
+- `Cargo.toml` workspace: edition 2024, resolver 3, `[workspace.package]` (repository URL, `rust-version` matching the toolchain, `license = "GPL-3.0-or-later WITH AdditionRef-BayanDocs-App-Store-Permission"` per ADR-0003 §4, the SPDX 3.0 form that cargo-deny accepts), `[workspace.dependencies]` with exact `=x.y.z` requirements, `[workspace.lints]` with `unsafe_code = "forbid"` (overridden only in `bayan-ffi` and `bayan-wasm`), and a curated Clippy set (all warnings denied in CI, a pedantic subset).
 - `rust-toolchain.toml`: the latest stable Rust release that is at least 24 hours old (record its version and release date in the pull request), components `rustfmt` and `clippy`, target `wasm32-unknown-unknown`.
 - `clippy.toml`: `disallowed-methods` for floating-point transcendental and platform math methods on `f32`/`f64` (`sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `atan2`, `sinh`, `cosh`, `tanh`, `exp`, `exp2`, `exp_m1`, `ln`, `log`, `log2`, `log10`, `ln_1p`, `powf`, `powi`, `cbrt`, `hypot`), with a message pointing to `bayan-units`; `disallowed-types` for `std::collections::HashMap` and `HashSet` (allowed only via `#[expect]` with a justification where iteration order cannot affect output).
 - Crate skeletons with crate-level documentation stating their responsibility and layer: `bayan-units`, `bayan-opc`, `bayan-xml`, `bayan-crdt`, `bayan-model`, `bayan-engine`, `bayan-ffi`, `bayan-wasm`, `bayan-cli`. Layout: `crates/<name>/`, `xtask/`, `lab/` (empty README), `fuzz/` (empty README), `spikes/` (README explaining that spikes are excluded from release builds).
@@ -38,7 +38,7 @@ A Cargo workspace with the crate skeletons needed in Phase 0, strict lints that 
 ### Out of scope
 
 - Any functionality inside the crates (later WPs).
-- License files (X-001).
+- License files: `LICENSE`, `LICENSES/` and `REUSE.toml` already exist; keep `reuse lint` passing (the REUSE CI job comes with X-001).
 - Supply-chain scripts (X-003).
 
 ## Deliverables

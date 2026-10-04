@@ -10,7 +10,7 @@ A work package (WP) is a self-contained brief that one agent session can execute
 
 | ID | Title | Repo | Size | Depends on | Wave | Status |
 |---|---|---|---|---|---|---|
-| [X-001](phase-0/X-001-repository-baseline.md) | Repository baseline: governance files, PR template, DCO, licenses, REUSE | all | M | (license part: reviewed app-store permission text, ADR-0003 §4) | 1 | Ready |
+| [X-001](phase-0/X-001-repository-baseline.md) | Repository baseline: governance files, PR template, DCO, REUSE check | all | M | — | 1 | Ready |
 | [DOCS-001](phase-0/DOCS-001-knowledge-base-site.md) | Knowledge-base site (mdBook) and docs CI | docs | S | — | 1 | Ready |
 | [CORE-001](phase-0/CORE-001-workspace-and-gate.md) | Core workspace scaffold and verification gate | core | M | — | 1 | Ready |
 | [DESK-001](phase-0/DESK-001-desktop-scaffold.md) | Desktop scaffold and CI | desktop | M | — | 1 | Ready |

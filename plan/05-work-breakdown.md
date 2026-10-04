@@ -39,7 +39,7 @@ Briefs are in [workpackages/phase-0/](../workpackages/phase-0/). Waves show what
 
 | ID | Title | Repo | Size | Depends on | Wave |
 |---|---|---|---|---|---|
-| [X-001](../workpackages/phase-0/X-001-repository-baseline.md) | Repository baseline: governance files, PR template, DCO, licenses, REUSE | all | M | Reviewed app-store permission text, ADR-0003 §4 (license part only) | 1 |
+| [X-001](../workpackages/phase-0/X-001-repository-baseline.md) | Repository baseline: governance files, PR template, DCO, REUSE check | all | M | — | 1 |
 | [DOCS-001](../workpackages/phase-0/DOCS-001-knowledge-base-site.md) | Knowledge-base site (mdBook) and docs CI | docs | S | — | 1 |
 | [CORE-001](../workpackages/phase-0/CORE-001-workspace-and-gate.md) | Core workspace scaffold and verification gate | core | M | — | 1 |
 | [DESK-001](../workpackages/phase-0/DESK-001-desktop-scaffold.md) | Desktop scaffold and CI | desktop | M | — (stub engine until CORE-007) | 1 |
@@ -114,7 +114,7 @@ flowchart LR
 
 **Suggested pace:** run three to five work packages at a time, so that you can review every pull request properly. Wave 1 alone is six independent packages; start with CORE-001, SRV-001 and WEB-001 if you want the fewest moving parts.
 
-**Owner-dependent items:** X-001's license files need the lawyer-reviewed wording of the app-store permission (ADR-0003 §4); LAB-002 (and therefore LAB-005 and part of CORE-008) needs the Word reference machine described in [09-owner-checklist.md](09-owner-checklist.md).
+**Owner-dependent items:** LAB-002 (and therefore LAB-005 and part of CORE-008) needs the Word reference machine described in [09-owner-checklist.md](09-owner-checklist.md).
 
 ## Phase 1 — Faithful Viewer: draft work packages
 

@@ -2,7 +2,7 @@
 
 This folder holds the specifications of the protocols and APIs that clients and integrations use to talk to a BayanDocs server.
 
-**License:** unlike the rest of this repository (CC BY 4.0), everything in this folder is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) (SPDX: `Apache-2.0`). Anyone may implement these protocols in software under any license, and Apache-2.0 includes a patent license from contributors ([ADR-0003](../../adr/0003-licensing-and-contribution-model.md), [LICENSING.md](../../LICENSING.md)).
+**License:** unlike the rest of this repository (CC BY 4.0), everything in this folder is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) (SPDX: `Apache-2.0`); the full text is in [LICENSE](LICENSE). Anyone may implement these protocols in software under any license, and Apache-2.0 includes a patent license from contributors ([ADR-0003](../../adr/0003-licensing-and-contribution-model.md), [LICENSING.md](../../LICENSING.md)).
 
 **Rules for this folder:**
 
