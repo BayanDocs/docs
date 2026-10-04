@@ -110,6 +110,17 @@ Decided by the owner on 2026-10-04, answering open question 3 of DESK-001 (Bayan
 
 **Consequences.** CI's Python interpreter and the agent environment's tools need no further exception. Nothing changes for package dependencies, including build-time ones: they stay under the allowlist as before. DESK-104 gains a deliverable, the third-party notices for Qt's bundled code and ICU, taken from the SBOM files of the Qt release it packages, and each Qt upgrade gains a short SBOM comparison.
 
+## Amendment 2026-10-04: pnpm without Corepack
+
+Node.js 25 and later no longer ship Corepack (the Node.js 26.10.0 download contains only `node`, `npm` and `npx`), and Node.js 26 is expected to become the Active LTS release in late October 2026, so the agent environment's Corepack step would break at the next Node.js update. Corepack was also weaker than it looked: it checked only pnpm's small JavaScript wrapper against the `packageManager` hash, while the 60 MB native binary that does the work was downloaded on first use and checked only against the npm registry's signature. Corepack is therefore no longer used anywhere:
+
+- **Agent environment:** [scripts/cloud-environment-setup.sh](../scripts/cloud-environment-setup.sh) installs pnpm's native binary, the npm package `@pnpm/exe.linux-x64` at the pinned `PNPM_VERSION`, only after checking it against a SHA-512 hash written in the script (in hex, like the other pins), and puts it on `PATH` ahead of Node.js. The `COREPACK_*` settings are gone.
+- **Inside each repository**, pnpm switches itself to the version pinned in that repository's `packageManager` field, verified against the repository's lockfile and npm's signature.
+- **bayan-web** pins pnpm's native binary through its lockfile: the first YAML document of `pnpm-lock.yaml` records the sha512 of `@pnpm/exe.<platform>` for each supported platform, and its `scripts/dev-setup.sh` installs that binary only after checking the download against it. Its policy check also fails when the pnpm running the gate (reported in `npm_config_user_agent`) is not the pinned version.
+- **Updates:** the pnpm pin in the setup script changes only in the monthly dependency session, like every other pin.
+
+This amendment replaces only the Corepack parts of the amendment "tools in agent sessions" above ("pnpm through Corepack with a SHA-512 pin" and `COREPACK_DEFAULT_TO_LATEST=0`); everything else in that amendment and in the other amendments still applies.
+
 ## Revisit when
 
 Ecosystem tools change (for example Cargo re-checking lockfile ages natively, or lockfile-lint supporting pnpm), a supply-chain incident affects us, or the owner changes the policy.
