@@ -18,6 +18,8 @@
 
 ADR-0016 chooses MLS (RFC 9420) via OpenMLS 0.9 with the standard ciphersuite `MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519` at launch, one group per document, handshake messages in public framing so the server can validate membership changes, application messages (CRDT updates) in private framing, and roles in a signed group-context extension. Research on 2026-10-03 found OpenMLS builds for WebAssembly but its upstream CI does not test that build, it had 2026 security advisories, and post-quantum suites exist only with provisional code points. In MLS private framing the sender is encrypted, so the server must enforce write permissions from the authenticated connection (device identity mapped to its member entry), while clients verify the decrypted sender's role.
 
+On 2026-10-04 the owner decided that collaboration ships with the hybrid post-quantum ciphersuite from its first release ([ADR-0016](../../adr/0016-e2ee-and-identity.md), amendment 2026-10-04). The post-quantum measurement below therefore informs the launch plan, not only a later migration, and AC-5's ciphersuite plan must show how it meets that amendment.
+
 ## Objective
 
 Prove the MLS design end to end natively and in WebAssembly, measure it at realistic group sizes, and confirm or amend ADR-0016.

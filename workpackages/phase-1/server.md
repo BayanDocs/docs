@@ -3,12 +3,12 @@
 **Status: Draft**, refined at the Phase-0 gate after SRV-003 (threat model v1). Server work runs in parallel with the viewer because the zero-knowledge server does not depend on the layout engine. All in bayan-server; attach bayan-server and docs (bayan-core read-only where shared crates are involved).
 
 ### SRV-101 — Identity: OIDC, passkeys, sessions, devices
-- **Size:** L · **Depends on:** SRV-001, SRV-003 · **Decisions:** ADR-0015, ADR-0016
-- **Scope:** generic OpenID Connect login (tested with Keycloak, Authentik and Microsoft Entra ID); passkey accounts (WebAuthn); session management with secure defaults; device registration (public keys only); admin bootstrap; rate limits; audit log of security events (no content); registration closed by default (OPS-09); each device records its declared client application, as groundwork for device approval and client policy (COL-13).
+- **Size:** L · **Depends on:** SRV-001, SRV-003 · **Decisions:** ADR-0015, ADR-0016, ADR-0028
+- **Scope:** generic OpenID Connect login (tested with Keycloak, Authentik and Microsoft Entra ID); passkey accounts (WebAuthn); session management with secure defaults; device registration (public keys only); admin bootstrap; rate limits; audit log of security events (no content); registration closed by default (OPS-09); each device records its declared client application, as groundwork for device approval and client policy (COL-13); outbound HTTPS to identity providers through rustls with aws-lc-rs and the operating system's certificate store (ADR-0028).
 
 ### SRV-102 — Storage layer
-- **Size:** M · **Depends on:** SRV-001
-- **Scope:** metadata schema (users, devices, documents, groups, memberships, roles, quotas) with migrations for SQLite and PostgreSQL; blob store interface with filesystem and S3-compatible backends (dependency chosen by size and maintenance); quotas; encrypted-blob APIs (opaque bytes only).
+- **Size:** M · **Depends on:** SRV-001 · **Decisions:** ADR-0015, ADR-0028
+- **Scope:** metadata schema (users, devices, documents, groups, memberships, roles, quotas) with migrations for SQLite and PostgreSQL; blob store interface with filesystem and S3-compatible backends (dependency chosen by size and maintenance); quotas; encrypted-blob APIs (opaque bytes only); TLS to PostgreSQL and to S3-compatible storage with rustls and aws-lc-rs (ADR-0028): certificate and host-name verification on by default, a setting for a private certificate authority, guidance on PostgreSQL's `ssl_groups` for post-quantum key exchange, the `deny.toml` changes ADR-0028 describes and the `webpki-roots` license exception (ADR-0017, amendment 2026-10-04), with the measured build-time and image-size increase recorded.
 
 ### SRV-103 — MLS delivery and authentication services; WebSocket relay
 - **Size:** L · **Depends on:** SRV-002, SRV-101, SRV-102 · **Decisions:** ADR-0016
@@ -20,4 +20,4 @@
 
 ### SRV-105 — Operations
 - **Size:** M · **Depends on:** SRV-001
-- **Scope:** Prometheus and OpenTelemetry metrics; structured security audit log; backup and restore tooling with tests; compose profiles (SQLite single node; PostgreSQL plus S3-compatible storage); load-test harness and first PERF-07 measurements; machine-readable API descriptions and a first integration kit in the Apache-2.0 `integrations/` directory (it already holds a README and the Apache-2.0 `LICENSE`), with `specs/protocols/server-api.md`; the "Source code" link setting (OPS-08).
+- **Scope:** Prometheus and OpenTelemetry metrics; structured security audit log; backup and restore tooling with tests; compose profiles (SQLite single node; PostgreSQL plus S3-compatible storage) with a Caddy front end, and the deployment guide's reverse-proxy requirements (ADR-0028); load-test harness and first PERF-07 measurements; machine-readable API descriptions and a first integration kit in the Apache-2.0 `integrations/` directory (it already holds a README and the Apache-2.0 `LICENSE`), with `specs/protocols/server-api.md`; the "Source code" link setting (OPS-08).
