@@ -4,7 +4,7 @@
 
 ### SRV-101 — Identity: OIDC, passkeys, sessions, devices
 - **Size:** L · **Depends on:** SRV-001, SRV-003 · **Decisions:** ADR-0015, ADR-0016
-- **Scope:** generic OpenID Connect login (tested with Keycloak, Authentik and Microsoft Entra ID); passkey accounts (WebAuthn); session management with secure defaults; device registration (public keys only); admin bootstrap; rate limits; audit log of security events (no content).
+- **Scope:** generic OpenID Connect login (tested with Keycloak, Authentik and Microsoft Entra ID); passkey accounts (WebAuthn); session management with secure defaults; device registration (public keys only); admin bootstrap; rate limits; audit log of security events (no content); registration closed by default (OPS-09); each device records its declared client application, as groundwork for device approval and client policy (COL-13).
 
 ### SRV-102 — Storage layer
 - **Size:** M · **Depends on:** SRV-001
@@ -12,7 +12,7 @@
 
 ### SRV-103 — MLS delivery and authentication services; WebSocket relay
 - **Size:** L · **Depends on:** SRV-002, SRV-101, SRV-102 · **Decisions:** ADR-0016
-- **Scope:** key-package store; per-group ordering and fan-out of handshake and application messages; public-state validation of commits and role enforcement on authenticated connections; WebSocket gateway with authentication, backpressure, reconnection and resumption; retention policy.
+- **Scope:** key-package store; per-group ordering and fan-out of handshake and application messages; public-state validation of commits and role enforcement on authenticated connections; WebSocket gateway with authentication, backpressure, reconnection and resumption; retention policy; a hostile-client test suite proving that authorization never depends on which client software connects (SEC-13).
 
 ### SRV-104 — Sync protocol specification v1 and reference client
 - **Size:** M · **Depends on:** SRV-103, CORE-004

@@ -67,6 +67,7 @@
 | T18 | 3 | I | Clipboard or URL handling leaks content to other apps or sites | Explicit user actions only; confirmation before opening URLs; no automatic external fetch | Planned |
 | T19 | lab | I | Private corpus leaks | Private storage; aggregate-only reports; isolated reference machine | Planned |
 | T20 | 2, logs | I | Content leaks via logs, crash reports or recordings | No content in logs; opt-in, user-reviewed crash reports; recordings only on explicit request | Planned |
+| T21 | 4 | S, T, D, E | Third-party or modified clients, buggy or malicious, connect with a user's valid credentials | Server treats every client as untrusted (validation, limits, quotas, rate limits, fuzzed decoders); a new device needs approval from an existing trusted device and optionally an administrator; clients verify every update's signature and sender role; device lists with revocation; optional administrator policy on client applications (not a security boundary); public conformance suite (SEC-13, COL-13, COL-14) | Planned |
 
 ## 5. Accepted residual risks (v0)
 
@@ -74,6 +75,7 @@
 - Users of the web application must trust the origin that serves it until web code transparency ships in browsers; self-hosting or the desktop app removes third-party trust.
 - A collaborator with read access can copy content; encryption cannot prevent that.
 - Compromised endpoints are out of scope.
+- A user can run any client software with their own account, including a careless or malicious one; it can do only what that user may do, and the user or an administrator can revoke the device.
 
 ## 6. Open items for SRV-003
 

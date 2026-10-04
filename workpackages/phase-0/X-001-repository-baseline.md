@@ -7,7 +7,7 @@
 | Repository | all five: bayan-core, bayan-desktop, bayan-web, bayan-server, docs |
 | Attach to session | all five repositories |
 | Size | M |
-| Depends on | Part A: — · Part B: owner's decision on ADR-0003 §4 (app-store permission), and its final reviewed text if adopted |
+| Depends on | Part A: — · Part B: the lawyer-reviewed final text of the app-store permission (ADR-0003 §4; owner checklist item 2b) |
 | Unblocks | X-002, all later contribution flows |
 | Status | Ready |
 | Requirements | SEC-09 |
@@ -16,7 +16,7 @@
 
 ## Context
 
-Every repository needs the same contribution scaffolding before many agents start working in parallel: how to contribute, how to report vulnerabilities, the pull request hand-off template, sign-off of commits (Developer Certificate of Origin), and, once the owner confirms ADR-0003, license files and per-file license headers checked by the REUSE tool. The repositories currently contain only `README.md`, `AGENTS.md` and `CLAUDE.md`. The licenses were confirmed by the owner on 2026-10-04 (ADR-0003, explained in `docs/LICENSING.md`); only the app-store permission (ADR-0003 §4) is still open.
+Every repository needs the same contribution scaffolding before many agents start working in parallel: how to contribute, how to report vulnerabilities, the pull request hand-off template, sign-off of commits (Developer Certificate of Origin), and, once the owner confirms ADR-0003, license files and per-file license headers checked by the REUSE tool. The repositories currently contain only `README.md`, `AGENTS.md` and `CLAUDE.md`. The licenses, including the app-store permission (ADR-0003 §4), were confirmed by the owner on 2026-10-04 and are explained in `docs/LICENSING.md`; only the permission's final, lawyer-reviewed wording is still pending.
 
 ## Objective
 
@@ -37,11 +37,11 @@ Identical, correct governance and contribution files in all five repositories, p
 - `.editorconfig` and `.gitattributes` (LF line endings, binary file types, `*.docx`/`*.pdf`/`*.ttf`/`*.otf`/`*.png` as binary).
 - A **DCO check workflow** in each repository implemented as a small script in the workflow (no third-party action), following the AI-assisted contribution rule in ADR-0003: commits by human authors must carry a `Signed-off-by` line matching their author; commits authored by recognized agent identities (listed in a small config file) must carry agent attribution trailers instead, and the pull request description must then contain a `Signed-off-by` line from the human submitter. Document the rule in `CONTRIBUTING.md` and follow the workflow rules in ADR-0017 (SHA-pinned actions, minimal permissions).
 
-**Part B (only after the owner has decided ADR-0003 §4):**
+**Part B (only once the lawyer-reviewed app-store permission text is available):**
 
 - `LICENSE` file per repository with the exact license text from its official source: GPL-3.0 text for bayan-core, bayan-desktop and bayan-web (license expression `GPL-3.0-or-later`); AGPL-3.0 text for bayan-server (`AGPL-3.0-or-later`); CC BY 4.0 for docs. Also a REUSE `LICENSES/` folder in each repository holding the full text of every license used there (including `Apache-2.0`, `MIT-0` and `CC0-1.0` where applicable), taken from the SPDX license-list data and verified by checksum.
 - **Apache-2.0 areas** declared in REUSE: `docs/specs/protocols/**`, `bayan-core/crates/bayan-protocol/**` and `bayan-server/integrations/**` (create the directories with a short README if they do not exist yet). **CC0-1.0** for template and sample-content directories once they exist. CC-BY-4.0 (with MIT-0 for code snippets) for the rest of docs.
-- **App-store permission:** only if the owner adopted ADR-0003 §4, add its final, lawyer-reviewed text as a separate file (for example `LICENSES/LicenseRef-BayanDocs-App-Store-Permission.txt`, or the form REUSE and SPDX recommend for custom license additions at the time) and reference it from the license expressions and READMEs of bayan-core, bayan-desktop and bayan-web. Never use the draft wording from the ADR.
+- **App-store permission (adopted, ADR-0003 §4):** add its final, lawyer-reviewed text as a separate file (for example `LICENSES/LicenseRef-BayanDocs-App-Store-Permission.txt`, or the form REUSE and SPDX recommend for custom license additions at the time) and reference it from the license expressions and READMEs of bayan-core, bayan-desktop and bayan-web. Never use the draft wording from the ADR.
 - `CONTRIBUTING.md` explains inbound = outbound per file or directory and links to `docs/LICENSING.md`.
 - A REUSE lint job in CI with the `reuse` tool pinned by exact version and hash.
 - Set the `license` field in manifests that exist by then (for example `Cargo.toml` `[workspace.package]`, with a separate value for `bayan-protocol`).
@@ -78,5 +78,5 @@ One pull request per repository (or one per repository for Part A and one for Pa
 
 ## Escalate if
 
-- The owner has not yet decided ADR-0003 §4: deliver Part A only and say so.
+- The lawyer-reviewed app-store permission text is not yet available: deliver Part A only and say so.
 - The owner's GitHub handle or security contact email is unknown: use clearly marked placeholders and list them under "Open questions for the owner".

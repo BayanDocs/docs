@@ -97,6 +97,8 @@ The detailed, element-level checklist is [specs/coverage-matrix.md](../specs/cov
 | COL-10 | Notifications that leak no document content. | S | P3 | Review |
 | COL-11 | Federation between independently hosted servers. | C | P6+ | Research |
 | COL-12 | Merge two BayanDocs-edited copies of the same `.docx` exchanged as files, using embedded history. | C | P5 | Tests |
+| COL-13 | Device control: users see all their devices (name, client application, last activity) and can revoke any; a new device must be approved from an existing trusted device; administrators can additionally require their own approval for new devices and restrict which client applications may connect (a policy for well-behaved software, not a security boundary). | M | P3 | End-to-end tests, security review |
+| COL-14 | A public conformance test suite for the sync protocol lets third-party implementations verify that they do not corrupt documents. | S | P4 | Suite passes against the reference client |
 
 ## SEC — Security and privacy
 
@@ -114,6 +116,7 @@ The detailed, element-level checklist is [specs/coverage-matrix.md](../specs/cov
 | SEC-10 | Web hardening: strict CSP, Trusted Types, cross-origin isolation, Subresource Integrity, no third-party runtime origins. | M | P1 | Header tests |
 | SEC-11 | Locally cached collaborative documents encrypted at rest with OS-keychain-protected keys. | S | P3 | Review |
 | SEC-12 | Threat model maintained per component ([specs/threat-model.md](../specs/threat-model.md)). | M | P0+ | Phase-gate review |
+| SEC-13 | The server and clients treat every other client as untrusted: all protocol input is authenticated, validated, limited and fuzzed, and authorization never depends on which client software is connecting. | M | P1 / P3 | Protocol fuzzing; authorization matrix run with a hostile test client |
 
 ## TYP / PUB — Typography, publishing and print
 
@@ -237,6 +240,7 @@ Reference hardware: a 2020-era mid-range laptop (4-core x86-64 or Apple M1, 8 GB
 | OPS-06 | Admin console and CLI: users, storage, quotas, policies. | M | P3 |
 | OPS-07 | Air-gapped deployments: fonts, dictionaries and AI models served locally. | M | P3 / P5 |
 | OPS-08 | The web app and the server show a "Source code" link to the exact source of the running version, which operators of modified versions can point at their own source (license compliance made easy, ADR-0003). | M | P1 (web) / P3 (server) |
+| OPS-09 | New self-hosted servers start with registration closed (invitations or single sign-on only); opening it is an explicit administrator choice. | M | P3 |
 
 ## PLT — Supported platforms
 

@@ -1,6 +1,6 @@
 # ADR-0003: Licensing and contribution model
 
-- **Status:** Accepted (owner confirmed 2026-10-04). §4, the app-store permission, remains **Proposed** pending the owner's decision.
+- **Status:** Accepted (owner confirmed 2026-10-04), including §4, the app-store permission, whose final wording awaits legal review.
 - **Date:** 2026-10-03 (proposed); 2026-10-04 (accepted with changes)
 - **Deciders:** Owner (decision); Planner (analysis)
 - **Related:** [LICENSING.md](../LICENSING.md) (plain-language FAQ), X-001, ADR-0013, ADR-0017, OPS-08
@@ -43,29 +43,30 @@ Facts that shape the choice:
 - They never contain, copy from, or depend on GPL or AGPL code. They are written against the specifications so that anyone can use them in software under any license.
 - The GPL and AGPL implementations may depend on them.
 - An **integration** communicates with BayanDocs through its documented protocols and APIs. Linking BayanDocs engine or server code into another program is not an integration; it makes that program subject to the GPL or AGPL.
+- **Third-party clients and integrations** may connect to BayanDocs servers, as with any open protocol. What they can do is governed by accounts, device approval, roles and server limits (SEC-13, COL-13, OPS-09), never by which software they are. Keeping the protocols closed would not prevent this, because the GPL clients already show how the protocols work.
 
 ### 3. Making compliance easy
 
 - The web app and the server show a **"Source code" link** to the exact source of the running version (OPS-08). Operators of modified versions comply by pointing it at their own source.
 - [LICENSING.md](../LICENSING.md) publishes a plain-language FAQ. It states that using BayanDocs for any purpose, running the unmodified server, connecting clients and building integrations through the documented protocols and APIs carry no obligations (beyond keeping the built-in source link working, and keeping Apache-2.0 notices when redistributing kit code).
 
-### 4. App-store permission — Proposed, owner decision pending
+### 4. App-store permission — adopted, final wording under legal review
 
 **Problem.** The GPL forbids anyone distributing the software from imposing further restrictions on recipients (GPLv3 section 10). Apple's App Store terms impose such restrictions, so distributing GPL software there violates the license, and any single copyright holder can force removal. This happened to VLC in 2011. VideoLAN then had to contact a large number of past contributors to relicense before VLC returned to Apple's store in 2013. Windows, Linux and Android stores carry no such conflict in practice, and Mac users can always install from our website.
 
 **Mechanism.** GPLv3 section 7 lets copyright holders attach an **additional permission** to their code. Only copyright holders can grant it, so it must be in place before anyone outside the project contributes; afterwards, every contributor would have to agree.
 
-**Proposal.** Attach a one-paragraph permission to bayan-core, bayan-desktop and bayan-web, allowing distribution through app stores as long as the source code stays freely available to everyone. The draft below is for legal review and is **not in force**.
+**Decision (owner, 2026-10-04).** Attach a one-paragraph permission to bayan-core, bayan-desktop and bayan-web, allowing distribution through app stores as long as the source code stays freely available to everyone. The draft below is for legal review and is **not in force**; X-001 adds the final, reviewed text.
 
 > **BayanDocs App Store Permission (draft for legal review).** Additional permission under section 7 of the GNU General Public License, version 3: the copyright holders of BayanDocs give you permission to convey this program, or any work based on it, in object code form through an application distribution service even if the terms, usage rules or technical measures of that service would otherwise be further restrictions prohibited by section 10 of the GNU General Public License, provided that you (a) make the Corresponding Source of what you convey available at no charge to everyone who receives it through that service, under the GNU General Public License version 3 or any later version, by means outside the service if the service does not permit it; (b) state in the service's listing, or in the program itself, that the program is free software under the GNU General Public License and where its Corresponding Source can be obtained; and (c) impose no restriction of your own on recipients' exercise of the rights granted by the GNU General Public License beyond those the service itself requires. This permission covers only code whose copyright holders have granted it. As section 7 provides, you may remove this permission from your copies of the work or any part of it.
 
-**Consequences if adopted.**
+**Consequences.**
 - A Mac App Store build, and a future iPad or iPhone app (tablet editing is planned for Phase 6), become possible.
 - Anyone, including a fork, may use the permission, but they must still publish their source and cannot use the BayanDocs name.
 - Third-party GPL code that lacks the same permission cannot go into components shipped through app stores; the dependency allowlist (ADR-0017) already excludes copyleft dependencies.
 - A custom permission needs a one-time legal review and may prompt a one-time review by some companies' license scanners.
 
-**Deadline.** The owner decides before X-001 adds license files and before the first outside contribution.
+**Deadline.** The reviewed text must be in place before X-001 adds license files and before the first outside contribution.
 
 ### 5. Contributions
 
@@ -100,9 +101,10 @@ The BayanDocs name and logo are governed by a trademark policy (drafted before t
 
 ## Revisit when
 
-The owner decides §4; a lawyer's review recommends changes; the first outside contribution is about to be accepted (after which this decision is effectively permanent).
+A lawyer's review of §4 recommends changes; the first outside contribution is about to be accepted (after which this decision is effectively permanent).
 
 ## History
 
 - 2026-10-03: proposed MPL-2.0 for core, desktop and web; AGPL-3.0-or-later for the server.
 - 2026-10-04: the owner chose GPL-3.0-or-later for core, desktop and web so contributors' work cannot become part of closed products; kept AGPL-3.0-or-later for the server; added Apache-2.0 protocol specifications and integration kits and the licensing FAQ; added CC0 for material copied into users' documents; proposed the app-store permission.
+- 2026-10-04 (later): the owner adopted the app-store permission (§4), subject to legal review of its final wording; clarified that third-party clients are governed by authentication, device approval and roles (§2).

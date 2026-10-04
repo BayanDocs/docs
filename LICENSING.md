@@ -2,7 +2,7 @@
 
 BayanDocs is free and open-source software. This page explains, in plain language, which licenses apply to which parts of the project and what they mean for people who use, host, integrate with, build on, or contribute to BayanDocs. The decision and its reasoning are recorded in [ADR-0003](adr/0003-licensing-and-contribution-model.md).
 
-> **Status (2026-10-04):** the licenses below are decided. The license files themselves are being added to each repository by work package X-001; until a repository contains its `LICENSE` file, its contents are not yet available under these licenses.
+> **Status (2026-10-04):** the licenses below are decided. The engine and apps will also carry an app-store permission (see the FAQ), whose final wording is under legal review. The license files themselves are being added to each repository by work package X-001; until a repository contains its `LICENSE` file, its contents are not yet available under these licenses.
 
 ## Licenses at a glance
 
@@ -57,11 +57,13 @@ BayanDocs is free and open-source software. This page explains, in plain languag
 
 **Our company policy does not allow AGPL software. Can we still integrate?** Yes. The Apache-2.0 integration kits contain no AGPL code. Whether your policy allows you to *run* an unmodified AGPL server is for your legal team to decide; the AGPL itself imposes no obligations on unmodified use.
 
-**Can we build our own BayanDocs-compatible client?** Yes, from the Apache-2.0 specifications and protocol definitions, under any license you choose. You cannot copy GPL or AGPL BayanDocs code into it unless your client is released under a compatible license.
+**Can we build our own BayanDocs-compatible client?** Yes, from the Apache-2.0 specifications and protocol definitions, under any license you choose. You cannot copy GPL or AGPL BayanDocs code into it unless your client is released under a compatible license. Connecting to a particular server still requires an account on it, each new device must be approved by its user, and each server's administrators decide which devices and applications may connect.
 
 ### Building on BayanDocs code
 
 **Can I use the BayanDocs engine in my own product?** Yes, if your product is free software released under the GPL (version 3 or later) and you share its source code when you distribute it. You cannot use BayanDocs code in a closed-source product. This is deliberate: it keeps everyone's contributions free.
+
+**Can BayanDocs be distributed through Apple's App Store?** Yes. The GPL on its own conflicts with Apple's App Store terms, so the engine and apps carry an additional permission ([ADR-0003 §4](adr/0003-licensing-and-contribution-model.md#4-app-store-permission--adopted-final-wording-under-legal-review)) that allows distribution through app stores as long as the source code stays freely available to everyone. Its final wording is under legal review.
 
 **Can I sell BayanDocs?** The GPL allows charging for copies, but you must provide the source code, and anyone who receives it may share it freely. You may not use the BayanDocs name or logo for your version without permission under the trademark policy.
 

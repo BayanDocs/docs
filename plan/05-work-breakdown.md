@@ -39,7 +39,7 @@ Briefs are in [workpackages/phase-0/](../workpackages/phase-0/). Waves show what
 
 | ID | Title | Repo | Size | Depends on | Wave |
 |---|---|---|---|---|---|
-| [X-001](../workpackages/phase-0/X-001-repository-baseline.md) | Repository baseline: governance files, PR template, DCO, licenses, REUSE | all | M | Owner decides ADR-0003 §4 (license part only) | 1 |
+| [X-001](../workpackages/phase-0/X-001-repository-baseline.md) | Repository baseline: governance files, PR template, DCO, licenses, REUSE | all | M | Reviewed app-store permission text, ADR-0003 §4 (license part only) | 1 |
 | [DOCS-001](../workpackages/phase-0/DOCS-001-knowledge-base-site.md) | Knowledge-base site (mdBook) and docs CI | docs | S | — | 1 |
 | [CORE-001](../workpackages/phase-0/CORE-001-workspace-and-gate.md) | Core workspace scaffold and verification gate | core | M | — | 1 |
 | [DESK-001](../workpackages/phase-0/DESK-001-desktop-scaffold.md) | Desktop scaffold and CI | desktop | M | — (stub engine until CORE-007) | 1 |
@@ -114,7 +114,7 @@ flowchart LR
 
 **Suggested pace:** run three to five work packages at a time, so that you can review every pull request properly. Wave 1 alone is six independent packages; start with CORE-001, SRV-001 and WEB-001 if you want the fewest moving parts.
 
-**Owner-dependent items:** X-001's license files need your decision on the app-store permission (ADR-0003 §4); LAB-002 (and therefore LAB-005 and part of CORE-008) needs the Word reference machine described in [09-owner-checklist.md](09-owner-checklist.md).
+**Owner-dependent items:** X-001's license files need the lawyer-reviewed wording of the app-store permission (ADR-0003 §4); LAB-002 (and therefore LAB-005 and part of CORE-008) needs the Word reference machine described in [09-owner-checklist.md](09-owner-checklist.md).
 
 ## Phase 1 — Faithful Viewer: draft work packages
 
@@ -161,11 +161,11 @@ Each epic becomes a set of work packages at the gate review before its phase.
 
 ### Phase 3 — Together
 
-E3-ACCOUNTS (OIDC, passkeys, sessions) · E3-DEVICES-KEYS (identity keys, cross-signing, recovery kit) · E3-GROUPS-SHARING (MLS group per document, roles, E2EE link sharing, revocation) · E3-SYNC (client and server sync, encrypted snapshots, compaction) · E3-PRESENCE · E3-OFFLINE (queues, encrypted local cache, partition tests) · E3-HISTORY (named versions, restore, compare) · E3-COMMENTS-RT · E3-ADMIN (console, CLI, policies, quotas) · E3-DEPLOY (container, compose, docs, backups) · E3-AUDIT (external cryptography and server audit) · E3-SCALE (load tests, PERF-07).
+E3-ACCOUNTS (OIDC, passkeys, sessions) · E3-DEVICES-KEYS (identity keys, cross-signing, recovery kit, device approval and administrator client policy, COL-13) · E3-GROUPS-SHARING (MLS group per document, roles, E2EE link sharing, revocation) · E3-SYNC (client and server sync, encrypted snapshots, compaction) · E3-PRESENCE · E3-OFFLINE (queues, encrypted local cache, partition tests) · E3-HISTORY (named versions, restore, compare) · E3-COMMENTS-RT · E3-ADMIN (console, CLI, policies, quotas) · E3-DEPLOY (container, compose, docs, backups) · E3-AUDIT (external cryptography and server audit) · E3-SCALE (load tests, PERF-07).
 
 ### Phase 4 — Press
 
-E4-MATH-EDIT · E4-CHARTS-EDIT · E4-CITATIONS · E4-INDEX-TOA · E4-COMPARE · E4-MAILMERGE · E4-FORMS (content controls, legacy form fields, data binding) · E4-PROTECT-SIGN · E4-RIBBON-CUSTOM · E4-DOC-IMPORT · E4-ODT · E4-HTML-EXPORT · E4-PRINT (PDF/X, ICC CMYK, bleed, slug, marks) · E4-PDF-VALIDATED (PDF/A, PDF/UA in CI) · E4-A11Y-CHECKER · E4-OUTLINE-VIEW · E4-CJK-ADVANCED (vertical text, ruby, combined characters) · E4-TABLET · E4-ENTERPRISE (SCIM, compliance escrow) · E4-SCALEOUT · E4-VBA-VIEWER.
+E4-MATH-EDIT · E4-CHARTS-EDIT · E4-CITATIONS · E4-INDEX-TOA · E4-COMPARE · E4-MAILMERGE · E4-FORMS (content controls, legacy form fields, data binding) · E4-PROTECT-SIGN · E4-RIBBON-CUSTOM · E4-DOC-IMPORT · E4-ODT · E4-HTML-EXPORT · E4-PRINT (PDF/X, ICC CMYK, bleed, slug, marks) · E4-PDF-VALIDATED (PDF/A, PDF/UA in CI) · E4-A11Y-CHECKER · E4-OUTLINE-VIEW · E4-CJK-ADVANCED (vertical text, ruby, combined characters) · E4-TABLET · E4-ENTERPRISE (SCIM, compliance escrow) · E4-SCALEOUT · E4-PROTOCOL-CONFORMANCE (public conformance suite for third-party clients, COL-14) · E4-VBA-VIEWER.
 
 ### Phase 5 — Insight
 
