@@ -35,7 +35,7 @@ The work is organized into **streams** (long-lived areas of responsibility), **e
 
 ## Phase 0 — Bedrock: Ready work packages
 
-Briefs are in [workpackages/phase-0/](../workpackages/phase-0/). Waves show what can run in parallel; a WP may start as soon as its dependencies are merged.
+Briefs are in [workpackages/phase-0/](../workpackages/README.md#phase-0--bedrock). Waves show what can run in parallel; a WP may start as soon as its dependencies are merged.
 
 | ID | Title | Repo | Size | Depends on | Wave |
 |---|---|---|---|---|---|
@@ -118,7 +118,7 @@ flowchart LR
 
 ## Phase 1 — Faithful Viewer: draft work packages
 
-Drafts are in [workpackages/phase-1/](../workpackages/phase-1/). They are scoped and ordered but will be refined into Ready briefs at the Phase-0 gate, because the spikes may change them.
+Drafts are in [workpackages/phase-1/](../workpackages/README.md#phase-1--faithful-viewer-drafts). They are scoped and ordered but will be refined into Ready briefs at the Phase-0 gate, because the spikes may change them.
 
 | Stream | Draft WPs | File |
 |---|---|---|
