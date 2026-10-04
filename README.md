@@ -2,7 +2,7 @@
 
 BayanDocs is a free, open-source word processor built to match or exceed Microsoft Word in document fidelity, features and speed, while adding what Word cannot offer: layout that is identical on every platform, local-first editing, and zero-knowledge end-to-end-encrypted collaboration that anyone can self-host.
 
-This repository is the project's single source of truth. Today it holds the master plan, the architecture decision records, the technical specifications and the work packages that agents execute. Over time it will also hold the user handbook, the developer onboarding guide, the self-hosting guide and the API reference.
+This repository is the project's single source of truth. Today it holds the master plan, the architecture decision records, the technical specifications and the work packages that agents execute. Over time it will also hold the user handbook, the developer onboarding guide, the self-hosting guide and the API reference. The same files are also built into a searchable website with mdBook: `SUMMARY.md` is its table of contents, and `scripts/verify.sh` builds it and checks every link and spelling.
 
 > **Status (2026-10-03): Phase 0 — Foundations.** No product code exists yet. The plan, decisions and first work packages are in place. See [plan/04-roadmap.md](plan/04-roadmap.md).
 
@@ -24,7 +24,7 @@ This repository is the project's single source of truth. Today it holds the mast
 | [adr/](adr/README.md) | Architecture Decision Records. Every significant technical decision, why it was made, and what would make us revisit it. Accepted ADRs are binding on all work. |
 | [specs/](specs/README.md) | Technical specifications that several repositories depend on: the document model, the engine protocol, the fidelity lab, font compatibility, the Word feature coverage matrix, the threat model, and Word Behavior Notes. |
 | [workpackages/](workpackages/README.md) | Self-contained task briefs that can be handed to an agent, with scope, acceptance criteria and verification steps. |
-| `handbook/`, `developer/`, `deploy/`, `api/` | Planned. Created as the product grows (see work package DOCS-001). |
+| [handbook/](handbook/README.md), [developer/](developer/README.md), [deploy/](deploy/README.md), [api/](api/README.md) | The user handbook, the contributor and developer guides, the self-hosting guide and the API reference. Placeholders for now; they fill up as the product grows. |
 
 ## The repositories
 
