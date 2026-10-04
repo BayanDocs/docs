@@ -69,6 +69,15 @@ crates.io and npm **trusted publishing** from CI (no long-lived tokens), provena
 - **Vendoring all dependencies:** strong control, but heavy repositories and awkward updates; reconsider only for the core if registry trust degrades.
 - **cargo-vet from day one:** valuable but adds friction before the dependency set stabilizes; evaluate in Phase 2.
 
+## Amendment 2026-10-04: tools in agent sessions
+
+Agent sessions run in a Claude Code cloud environment whose setup script, [scripts/cloud-environment-setup.sh](../scripts/cloud-environment-setup.sh), installs the project's tools. It is part of the dependency posture and follows this policy:
+
+- **Pins and age:** every tool, toolchain and package is pinned to an exact version that was at least 24 hours old when pinned; Ubuntu packages come from the signed archive frozen at a snapshot date (`apt-get --snapshot`).
+- **Verification:** release archives are checked against SHA-256 hashes written in the script; Python tools are installed with `pip --require-hashes` from wheels, or, where no wheel fits (REUSE 6.2), from a hash-pinned source archive built with a hash-pinned build backend and no build isolation; Node.js against its SHA-256; pnpm through Corepack with a SHA-512 pin; Qt by aqtinstall against hashes from download.qt.io; Rust toolchains by rustup. If a release download is refused, the tool is built from source instead (Cargo with `--locked`, Go with its checksum database).
+- **No silent upgrades:** rustup self-update is disabled, and Corepack must not resolve "latest" (`COREPACK_DEFAULT_TO_LATEST=0`). On 2026-10-04 Corepack's default resolved pnpm 12.9.1, published about eight hours earlier, which is why the pin is explicit. npm's user configuration sets `ignore-scripts=true`. Once the pinned Rust toolchain is 1.100 or later, the script also sets Cargo's `global-min-publish-age` globally (earlier versions only warn about it).
+- **Updates:** only in the monthly dependency session, together with the repositories' own pins; Python hash lists are regenerated with [scripts/python-tool-hashes.py](../scripts/python-tool-hashes.py). The owner then pastes the new script into the environment settings ([plan/06](../plan/06-agent-workflow.md#cloud-environment-for-agent-sessions)).
+
 ## Revisit when
 
 Ecosystem tools change (for example Cargo re-checking lockfile ages natively, or lockfile-lint supporting pnpm), a supply-chain incident affects us, or the owner changes the policy.

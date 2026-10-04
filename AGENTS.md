@@ -11,6 +11,8 @@ This file is the canonical set of rules for every AI agent (and human) working o
 
 If you were not given a work package, you are in a planning, review or maintenance session; follow the matching session prompt in [plan/06-agent-workflow.md](plan/06-agent-workflow.md).
 
+In BayanDocs cloud sessions the project's tools are preinstalled at pinned versions by [scripts/cloud-environment-setup.sh](scripts/cloud-environment-setup.sh); run `bayandocs-tools` to list them. If a tool is missing, install the version pinned in that script (never a newer one) and mention it in your pull request.
+
 ## 2. Authority and scope
 
 - **ADRs are binding.** If a WP conflicts with an Accepted ADR, the ADR wins: stop and report the conflict. To change a decision, write a new ADR with status `Proposed` (or an amendment to the existing one) in a separate pull request to this repository. Do not implement against a proposal until the owner accepts it.

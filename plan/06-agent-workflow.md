@@ -49,12 +49,21 @@ Status lives in the index table of [workpackages/README.md](../workpackages/READ
 ## How to hand off a work package (owner's procedure)
 
 1. Pick a Ready WP whose dependencies are Done ([workpackages/README.md](../workpackages/README.md)).
-2. Start a new agent session. Attach the repositories listed in the brief's header, always including `docs` so the agent can read the brief, the ADRs and the specs. One WP per session.
+2. Start a new agent session in the BayanDocs cloud environment (see [Cloud environment](#cloud-environment-for-agent-sessions)). Attach the repositories listed in the brief's header, always including `docs` so the agent can read the brief, the ADRs and the specs. One WP per session.
 3. Use the strongest available model for spikes, layout and fidelity work, and anything touching cryptography or security. Faster models are fine for scaffolding and documentation WPs.
 4. Paste the **work package prompt** below, replacing the placeholders.
 5. When the agent opens a pull request, start a separate session with the **review prompt**.
 6. Merge when CI is green and the reviewer approves. If the reviewer requests changes, paste the review into the implementer session (or start a new implementer session with the WP prompt plus "address the review at <link>").
 7. If an agent reports that it is blocked, read its options and recommendation; decide, or start a planning session to decide.
+
+## Cloud environment for agent sessions
+
+Agent sessions run in a Claude Code cloud environment (Ubuntu 24.04). Its **setup script** is [scripts/cloud-environment-setup.sh](../scripts/cloud-environment-setup.sh): paste the whole file into the environment's settings (the cloud environment menu in a session's title bar → Edit → Setup script). It runs before each new session starts, and its result is cached for about seven days, so sessions start with the tools already installed.
+
+- **What it installs:** Rust (the pinned stable toolchain with `clippy`, `rustfmt` and the `wasm32-unknown-unknown` target, plus a pinned nightly for fuzzing), `cargo-deny`, `cargo-fuzz`, mdBook, lychee, typos, REUSE, zizmor, pinact, Node.js LTS with pnpm through Corepack, Qt (LGPL modules only) with aqtinstall and the system headers it needs, and ShellCheck. Run `bayandocs-tools` in a session to see the installed versions; logs are in `/var/log/bayandocs-setup/`.
+- **How it follows the dependency policy (ADR-0017):** every version is pinned exactly and was at least 24 hours old when pinned; every download is verified against a hash in the script (or by the tool's own signed metadata); Ubuntu packages come from the signed archive frozen at a snapshot date. Pins change only in the monthly dependency session, which also tests the script and asks you to paste the new version.
+- **Network:** everything comes from the default **Trusted** list except Qt, which needs `download.qt.io` and `master.qt.io` (choose **Custom**, keep the default list, and add those two). If release downloads from GitHub are refused, the script builds those tools from their verified sources instead.
+- **Failures never block a session:** a failed step is listed by `bayandocs-tools`, and the session starts anyway. An agent that finds a tool missing installs the same pinned version (never a newer one) and reports it.
 
 ## Ready-to-paste prompts
 
@@ -81,7 +90,7 @@ You are the planner for BayanDocs, an open-source, Word-compatible word processo
 ### Monthly dependency update session
 
 ```text
-You are running the batched dependency update for the BayanDocs repository <repo>, following ADR-0017 and the dependency rules in docs/AGENTS.md. Update every dependency (packages, toolchains, pinned CI actions and tool versions) to the newest version that has been published for at least 24 hours, skipping any version younger than that and noting it for next month. Keep exact pins and the committed lockfile, keep install scripts disabled, and never add Dependabot version updates, Renovate or any other update bot. Run the repository's full verification gate, fix whatever breaks, and land one green pull request whose description lists every change (old version, new version, publish date, notable changelog items, and anything that broke and how you fixed it). If the repository's dependency posture changed, update its ADR or posture document in the same pull request.
+You are running the batched dependency update for the BayanDocs repository <repo>, following ADR-0017 and the dependency rules in docs/AGENTS.md. Update every dependency (packages, toolchains, pinned CI actions and tool versions) to the newest version that has been published for at least 24 hours, skipping any version younger than that and noting it for next month. Keep exact pins and the committed lockfile, keep install scripts disabled, and never add Dependabot version updates, Renovate or any other update bot. Run the repository's full verification gate, fix whatever breaks, and land one green pull request whose description lists every change (old version, new version, publish date, notable changelog items, and anything that broke and how you fixed it). If the repository's dependency posture changed, update its ADR or posture document in the same pull request. If <repo> is docs, also update the pins in scripts/cloud-environment-setup.sh by the same rules (release binaries with their SHA-256 hashes, Python tools with hashes regenerated by scripts/python-tool-hashes.py, the Ubuntu snapshot date, and toolchains matching the code repositories' pins), run the script in the session to prove it works, and tell me to paste the new version into the cloud environment's setup script.
 ```
 
 ### Security alert response session
