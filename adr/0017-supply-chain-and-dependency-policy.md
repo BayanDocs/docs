@@ -78,6 +78,17 @@ Agent sessions run in a Claude Code cloud environment whose setup script, [scrip
 - **No silent upgrades:** rustup self-update is disabled, and Corepack must not resolve "latest" (`COREPACK_DEFAULT_TO_LATEST=0`). On 2026-10-04 Corepack's default resolved pnpm 12.9.1, published about eight hours earlier, which is why the pin is explicit. npm's user configuration sets `ignore-scripts=true`. Once the pinned Rust toolchain is 1.100 or later, the script also sets Cargo's `global-min-publish-age` globally (earlier versions only warn about it).
 - **Updates:** only in the monthly dependency session, together with the repositories' own pins; Python hash lists are regenerated with [scripts/python-tool-hashes.py](../scripts/python-tool-hashes.py). The owner then pastes the new script into the environment settings ([plan/06](../plan/06-agent-workflow.md#cloud-environment-for-agent-sessions)).
 
+## Amendment 2026-10-04: pnpm without Corepack
+
+Node.js 25 and later no longer ship Corepack (the Node.js 26.10.0 download contains only `node`, `npm` and `npx`), and Node.js 26 is expected to become the Active LTS release in late October 2026, so the agent environment's Corepack step would break at the next Node.js update. Corepack was also weaker than it looked: it checked only pnpm's small JavaScript wrapper against the `packageManager` hash, while the 60 MB native binary that does the work was downloaded on first use and checked only against the npm registry's signature. Corepack is therefore no longer used anywhere:
+
+- **Agent environment:** [scripts/cloud-environment-setup.sh](../scripts/cloud-environment-setup.sh) installs pnpm's native binary, the npm package `@pnpm/exe.linux-x64` at the pinned `PNPM_VERSION`, only after checking it against a SHA-512 hash written in the script (in hex, like the other pins), and puts it on `PATH` ahead of Node.js. The `COREPACK_*` settings are gone.
+- **Inside each repository**, pnpm switches itself to the version pinned in that repository's `packageManager` field, verified against the repository's lockfile and npm's signature.
+- **bayan-web** pins pnpm's native binary through its lockfile: the first YAML document of `pnpm-lock.yaml` records the sha512 of `@pnpm/exe.<platform>` for each supported platform, and its `scripts/dev-setup.sh` installs that binary only after checking the download against it. Its policy check also fails when the pnpm running the gate (reported in `npm_config_user_agent`) is not the pinned version.
+- **Updates:** the pnpm pin in the setup script changes only in the monthly dependency session, like every other pin.
+
+This amendment replaces the Corepack parts of the previous amendment ("pnpm through Corepack with a SHA-512 pin" and `COREPACK_DEFAULT_TO_LATEST=0`); the rest of that amendment still applies.
+
 ## Revisit when
 
 Ecosystem tools change (for example Cargo re-checking lockfile ages natively, or lockfile-lint supporting pnpm), a supply-chain incident affects us, or the owner changes the policy.
