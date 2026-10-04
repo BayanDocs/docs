@@ -22,3 +22,11 @@ SPDX-License-Identifier = "MIT-0"
 path = "specs/protocols/**"
 SPDX-FileCopyrightText = "2026 BayanDocs contributors"
 SPDX-License-Identifier = "Apache-2.0"
+
+# Vendored third-party code: Mermaid 11.17.2, which draws diagrams on the website (site/mermaid/README.md).
+# Mermaid is MIT; its single-file bundle also contains code from the packages listed in site/mermaid/THIRD-PARTY-NOTICES.txt.
+[[annotations]]
+path = "site/mermaid/mermaid.min.js"
+precedence = "override"
+SPDX-FileCopyrightText = ["2014-2022 Knut Sveidqvist and Mermaid contributors", "The authors of the bundled packages listed in site/mermaid/THIRD-PARTY-NOTICES.txt"]
+SPDX-License-Identifier = "MIT AND ISC AND BSD-3-Clause AND (MPL-2.0 OR Apache-2.0)"

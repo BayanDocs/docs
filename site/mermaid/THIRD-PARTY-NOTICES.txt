@@ -1,0 +1,167 @@
+Third-party notices for site/mermaid/mermaid.min.js
+
+mermaid.min.js is the unmodified dist/mermaid.min.js file from the npm package mermaid 11.17.2 (https://mermaid.js.org, https://www.npmjs.com/package/mermaid). Mermaid bundles code from other packages into that one file. Each package and its copyright notice are listed below; the full license texts are in the LICENSES folder at the root of this repository (MIT.txt, ISC.txt, BSD-3-Clause.txt, MPL-2.0.txt and Apache-2.0.txt). The license comments that Mermaid's build keeps at the end of mermaid.min.js (DOMPurify, Lodash and code embedded in Cytoscape) are left in place.
+
+The list covers Mermaid's runtime dependency tree, resolved from npm on 2026-10-04; the exact versions inside the bundle may differ slightly, and some listed packages may have been left out of the bundle by its build. Two kinds of package from the tree are not listed: type-declaration packages (@types/* and @chevrotain/types), which contain no code, and robust-predicates (Unlicense), whose code is not in the bundle (checked by searching the bundle for its constants; see site/mermaid/README.md).
+
+mermaid (MIT)
+    Copyright (c) 2014 - 2022 Knut Sveidqvist
+@antfu/install-pkg (MIT)
+    Copyright (c) 2021 Anthony Fu <https://github.com/antfu>
+@braintree/sanitize-url (MIT)
+    Copyright (c) 2017 Braintree
+@iconify/types (MIT)
+    Copyright (c) 2021 - 2022 Vjacheslav Trushkin / Iconify OÜ
+@iconify/utils (MIT)
+    Copyright (c) 2021-PRESENT Vjacheslav Trushkin
+@mermaid-js/parser (MIT)
+    Copyright (c) 2023 Yokozuna59
+@upsetjs/venn.js (MIT)
+    Copyright (c) 2013 Ben Frederickson
+    Copyright (c) 2021 Samuel Gratzl
+commander (MIT)
+    Copyright (c) 2011 TJ Holowaychuk <tj@vision-media.ca>
+cose-base (MIT)
+    Copyright (c) 2019 - present, iVis@Bilkent.
+cytoscape (MIT)
+    Copyright (c) 2016-2026, The Cytoscape Consortium.
+cytoscape-cose-bilkent (MIT)
+    Copyright (c) 2016-2018, The Cytoscape Consortium.
+cytoscape-fcose (MIT)
+    Copyright (c) 2018 - present, iVis-at-Bilkent.
+d3 (ISC)
+    Copyright 2010-2023 Mike Bostock
+d3-array (BSD-3-Clause)
+    Copyright 2010-2020 Mike Bostock
+d3-array (ISC)
+    Copyright 2010-2023 Mike Bostock
+d3-axis (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-brush (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-chord (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-color (ISC)
+    Copyright 2010-2022 Mike Bostock
+d3-contour (ISC)
+    Copyright 2012-2023 Mike Bostock
+d3-delaunay (ISC)
+    Copyright 2018-2021 Observable, Inc.
+    Copyright 2021 Mapbox
+d3-dispatch (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-drag (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-dsv (ISC)
+    Copyright 2013-2021 Mike Bostock
+d3-ease (BSD-3-Clause)
+    Copyright 2010-2021 Mike Bostock
+    Copyright 2001 Robert Penner
+d3-fetch (ISC)
+    Copyright 2016-2021 Mike Bostock
+d3-force (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-format (ISC)
+    Copyright 2010-2026 Mike Bostock
+d3-geo (ISC)
+    Copyright 2010-2024 Mike Bostock
+    Copyright 2008-2012 Charles Karney
+d3-hierarchy (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-interpolate (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-path (BSD-3-Clause)
+    Copyright 2015-2016 Mike Bostock
+d3-path (ISC)
+    Copyright 2015-2022 Mike Bostock
+d3-polygon (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-quadtree (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-random (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-sankey (BSD-3-Clause)
+    Copyright 2015, Mike Bostock
+d3-scale (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-scale-chromatic (ISC)
+    Copyright 2010-2024 Mike Bostock
+    Copyright 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State University
+d3-selection (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-shape (BSD-3-Clause)
+    Copyright 2010-2015 Mike Bostock
+d3-shape (ISC)
+    Copyright 2010-2022 Mike Bostock
+d3-time (ISC)
+    Copyright 2010-2022 Mike Bostock
+d3-time-format (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-timer (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-transition (ISC)
+    Copyright 2010-2021 Mike Bostock
+d3-zoom (ISC)
+    Copyright 2010-2021 Mike Bostock
+dagre-d3-es (MIT)
+    Original dagre-d3 copyright: Copyright (c) 2013 Chris Pettitt
+    Original dagre copyright: Copyright (c) 2012-2014 Chris Pettitt
+    Original graphlib copyright: Copyright (c) 2012-2014 Chris Pettitt
+    Copyright (c) 2022-2024 Thibaut Lassalle, David Newell, Alois Klink, Sidharth Vinod and dagre-es contributors
+dayjs (MIT)
+    Copyright (c) 2018-present, iamkun
+delaunator (ISC)
+    Copyright (c) 2026, Mapbox
+dompurify (MPL-2.0 OR Apache-2.0)
+    Copyright (c) Cure53 and other contributors
+es-toolkit (MIT)
+    Copyright (c) 2024 Viva Republica, Inc.
+fastdom (MIT)
+    Wilson Page (author; the package has no copyright line)
+hachure-fill (MIT)
+    Copyright (c) 2023 Preet Shihn
+iconv-lite (MIT)
+    Copyright (c) 2011 Alexander Shtuchkin
+import-meta-resolve (MIT)
+    Copyright (c) Titus Wormer <mailto:tituswormer@gmail.com>
+    Copyright Node.js contributors. All rights reserved.
+    Copyright Joyent, Inc. and other Node contributors. All rights reserved.
+internmap (ISC)
+    Copyright 2021 Mike Bostock
+katex (MIT)
+    Copyright (c) 2013-2020 Khan Academy and other contributors
+khroma (MIT)
+    Copyright (c) 2019-present Fabio Spampinato, Andrew Maney
+layout-base (MIT)
+    Copyright (c) 2019 iVis@Bilkent
+lodash-es (MIT)
+    Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
+    Based on Underscore.js, copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+marked (MIT)
+    Copyright (c) 2018+, MarkedJS (https://github.com/markedjs/)
+    Copyright (c) 2011-2018, Christopher Jeffrey (https://github.com/chjj/)
+    Copyright © 2004, John Gruber
+package-manager-detector (MIT)
+    Copyright (c) 2020-PRESENT Anthony Fu <https://github.com/antfu>
+path-data-parser (MIT)
+    Copyright (c) 2020 Preet Shihn
+points-on-curve (MIT)
+    Copyright (c) 2020 Preet Shihn
+points-on-path (MIT)
+    Copyright (c) 2020 Preet
+roughjs (MIT)
+    Copyright (c) 2019 Preet Shihn
+rw (BSD-3-Clause)
+    Copyright (c) 2014-2016, Michael Bostock
+safer-buffer (MIT)
+    Copyright (c) 2018 Nikita Skovoroda <chalkerx@gmail.com>
+strictdom (MIT)
+    Wilson Page (author; the package has no copyright line)
+stylis (MIT)
+    Copyright (c) 2016-present Sultan Tarimo
+tinyexec (MIT)
+    Copyright (c) 2024 Tinylibs
+ts-dedent (MIT)
+    Copyright (c) 2018 Tamino Martinius
+uuid (MIT)
+    Copyright (c) 2010-2020 Robert Kieffer and other contributors
