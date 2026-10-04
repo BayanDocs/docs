@@ -11,5 +11,6 @@ Specifications define contracts that more than one crate or repository depends o
 | [coverage-matrix.md](coverage-matrix.md) | v1 | all | planning, release notes |
 | [threat-model.md](threat-model.md) | v0 (expanded by SRV-003) | SECURITY | all repositories |
 | [word-behavior/](word-behavior/README.md) | living | LAB | bayan-text, bayan-layout, bayan-edit |
+| [protocols/](protocols/README.md) | living; **Apache-2.0** | SERVER | third-party clients and integrations, bayan-core, bayan-server |
 
-The sync protocol between core and server is written in Phase 1 (SRV-104) and will be added here.
+The sync protocol between core and server is written in Phase 1 (SRV-104) in [protocols/](protocols/README.md), which, unlike the rest of this repository, is licensed Apache-2.0 so anyone can implement it (ADR-0003).

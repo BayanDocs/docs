@@ -14,6 +14,7 @@ This repository is the project's single source of truth. Today it holds the mast
 | An agent about to execute a work package | [AGENTS.md](AGENTS.md), then your work package in [workpackages/](workpackages/README.md) |
 | Anyone who wants the big picture | [plan/01-vision-and-fidelity-contract.md](plan/01-vision-and-fidelity-contract.md) and [plan/03-architecture.md](plan/03-architecture.md) |
 | Someone checking why a technology was chosen | [adr/README.md](adr/README.md) |
+| Anyone asking what they may do with BayanDocs (use, host, integrate, build on it) | [LICENSING.md](LICENSING.md) |
 
 ## Map of this repository
 
@@ -37,4 +38,4 @@ This repository is the project's single source of truth. Today it holds the mast
 
 ## License
 
-The licensing plan is recorded in [ADR-0003](adr/0003-licensing-and-contribution-model.md) and awaits the owner's confirmation. Until a `LICENSE` file is added, all rights are reserved.
+The engine, desktop app and web app are licensed GPL-3.0-or-later; the server AGPL-3.0-or-later; protocol specifications and integration kits Apache-2.0; this documentation CC BY 4.0. What that means for users, hosts, integrators and contributors is explained in plain language in [LICENSING.md](LICENSING.md); the decision is [ADR-0003](adr/0003-licensing-and-contribution-model.md). License files are being added by work package X-001; until a repository contains its `LICENSE` file, its contents are not yet available under these licenses.

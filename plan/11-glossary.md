@@ -3,7 +3,9 @@
 | Term | Meaning |
 |---|---|
 | **ADR** | Architecture Decision Record: a short document recording one decision, its context, alternatives and consequences. See [adr/](../adr/README.md). |
-| **AGPL** | GNU Affero General Public License: copyleft that also applies when software is offered over a network. Proposed for bayan-server. |
+| **Additional permission** | An extra permission that copyright holders attach to a GPL license (GPLv3 section 7), for example the proposed app-store permission in ADR-0003. |
+| **AGPL** | GNU Affero General Public License: the GPL plus a rule that people who modify the software and offer it over a network must share their changes with its users. License of bayan-server. |
+| **Apache-2.0** | A permissive license with an explicit patent license. Used for the protocol specifications and integration kits so anyone can integrate with BayanDocs. |
 | **Anchor (object)** | The position in text a floating picture or shape is attached to; it moves with the text even though the object is drawn elsewhere on the page. |
 | **Atom** | One element of a story in the BDM: a character, or a special item such as a paragraph end, tab, field delimiter or object anchor. |
 | **AT / assistive technology** | Software such as screen readers (NVDA, JAWS, VoiceOver, Narrator, Orca) that presents an application to people with disabilities. |
@@ -13,6 +15,7 @@
 | **C ABI** | The plain C calling convention used to connect the Rust core to the C++ desktop shell. |
 | **CMYK / ICC** | Cyan-magenta-yellow-black print color; ICC profiles describe how to convert colors between devices. |
 | **Compatibility mode** | Word's per-document setting (`w:compatibilityMode` 11, 12, 14, 15) and related options that change layout behavior to match older Word versions. |
+| **Copyleft** | A license rule that software built from the code must be shared under the same license. The GPL and AGPL are copyleft; MIT and Apache-2.0 are not. |
 | **CRDT** | Conflict-free Replicated Data Type: a data structure that lets several people edit independently and always merge to the same result without a central coordinator. |
 | **DCO** | Developer Certificate of Origin: contributors certify they have the right to submit their code by signing off commits (`git commit -s`). |
 | **Determinism matrix** | CI job that renders the same documents on every platform and requires identical layout and pixel hashes. |
@@ -26,6 +29,7 @@
 | **Fidelity Lab** | The tools and process that measure how closely BayanDocs matches Microsoft Word. See [specs/fidelity-lab.md](../specs/fidelity-lab.md). |
 | **Field** | A Word instruction embedded in text that produces a result: page numbers, dates, tables of contents, cross-references, formulas. |
 | **Fluent** | Mozilla's localization system and file format (`.ftl`) used for interface strings. |
+| **GPL** | GNU General Public License (version 3 or later): copyleft; anyone who distributes the software, or a program built from it, must share the source under the same license. License of bayan-core, bayan-desktop and bayan-web. |
 | **Ground truth** | The reference output (Word's PDF and extracted layout) that BayanDocs is compared against. |
 | **Host service** | Anything the engine asks the shell to do because it touches the outside world: fonts from the system, clipboard, network transport, AI inference. |
 | **IME** | Input Method Editor: software that composes text in scripts with many characters (Chinese, Japanese, Korean, Indic) from keystrokes. |
@@ -36,7 +40,6 @@
 | **MCE** | Markup Compatibility and Extensibility (ECMA-376 Part 3): the `mc:` rules that let newer content degrade gracefully in older readers. |
 | **Metric-compatible font** | A font whose characters have exactly the same widths (and line metrics) as another, so text breaks into the same lines even though the letters look different. |
 | **MLS** | Messaging Layer Security (RFC 9420): the IETF standard for efficient end-to-end encrypted group key agreement. |
-| **MPL-2.0** | Mozilla Public License 2.0: file-level copyleft; modified files stay open, but the code can be combined with other software. Proposed for core, desktop and web. |
 | **OMML** | Office Math Markup Language: how Word stores equations. |
 | **OOXML** | Office Open XML (ECMA-376 / ISO/IEC 29500): the standard behind `.docx`, `.xlsx`, `.pptx`. |
 | **OPC** | Open Packaging Conventions: the ZIP-based container format of OOXML files, with parts, content types and relationships. |

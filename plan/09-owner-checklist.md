@@ -4,8 +4,9 @@ Agents can write code and documents, but some steps need your accounts, your mon
 
 ## Now — before handing off the first work package
 
-- [ ] **1. Fix the default branch in all five repositories.** The repositories were empty, so GitHub treats the first pushed branch (`claude/exciting-mccarthy-rcc9vt`) as the default branch. In each repository: create a branch named `main` from it (GitHub → Branches → New branch), then Settings → General → Default branch → switch to `main`. Alternatively, ask an agent session to push a `main` branch for you, giving it explicit permission to do so.
-- [ ] **2. Read and confirm the licensing decision ([ADR-0003](../adr/0003-licensing-and-contribution-model.md)).** It is the one decision that becomes very hard to change once outside contributors arrive. If you confirm it, change its status to Accepted (or ask an agent to). Work package X-001 adds the license files afterwards.
+- [ ] **1. Switch the default branch to `main` in all five repositories.** The repositories were empty, so GitHub treated the first pushed branch (`claude/exciting-mccarthy-rcc9vt`) as the default. `main` has been pushed (2026-10-04); in each repository go to Settings → General → Default branch, switch to `main`, and confirm. Afterwards the old planning branch can be deleted.
+- [x] **2. Confirm the licensing decision ([ADR-0003](../adr/0003-licensing-and-contribution-model.md)).** Confirmed 2026-10-04: GPL-3.0-or-later for engine, desktop and web; AGPL-3.0-or-later for the server; Apache-2.0 for protocol specifications and integration kits; plain-language FAQ in [LICENSING.md](../LICENSING.md).
+- [ ] **2a. Decide on the app-store permission ([ADR-0003 §4](../adr/0003-licensing-and-contribution-model.md#4-app-store-permission--proposed-owner-decision-pending)).** It lets BayanDocs be distributed through Apple's App Store (Mac App Store now, iPad and iPhone later) while keeping the source free. It must be settled before work package X-001 adds the license files and before anyone outside the project contributes. If you adopt it, have an open-source lawyer review the draft wording first.
 - [ ] **3. Protect `main` in each repository** (Settings → Rules → Rulesets): require a pull request before merging, require status checks to pass (add the checks once CI exists), block force pushes and deletions. Prefer squash merging (Settings → General → Pull Requests).
 - [ ] **4. Turn on security alerts only, never update bots** (Settings → Advanced Security), in each repository:
   - enable **Dependabot alerts** (this also gives malware alerts);
@@ -36,7 +37,7 @@ Agents can write code and documents, but some steps need your accounts, your mon
   - Windows: apply to the SignPath Foundation (free code signing for open-source projects) or buy a commercial certificate;
   - macOS: join the Apple Developer Program (annual fee) for signing and notarization;
   - Linux: create a Flathub account for the Flatpak.
-- [ ] **12. Trademark:** run a basic search for "BayanDocs" in your main jurisdictions; consider registering it later; approve the trademark policy an agent drafts.
+- [ ] **12. Trademark:** run a basic search for "BayanDocs" in your main jurisdictions, register it, and approve the trademark policy an agent drafts. With the GPL licensing, the trademark is what stops others from selling or hosting their versions under the BayanDocs name, so do this before the project becomes widely visible.
 - [ ] **13. Community spaces:** enable GitHub Discussions; choose a chat space (for example Matrix); name a Code of Conduct contact.
 
 ## Before collaboration GA (Phase 3)

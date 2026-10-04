@@ -13,4 +13,4 @@
 
 ### WEB-103 — PWA, offline and deployment
 - **Size:** M · **Depends on:** WEB-101 · **Decisions:** ADR-0014, ADR-0026
-- **Scope:** installable PWA with a hand-written service worker; offline viewing of local files; lazy font loading with integrity hashes; static-site deployment (a public demo on GitHub Pages) and a container image serving the app with the full security-header set; Subresource Integrity enforced.
+- **Scope:** installable PWA with a hand-written service worker; offline viewing of local files; lazy font loading with integrity hashes; static-site deployment (a public demo on GitHub Pages) and a container image serving the app with the full security-header set; Subresource Integrity enforced; a "Source code" link to the exact source of the running version, configurable by operators (OPS-08).

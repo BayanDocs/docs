@@ -43,3 +43,7 @@ DESK-002 must demonstrate smooth scrolling and zooming of engine tiles at high D
 ## Revisit when
 
 DESK-002 fails on accessibility or input methods; CXX-Qt reaches a stable 1.0; or Qt's licensing changes for the modules we use.
+
+## Amendment (2026-10-04)
+
+The desktop app is now licensed GPL-3.0-or-later (ADR-0003). GPL-only Qt modules would therefore be license-compatible, but the LGPL-only rule stays: GPL-only Qt modules would block the proposed app-store permission (ADR-0003 §4) and remove the flexibility of dynamic linking. No other part of this decision changes.

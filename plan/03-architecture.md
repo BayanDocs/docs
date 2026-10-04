@@ -131,6 +131,7 @@ flowchart TB
 | bayan-edit | Selection, caret movement (logical and visual for bidirectional text), commands, transactions, undo/redo, clipboard formats, find/replace, autocorrect, track-changes mode. |
 | bayan-a11y | Accessibility tree generation and incremental updates. |
 | bayan-proof | Spelling, grammar, hyphenation dictionaries (ADR-0022). |
+| bayan-protocol | Message definitions and schemas of the client–server sync protocol, licensed Apache-2.0 so anyone can implement clients and integrations (ADR-0003); used by bayan-sync and by the server. |
 | bayan-sync, bayan-mls | Sync protocol client, presence, offline queue; MLS group management and encryption of CRDT updates (ADR-0016). Shared with the server where applicable. |
 | bayan-script | Sandboxed automation runtime and VBA tooling (ADR-0023). |
 | bayan-ai | AI provider interface, prompts, chunking, mapping of suggestions back to document ranges (ADR-0024). |

@@ -28,7 +28,7 @@ Every decision has an ADR with its reasoning and alternatives ([adr/README.md](.
 | Server | Rust (tokio/axum), one container, SQLite by default, PostgreSQL and S3 optional |
 | Encryption | MLS (RFC 9420) via OpenMLS; standard ciphersuite now, hybrid post-quantum when standardized |
 | Supply chain | Your dependency preferences, encoded as ADR-0017 and enforced in CI in every repository |
-| Licensing (needs your confirmation) | MPL-2.0 for core, desktop and web; AGPL-3.0-or-later for the server; CC BY 4.0 for documentation; DCO sign-off, no CLA |
+| Licensing (confirmed 2026-10-04) | GPL-3.0-or-later for engine, desktop and web; AGPL-3.0-or-later for the server; Apache-2.0 for protocol specifications and integration kits; CC BY 4.0 for documentation; DCO sign-off, no CLA ([FAQ](../LICENSING.md)); the app-store permission is still to be decided |
 
 ## Where the plan sharpened the original specification
 
@@ -44,8 +44,8 @@ Nothing was scaled back, but some items were made precise so they can be tested 
 
 The full list is [09-owner-checklist.md](09-owner-checklist.md). The first four:
 
-1. **Fix the default branch** in all five repositories (they were empty, so the planning branch became the default).
-2. **Confirm or change the licensing decision** in [ADR-0003](../adr/0003-licensing-and-contribution-model.md).
+1. **Switch the default branch to `main`** in all five repositories (Settings → General → Default branch). The repositories were empty, so the planning branch became the default; `main` has already been pushed.
+2. **Decide on the app-store permission** in [ADR-0003 §4](../adr/0003-licensing-and-contribution-model.md#4-app-store-permission--proposed-owner-decision-pending) (the rest of the licensing is confirmed).
 3. **Turn on security alerts (not update bots), secret scanning and Actions hardening** in each repository's settings.
 4. **Plan the Word reference machine** (Windows + Microsoft 365) for the Fidelity Lab; it is needed in about the third wave of Phase 0.
 

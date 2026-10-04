@@ -26,7 +26,7 @@ A published mdBook site of the whole knowledge base with a CI gate that keeps li
 
 ### In scope
 
-- `book.toml` and `SUMMARY.md` covering `README.md`, `AGENTS.md`, `plan/`, `adr/`, `specs/`, `workpackages/`.
+- `book.toml` and `SUMMARY.md` covering `README.md`, `LICENSING.md`, `AGENTS.md`, `plan/`, `adr/`, `specs/`, `workpackages/`.
 - Placeholder folders with a `README.md` each: `handbook/` (user handbook), `developer/` (contributor and developer guides), `deploy/` (self-hosting), `api/` (API references).
 - Mermaid rendering on the site: choose between a pinned, vendored `mermaid` script with its checksum recorded, or an mdBook preprocessor, by lowest dependency cost; document the choice.
 - `scripts/verify.sh`: mdBook build, `lychee` link check (internal links strictly; external links with caching and a small allowlist for flaky sites), `typos` spell check with a project dictionary (technical terms such as Loro, harfrust, skrifa, OOXML).

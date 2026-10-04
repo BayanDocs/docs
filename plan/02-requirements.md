@@ -236,6 +236,7 @@ Reference hardware: a 2020-era mid-range laptop (4-core x86-64 or Apple M1, 8 GB
 | OPS-05 | Scale-out mode: PostgreSQL, S3-compatible storage, multiple instances. | S | P4 |
 | OPS-06 | Admin console and CLI: users, storage, quotas, policies. | M | P3 |
 | OPS-07 | Air-gapped deployments: fonts, dictionaries and AI models served locally. | M | P3 / P5 |
+| OPS-08 | The web app and the server show a "Source code" link to the exact source of the running version, which operators of modified versions can point at their own source (license compliance made easy, ADR-0003). | M | P1 (web) / P3 (server) |
 
 ## PLT — Supported platforms
 

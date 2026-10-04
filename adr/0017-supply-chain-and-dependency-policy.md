@@ -38,7 +38,7 @@ Tool capabilities verified on 2026-10-03:
 5. **Exact pins and committed lockfiles.** Builds use `--locked` / `--frozen-lockfile`.
 6. **Install scripts disabled**; any exception is named in an allowlist with a justification.
 7. **Audit and lockfile-integrity gates** run on every pull request and nightly.
-8. **License allowlist:** MIT, MIT-0, Apache-2.0 (including the LLVM exception), BSD-2-Clause, BSD-3-Clause, ISC, Zlib, 0BSD, BSL-1.0, CC0-1.0, Unicode-3.0, Unicode-DFS-2016, MPL-2.0. Fonts and data packs may also use OFL-1.1, the GUST Font License, CC BY 4.0 and LGPL with font exceptions. Qt is used under LGPL-3.0 (dynamic linking). Anything else requires an ADR amendment. Dual-licensed packages qualify if one option is on the list.
+8. **License allowlist:** MIT, MIT-0, Apache-2.0 (including the LLVM exception), BSD-2-Clause, BSD-3-Clause, ISC, Zlib, 0BSD, BSL-1.0, CC0-1.0, Unicode-3.0, Unicode-DFS-2016, MPL-2.0. Fonts and data packs may also use OFL-1.1, the GUST Font License, CC BY 4.0 and LGPL with font exceptions. Qt is used under LGPL-3.0 (dynamic linking). Anything else requires an ADR amendment. Dual-licensed packages qualify if one option is on the list. Copyleft dependencies (GPL, AGPL, and LGPL other than Qt) stay excluded even though our own code is GPL or AGPL: they could not be used in the Apache-2.0 areas and would block the proposed app-store permission (ADR-0003).
 9. **Minimal dependencies.** Every new dependency is justified in its pull request (purpose, alternatives, license, maintenance, publish date, transitive count).
 10. **Posture documents** (this ADR and each repository's `AGENTS.md` dependency section) are updated in the same pull request as any posture change.
 
