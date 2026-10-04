@@ -96,6 +96,20 @@ Decided by the owner on 2026-10-04 during DESK-001 (BayanDocs/bayan-desktop pull
 
 **Consequences.** CI and developer machines no longer need aqtinstall's 25 third-party Python packages (some compiled, some LGPL-licensed) to install Qt. In exchange, the project maintains about 400 lines of Python (comments included) and must adapt them when Qt changes its repository layout again; the installer fails with a clear message, and installs nothing, when the index does not match the pins. `deps/qt.json` gains fields that change with every Qt version, so updating Qt in the monthly session means updating all of them and running bayan-desktop's verification gate.
 
+## Amendment 2026-10-04: what the license allowlist covers
+
+Decided by the owner on 2026-10-04, answering open question 3 of DESK-001 (BayanDocs/bayan-desktop pull request 1).
+
+**Context.** Decision 8 lists the licenses that BayanDocs' dependencies may use, but it does not say which software the list applies to, and DESK-001 met two cases it does not settle. First, some tools that build and check BayanDocs without ever becoming part of it use other open-source licenses: the Python interpreter that runs CI's build tools is under PSF-2.0, and ShellCheck, which the agent environment installs, is under GPL-3.0-or-later. Second, decision 8 accepts "Qt under LGPL-3.0", but Qt's libraries contain third-party code under its own licenses. The SBOM files (software bills of materials, machine-readable lists of components) shipped with Qt 6.12.0 list about a hundred third-party entries for qtbase alone: code bundled into Qt's libraries, such as HarfBuzz, libpng, libjpeg-turbo, PCRE2 and FreeType's rasterizer, mostly under MIT and BSD licenses, and references to system libraries that Qt uses on some platforms.
+
+**Decision.** Decision 8 is read as follows:
+
+1. **The allowlist applies to everything that is linked into, or shipped with, BayanDocs software:** the desktop and web applications, the server, and the packages, installers and containers that distribute them. It includes every package dependency of our code, whether it is used at run time or only at build time (for example Cargo build dependencies, build scripts and procedural macros, or npm packages that a bundler processes), because their code or output can end up in what we ship.
+2. **Standalone build, test and CI tools** that are installed separately, are never a package dependency of our code and are never shipped (for example compilers, interpreters, build systems, linters, formatters and test runners) may use any OSI-approved open-source license, such as PSF-2.0 for Python or GPL-3.0-or-later for ShellCheck. Every other rule of this ADR still applies to them: exact pins, the 24-hour minimum age, hash verification wherever the ecosystem allows it, and a justification in the pull request that adds or changes them.
+3. **Third-party code that Qt bundles in its libraries**, as listed in the SBOM files of the pinned Qt release (the `sbom/` folder of the Qt installation), and the ICU libraries that Qt's repository supplies with it on Linux, are accepted as part of the Qt decision (ADR-0013), under the licenses those files record. Where a component offers a choice of licenses, BayanDocs uses the permissive one (for example the FreeType License rather than GPL-2.0 for FreeType's rasterizer). The packaging work package DESK-104 ships the notices these licenses require, such as the FreeType and Independent JPEG Group credits. When the monthly dependency session upgrades Qt, it compares the new SBOM files with the old ones and asks the owner before accepting a newly bundled component whose licenses offer no permissive or LGPL option.
+
+**Consequences.** CI's Python interpreter and the agent environment's tools need no further exception. Nothing changes for package dependencies, including build-time ones: they stay under the allowlist as before. DESK-104 gains a deliverable, the third-party notices for Qt's bundled code and ICU, taken from the SBOM files of the Qt release it packages, and each Qt upgrade gains a short SBOM comparison.
+
 ## Amendment 2026-10-04: pnpm without Corepack
 
 Node.js 25 and later no longer ship Corepack (the Node.js 26.10.0 download contains only `node`, `npm` and `npx`), and Node.js 26 is expected to become the Active LTS release in late October 2026, so the agent environment's Corepack step would break at the next Node.js update. Corepack was also weaker than it looked: it checked only pnpm's small JavaScript wrapper against the `packageManager` hash, while the 60 MB native binary that does the work was downloaded on first use and checked only against the npm registry's signature. Corepack is therefore no longer used anywhere:
@@ -105,7 +119,7 @@ Node.js 25 and later no longer ship Corepack (the Node.js 26.10.0 download conta
 - **bayan-web** pins pnpm's native binary through its lockfile: the first YAML document of `pnpm-lock.yaml` records the sha512 of `@pnpm/exe.<platform>` for each supported platform, and its `scripts/dev-setup.sh` installs that binary only after checking the download against it. Its policy check also fails when the pnpm running the gate (reported in `npm_config_user_agent`) is not the pinned version.
 - **Updates:** the pnpm pin in the setup script changes only in the monthly dependency session, like every other pin.
 
-This amendment replaces the Corepack parts of the amendment "tools in agent sessions" above ("pnpm through Corepack with a SHA-512 pin" and `COREPACK_DEFAULT_TO_LATEST=0`); the rest of that amendment, and the amendment on installing Qt for bayan-desktop, still apply.
+This amendment replaces only the Corepack parts of the amendment "tools in agent sessions" above ("pnpm through Corepack with a SHA-512 pin" and `COREPACK_DEFAULT_TO_LATEST=0`); everything else in that amendment and in the other amendments still applies.
 
 ## Revisit when
 
