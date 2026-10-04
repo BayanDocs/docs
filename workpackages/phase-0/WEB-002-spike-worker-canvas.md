@@ -48,11 +48,16 @@ Worker integration, compositor, input bridges, accessibility mirror prototype, t
 - [ ] AC-2 Japanese, Chinese and Korean composition reaches the engine through EditContext (Chromium) and through the fallback (Firefox and Safari), with evidence.
 - [ ] AC-3 A screen reader reads the mirror's text in at least two browser/screen-reader combinations, with evidence.
 - [ ] AC-4 Keystroke-to-overlay latency is reported, with a plan to meet PERF-04 if it is not met.
-- [ ] AC-5 The CSP and Trusted Types configuration from WEB-001 is unchanged (no relaxations).
+- [ ] AC-5 The CSP and Trusted Types configuration from WEB-001 is unchanged (no relaxations), except for exactly one named Trusted Types policy, bayan-script-url, added to the trusted-types directive. It is created in one module only (a test fails if createPolicy appears anywhere else in src/), implements only createScriptURL, and accepts nothing but same-origin paths of the application's own built scripts, throwing for anything else (other origins, blob:, data:, query strings). Tests in Chromium, Firefox and WebKit show that the worker starts through the policy and that a forbidden URL is refused.
 
 ## Verification
 
 `pnpm verify`; Playwright results; report evidence.
+
+## Notes and pitfalls
+
+- Under [WEB-001](WEB-001-web-scaffold.md)'s `trusted-types 'none'`, `new Worker()`, `trustedTypes.createPolicy()` and `navigator.serviceWorker.register()` throw in Chromium, Firefox and WebKit, which is why AC-5 permits this one policy. The PWA service worker, which is out of scope here, will use the same policy later.
+- WEB-001's `scripts/sri.ts` fails the build if any JavaScript file is not loaded by `index.html` with an integrity hash, and production sends `Integrity-Policy: blocked-destinations=(script)`, so the worker entry script and anything it imports need an integrity plan, decided and tested in this spike, while `sri.ts` keeps failing closed for everything else.
 
 ## Escalate if
 
