@@ -10,6 +10,8 @@ user_agent = "lychee (BayanDocs documentation link check)"
 
 # A "429 Too Many Requests" answer means the page exists but the site is limiting automated checks, not that the link is broken.
 accept = ["100..=103", "200..=299", "429"]
+# A timeout (after the retries above) says nothing about whether a page exists: slow or rate-limiting sites cause them, while a dead site gives an error status or a connection error. Timeouts are reported but do not fail the check.
+accept_timeouts = true
 
 max_cache_age = "1d"
 # Do not remember rate-limited or server-error answers; check those links again next time.
