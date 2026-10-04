@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2026 BayanDocs contributors
 # SPDX-License-Identifier: MIT-0
 #
-# BayanDocs cloud environment setup script, version 2026-10-04.2.
+# BayanDocs cloud environment setup script, version 2026-10-04.3.
 #
 # Installs the tools that BayanDocs agent sessions need in a Claude Code cloud environment (Ubuntu 24.04, x86-64, run as root before Claude Code starts). Paste this whole file into the environment's settings: the cloud environment menu in the session's title bar, then Edit, then "Setup script". The result is cached for about seven days, or until this script or the network settings change. Canonical copy: https://github.com/BayanDocs/docs/blob/main/scripts/cloud-environment-setup.sh
 #
@@ -25,7 +25,7 @@ export NODE_EXTRA_CA_CERTS="${NODE_EXTRA_CA_CERTS:-$SYSTEM_CA}"
 # ---------------------------------------------------------------------------------------------------------------------
 # Pins. Update only in the monthly dependency session, checking each publish date (at least 24 hours old) and hash.
 # ---------------------------------------------------------------------------------------------------------------------
-SCRIPT_VERSION=2026-10-04.2
+SCRIPT_VERSION=2026-10-04.3
 APT_SNAPSHOT=20261003T000000Z    # Ubuntu archive as of 2026-10-03 00:00 UTC (snapshot.ubuntu.com)
 APT_PACKAGES="libgl-dev libegl-dev libvulkan-dev libxkbcommon-dev libfontconfig-dev libdbus-1-dev shellcheck"
 RUST_STABLE=1.99.0               # released 2026-10-01; keep equal to rust-toolchain.toml in bayan-core and bayan-server
@@ -400,9 +400,11 @@ done
 for name in "${!JOBS[@]}"; do finish "$name" || true; done
 
 # bayan-desktop pins its own CMake, Ninja, clang-format and clang-tidy (with hashes) and installs them with its scripts/dev-setup.sh, which reuses the Qt installed above. Repositories are cloned before this script runs; in sessions without bayan-desktop this does nothing.
+# The tools are deliberately not linked into /usr/local/bin: the pinned CMake is version 4, which refuses projects that declare cmake_minimum_required below 3.5 (as some C and C++ code that Rust build scripts compile still does), so it must not become the cmake of every repository. Agents working on bayan-desktop load its environment file first, as that repository's AGENTS.md says.
+DESKTOP_TOOLS="$HOME/.local/share/bayandocs/desktop-tools"
 if [ -x /home/user/bayan-desktop/scripts/dev-setup.sh ]; then
-  if /home/user/bayan-desktop/scripts/dev-setup.sh --link-dir /usr/local/bin >"$LOG_DIR/desktop-tools.log" 2>&1; then
-    note ok desktop-tools "bayan-desktop's pinned build tools (scripts/dev-setup.sh)"
+  if BAYAN_TOOLS_DIR="$DESKTOP_TOOLS" /home/user/bayan-desktop/scripts/dev-setup.sh >"$LOG_DIR/desktop-tools.log" 2>&1; then
+    note ok desktop-tools "bayan-desktop's pinned build tools (scripts/dev-setup.sh); to use them: . $DESKTOP_TOOLS/env.sh"
   else
     note FAILED desktop-tools "see $LOG_DIR/desktop-tools.log"
   fi
