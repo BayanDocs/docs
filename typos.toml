@@ -1,0 +1,32 @@
+# typos (spell checker) settings for scripts/verify.sh (work package DOCS-001).
+# typos flags only known misspellings, so ordinary technical words pass without being listed. When it flags a word that is actually correct (a name, a Word field code), add it to [default.extend-words] below with a short comment.
+
+[files]
+# Check hidden files too (such as the GitHub workflows in .github/), but not Git's own folder.
+ignore-hidden = false
+extend-exclude = [
+  ".git/",
+  # License texts are copied verbatim from their publishers.
+  "LICENSES/",
+  "LICENSE",
+  "specs/protocols/LICENSE",
+  # Vendored third-party code and its notices (site/mermaid/README.md).
+  "site/mermaid/mermaid.min.js",
+  "site/mermaid/THIRD-PARTY-NOTICES.txt",
+]
+
+[default]
+extend-ignore-re = [
+  # MoSCoW priorities written with a bold first letter, such as **M**ust and **S**hould.
+  '\*\*[A-Za-z]\*\*[a-z]+',
+]
+
+[default.extend-words]
+# Names and terms that look like misspellings but are correct.
+Automattic = "Automattic"  # the company behind Harper (ADR-0022)
+FILLIN = "FILLIN"  # a Word field code
+# Project vocabulary, listed so that a future typos dictionary update cannot flag it.
+Loro = "Loro"  # CRDT library (ADR-0008)
+harfrust = "harfrust"  # text shaping library (ADR-0009)
+skrifa = "skrifa"  # font reading library (ADR-0009)
+OOXML = "OOXML"  # Office Open XML

@@ -1,0 +1,8 @@
+# The website built by `mdbook build` or scripts/verify.sh.
+/book/
+# Tools installed by scripts/dev-setup.sh.
+/.tools/
+# lychee's cache of external link results (scripts/verify.sh).
+/.lycheecache
+# Python's bytecode cache (from running the Python scripts in scripts/).
+__pycache__/
