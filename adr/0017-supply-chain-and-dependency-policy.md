@@ -121,6 +121,14 @@ Node.js 25 and later no longer ship Corepack (the Node.js 26.10.0 download conta
 
 This amendment replaces only the Corepack parts of the amendment "tools in agent sessions" above ("pnpm through Corepack with a SHA-512 pin" and `COREPACK_DEFAULT_TO_LATEST=0`); everything else in that amendment and in the other amendments still applies.
 
+## Amendment 2026-10-04: root certificate data for the server's TLS
+
+Decided by the owner on 2026-10-04 during SRV-001 ([BayanDocs/bayan-server pull request 1](https://github.com/BayanDocs/bayan-server/pull/1)), as part of [ADR-0028](0028-server-tls.md).
+
+**Context.** ADR-0028 chooses rustls with the aws-lc-rs provider for the server's TLS. The server's PostgreSQL driver, sqlx 0.9, offers that combination only together with the `webpki-roots` crate: Mozilla's list of trusted root certificate authorities, compiled into the program as data. `webpki-roots` (1.0.9, published 2026-07-18) is licensed CDLA-Permissive-2.0, a permissive license for data published by the Linux Foundation, which is not on the allowlist; because the crate is linked into the server, the amendment "what the license allowlist covers" applies to it.
+
+**Decision.** CDLA-Permissive-2.0 is accepted **for the `webpki-roots` crate only**, recorded as a per-crate license exception in bayan-server's `deny.toml`, not as a new entry in the general allowlist. Wherever a library can use the operating system's certificate store (the container's CA bundle) instead, the server uses that, as ADR-0028 requires; this exception exists because sqlx offers no such option with aws-lc-rs. ADR-0028 also accepts `aws-lc-sys`, a `-sys` crate whose build script compiles AWS-LC's C code; like `libsqlite3-sys`, it is a documented exception to "avoid `-sys` crates that compile C" in the Rust row of the mechanisms table.
+
 ## Revisit when
 
 Ecosystem tools change (for example Cargo re-checking lockfile ages natively, or lockfile-lint supporting pnpm), a supply-chain incident affects us, or the owner changes the policy.
