@@ -20,7 +20,7 @@ This repository is the project's single source of truth. Today it holds the mast
 
 | Folder | What lives there |
 |---|---|
-| [plan/](plan/) | The master plan: vision, requirements, architecture, roadmap, work breakdown, agent workflow, quality and security, risks, owner checklist, learning path, glossary. |
+| [plan/](plan/00-start-here.md) | The master plan: vision, requirements, architecture, roadmap, work breakdown, agent workflow, quality and security, risks, owner checklist, learning path, glossary. |
 | [adr/](adr/README.md) | Architecture Decision Records. Every significant technical decision, why it was made, and what would make us revisit it. Accepted ADRs are binding on all work. |
 | [specs/](specs/README.md) | Technical specifications that several repositories depend on: the document model, the engine protocol, the fidelity lab, font compatibility, the Word feature coverage matrix, the threat model, and Word Behavior Notes. |
 | [workpackages/](workpackages/README.md) | Self-contained task briefs that can be handed to an agent, with scope, acceptance criteria and verification steps. |
@@ -38,4 +38,4 @@ This repository is the project's single source of truth. Today it holds the mast
 
 ## License
 
-The engine, desktop app and web app are licensed GPL-3.0-or-later with the BayanDocs App Store Permission; the server AGPL-3.0-or-later; protocol specifications and integration kits Apache-2.0; this documentation CC BY 4.0 ([LICENSE](LICENSE)), with its scripts under MIT-0. What that means for users, hosts, integrators and contributors is explained in plain language in [LICENSING.md](LICENSING.md); the decision is [ADR-0003](adr/0003-licensing-and-contribution-model.md). [REUSE.toml](REUSE.toml) records which license applies to which files, and [LICENSES/](LICENSES) holds the full texts.
+The engine, desktop app and web app are licensed GPL-3.0-or-later with the BayanDocs App Store Permission; the server AGPL-3.0-or-later; protocol specifications and integration kits Apache-2.0; this documentation CC BY 4.0 ([LICENSE](LICENSE)), with its scripts under MIT-0. What that means for users, hosts, integrators and contributors is explained in plain language in [LICENSING.md](LICENSING.md); the decision is [ADR-0003](adr/0003-licensing-and-contribution-model.md). [REUSE.toml](REUSE.toml) records which license applies to which files, and [LICENSES/](https://github.com/BayanDocs/docs/tree/main/LICENSES) holds the full texts.
