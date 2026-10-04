@@ -16,6 +16,12 @@ path = "scripts/**"
 SPDX-FileCopyrightText = "2026 BayanDocs contributors"
 SPDX-License-Identifier = "MIT-0"
 
+# Configuration files, CI workflows and the website's Mermaid loader script: MIT-0 like the scripts, because CC BY 4.0 is meant for prose rather than code (the owner's decision of 2026-10-04, ADR-0003 History).
+[[annotations]]
+path = [".github/**", ".gitignore", "book.toml", "lychee.toml", "typos.toml", "site/mermaid/mermaid-init.js"]
+SPDX-FileCopyrightText = "2026 BayanDocs contributors"
+SPDX-License-Identifier = "MIT-0"
+
 # Protocol specifications: Apache-2.0, so anyone can implement BayanDocs clients and integrations under any license.
 # They must never copy text or code from the GPL engine or the AGPL server.
 [[annotations]]

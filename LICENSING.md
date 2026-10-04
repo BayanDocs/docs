@@ -11,7 +11,7 @@ BayanDocs is free and open-source software. This page explains, in plain languag
 | The engine ([bayan-core](https://github.com/BayanDocs/bayan-core)), the desktop app ([bayan-desktop](https://github.com/BayanDocs/bayan-desktop)) and the web app ([bayan-web](https://github.com/BayanDocs/bayan-web)) | [GNU GPL v3 or later](https://www.gnu.org/licenses/gpl-3.0.html) (GPL-3.0-or-later), with the [BayanDocs App Store Permission](https://github.com/BayanDocs/bayan-core/blob/HEAD/LICENSES/LicenseRef-BayanDocs-App-Store-Permission.txt) |
 | The collaboration server ([bayan-server](https://github.com/BayanDocs/bayan-server)) | [GNU AGPL v3 or later](https://www.gnu.org/licenses/agpl-3.0.html) (AGPL-3.0-or-later) |
 | Protocol specifications ([specs/protocols/](specs/protocols/README.md)), the protocol definitions crate (`bayan-core/crates/bayan-protocol/`) and the integration kits (`bayan-server/integrations/`) | [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) (Apache-2.0) |
-| Documentation (this repository, except the protocol specifications) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); code snippets in documentation also [MIT-0](https://spdx.org/licenses/MIT-0.html), and scripts MIT-0 only |
+| Documentation (this repository, except the protocol specifications) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); code snippets in documentation also [MIT-0](https://spdx.org/licenses/MIT-0.html), and scripts, configuration files and CI workflows MIT-0 only |
 | Templates, sample content, default styles and anything else the apps copy into your documents | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (no rights reserved) |
 | Fonts created by the project | [SIL Open Font License 1.1](https://openfontlicense.org/) |
 | The name "BayanDocs" and its logo | Trademark policy (not a copyright license; published before the first public release) |
@@ -81,7 +81,7 @@ BayanDocs is free and open-source software. This page explains, in plain languag
 | [bayan-desktop](https://github.com/BayanDocs/bayan-desktop) | `GPL-3.0-or-later WITH LicenseRef-BayanDocs-App-Store-Permission` | — |
 | [bayan-web](https://github.com/BayanDocs/bayan-web) | `GPL-3.0-or-later WITH LicenseRef-BayanDocs-App-Store-Permission` | — |
 | [bayan-server](https://github.com/BayanDocs/bayan-server) | `AGPL-3.0-or-later` | `integrations/`: `Apache-2.0` |
-| [docs](https://github.com/BayanDocs/docs) (this repository) | `CC-BY-4.0` | `specs/protocols/`: `Apache-2.0`; `scripts/`: `MIT-0` |
+| [docs](https://github.com/BayanDocs/docs) (this repository) | `CC-BY-4.0` | `specs/protocols/`: `Apache-2.0`; `scripts/`, configuration files and CI workflows (listed in `REUSE.toml`): `MIT-0` |
 
 In every repository, `LICENSE` holds the official text of the main license, so GitHub shows it; the `LICENSES/` folder holds the full text of every license used in the repository; and `REUSE.toml` records which license applies to which files, in the machine-readable [REUSE](https://reuse.software) format that license scanners understand. The Apache-2.0 folders also contain their own `LICENSE` file, so they can be copied out on their own.
 
