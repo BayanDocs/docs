@@ -18,3 +18,4 @@
 ### DESK-104 — Packaging, signing and update channel v1
 - **Size:** L · **Depends on:** DESK-101, X-101 · **Decisions:** ADR-0026
 - **Scope:** Windows installer (MSIX or MSI, decided here) signed; macOS universal or per-architecture app signed and notarized; Linux Flatpak (Flathub submission), AppImage, `.deb` and `.rpm`; bundled fonts and optional packs; update mechanism per ADR-0026; reproducible-build investigation.
+- **Note (2026-10-04):** also ship the third-party notices for the code that Qt bundles in its libraries and for ICU on Linux, taken from the SBOM files of the Qt release being packaged, for example the FreeType and Independent JPEG Group credits ([ADR-0017](../../adr/0017-supply-chain-and-dependency-policy.md), amendment "what the license allowlist covers").
