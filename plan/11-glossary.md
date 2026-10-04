@@ -61,5 +61,3 @@
 | **WBN** | Word Behavior Note: a documented, evidence-backed description of how Word lays out or edits something. See [specs/word-behavior/](../specs/word-behavior/README.md). |
 | **WP** | Work package: a self-contained task brief for an agent. See [workpackages/](../workpackages/README.md). |
 | **Zero-knowledge server** | A server that stores and relays only data it cannot decrypt. |
-
-Deliberate fault for the DOCS-001 acceptance test AC-4, removed by the next commit: see [a page that does not exist](12-missing-page.md); the engine must recieve every document.
