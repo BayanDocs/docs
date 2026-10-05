@@ -46,8 +46,7 @@ REPOSITORIES: Dict[str, List[str]] = {
         "macOS (arm64) · build and test",
         "Windows (MSVC) · build and test",
     ],
-    # No CI yet: SRV-001 adds the gate. Pull requests are still required; add the check names when it exists.
-    "bayan-server": [],
+    "bayan-server": ["Verification gate", "PostgreSQL integration", "Container image"],
 }
 
 # Organization member privileges (organization settings → Member privileges), as (API field, description, baseline value). Base permission "none": being a member gives no access to any repository by itself, so access comes only from the teams below, and a future private repository (such as the private corpus) is not readable by every member. Only owners create repositories and publish GitHub Pages sites. Deploy keys (per-repository SSH keys that bypass people's accounts) are switched off.

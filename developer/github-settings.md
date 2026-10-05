@@ -88,7 +88,7 @@ The required checks are the CI jobs that run on every pull request:
 | bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)` |
 | bayan-web | `pnpm verify (ubuntu-24.04)`, `pnpm verify (macos-15)`, `pnpm verify (macos-26-intel)` |
 | bayan-desktop | `Linux · verification gate`, `Linux · AddressSanitizer and UndefinedBehaviorSanitizer`, `macOS (arm64) · build and test`, `Windows (MSVC) · build and test` |
-| bayan-server | none yet: the gate arrives with [SRV-001](../workpackages/phase-0/SRV-001-server-scaffold.md) |
+| bayan-server | `Verification gate`, `PostgreSQL integration`, `Container image` |
 
 **"Protect release tags"** applies to tags starting with `v`: they can be created but never moved or deleted, so a version number always names the same code, even for a tag without a published release.
 

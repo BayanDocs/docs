@@ -17,6 +17,7 @@ import re
 import sys
 import unittest
 import urllib.parse
+from unittest import mock
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -506,8 +507,14 @@ class GitHubSettingsTest(unittest.TestCase):
         checks = next(rule for rule in main["rules"] if rule["type"] == "required_status_checks")["parameters"]
         self.assertEqual(sorted(c["context"] for c in checks["required_status_checks"]), sorted(gs.REPOSITORIES["bayan-core"]))
         self.assertTrue(all(c["integration_id"] == gs.GITHUB_ACTIONS_APP_ID for c in checks["required_status_checks"]))
-        server = next(r for r in fake.repos["bayan-server"]["_rulesets"].values() if r["name"] == "Protect main")
-        self.assertNotIn("required_status_checks", [rule["type"] for rule in server["rules"]])
+
+    def test_a_repository_without_ci_gets_no_required_checks_rule(self) -> None:
+        with mock.patch.dict(gs.REPOSITORIES, {"no-ci": []}):
+            fake = FakeGitHub()
+            reach_baseline(fake)
+            main = next(r for r in fake.repos["no-ci"]["_rulesets"].values() if r["name"] == "Protect main")
+            self.assertNotIn("required_status_checks", [rule["type"] for rule in main["rules"]])
+            self.assertEqual(Run(fake, "audit").status, 0)
 
     def test_writes_that_depend_on_each_other_come_in_order(self) -> None:
         fake = FakeGitHub()
@@ -697,15 +704,16 @@ class GitHubSettingsTest(unittest.TestCase):
         self.assertIn("info   Members and outside collaborators whose only second factor is insecure (such as SMS): none", run.output)
 
     def test_a_wrong_actions_app_id_blocks_required_checks_but_nothing_else(self) -> None:
-        fake = FakeGitHub()
-        fake.actions_app_id = 99
-        run = Run(fake, "apply", "--yes")
+        with mock.patch.dict(gs.REPOSITORIES, {"no-ci": []}):
+            fake = FakeGitHub()
+            fake.actions_app_id = 99
+            run = Run(fake, "apply", "--yes")
         self.assertIn("ERROR  App ID of GitHub Actions is 99, but the baseline says 15368", run.output)
         self.assertIn('ERROR  Ruleset "Protect main": not changed, because the app ID of GitHub Actions is not confirmed', run.output)
         created = {path for method, path in fake.writes() if method == "POST" and path.endswith("/rulesets")}
-        # bayan-server has no required checks, so its rules are safe to apply; release tag rules never name an app.
+        # A repository without required checks names no app, so its rules are safe to apply; release tag rules never name one.
         self.assertNotIn("Protect main", [r["name"] for r in fake.repos["docs"]["_rulesets"].values()])
-        self.assertIn("Protect main", [r["name"] for r in fake.repos["bayan-server"]["_rulesets"].values()])
+        self.assertIn("Protect main", [r["name"] for r in fake.repos["no-ci"]["_rulesets"].values()])
         self.assertIn("/repos/BayanDocs/docs/rulesets", created)
         self.assertEqual(run.status, 2)
 
