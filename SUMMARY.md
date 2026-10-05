@@ -6,6 +6,9 @@
 
 - [Agent Operating Manual (canonical)](AGENTS.md)
 - [Licensing and FAQ](LICENSING.md)
+- [Contributing to BayanDocs](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
 
 # Plan
 
