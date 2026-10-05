@@ -34,9 +34,10 @@ esac
 
 # Markdown files that are deliberately not pages of the website.
 NOT_PAGES=(
-  CLAUDE.md               # tells Claude Code to read AGENTS.md; AGENTS.md itself is in the book
-  SUMMARY.md              # the website's navigation
-  site/mermaid/README.md  # maintenance note for the vendored Mermaid script
+  CLAUDE.md                         # tells Claude Code to read AGENTS.md; AGENTS.md itself is in the book
+  SUMMARY.md                        # the website's navigation
+  site/mermaid/README.md            # maintenance note for the vendored Mermaid script
+  .github/pull_request_template.md  # fills in new pull request descriptions; the same text is in plan/06-agent-workflow.md
 )
 # Work package IDs, such as CORE-001 or X-101 (workpackages/README.md).
 WP_ID='(CORE|LAB|DESK|WEB|SRV|DOCS|X)-[0-9]{3}'
