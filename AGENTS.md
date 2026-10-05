@@ -31,7 +31,7 @@ In BayanDocs cloud sessions the project's tools are preinstalled at pinned versi
 
 ## 4. The verification gate is sacred
 
-- Run the repository's full verification gate before every push (each repo's `AGENTS.md` names the command).
+- Run the repository's full verification gate before every push (each repo's `AGENTS.md` names the command). CI also runs the DCO check and `reuse lint` on every pull request in every repository ([CONTRIBUTING.md](CONTRIBUTING.md#developer-certificate-of-origin)); they must pass too.
 - Never weaken, skip, disable, quarantine or delete a test, lint, check or CI job to make a change pass. If a check is genuinely wrong, fix the check in its own commit and explain why, or escalate.
 - Every behavior change has tests. Every bug fix has a regression test. Any change that alters layout output must include Fidelity Lab evidence (see [specs/fidelity-lab.md](specs/fidelity-lab.md)).
 
