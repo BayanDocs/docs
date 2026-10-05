@@ -51,3 +51,16 @@ SRV-002 must demonstrate, natively and in WebAssembly: group creation, adding an
 ## Revisit when
 
 IANA assigns post-quantum MLS code points; an OpenMLS or mls-rs audit is published; WAICT or similar ships in browsers; the external audit recommends changes.
+
+## Amendment 2026-10-04: post-quantum encryption from the first release
+
+Decided by the owner on 2026-10-04 during SRV-001 ([BayanDocs/bayan-server pull request 1](https://github.com/BayanDocs/bayan-server/pull/1)), after discussing "harvest now, decrypt later" (threat T22 in the [threat model](../specs/threat-model.md)): an adversary, including a hostile server operator who keeps every encrypted message, can store MLS ciphertext today and decrypt it once a large quantum computer can break X25519. Re-keying into a new group later protects only what is sent afterwards.
+
+This amendment replaces the first sentence of Decision 2:
+
+- **Collaboration ships with the hybrid post-quantum ciphersuite from its first release, beta and GA alike.** No real user's document is ever protected only by a classical key exchange. The suite is the first one IANA assigns from the IETF draft for post-quantum MLS ciphersuites (draft-ietf-mls-pq-ciphersuites, in Working Group Last Call since 2026-10-01): as the context above notes, ML-KEM-768 + X25519 (X-Wing) with AES-128-GCM, SHA-256 and Ed25519. Collaboration is planned for Phase 3, so the code point is expected well before then.
+- **Until the code point is assigned,** the classical suite `MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519` (0x0001) is used only in development and tests, never for real users' documents. Provisional code points remain forbidden for persistent groups (Decision 2).
+- **If the code point is still unassigned at the Phase-3 gate,** that gate decides between delaying the collaboration beta and launching with the classical suite, a clear warning to users and the planned re-keying migration, accepting that whatever is shared before the migration stays exposed to harvest-now-decrypt-later.
+- **Later decisions, not made now:** post-quantum signatures (signatures are not exposed to harvest-now-decrypt-later, so migration by group re-creation, Decision 2, covers them), and a higher-assurance suite (for example ML-KEM-1024 with AES-256, which the NSA's CNSA 2.0 requires for US national security systems) if such customers become a target.
+
+SRV-002 already measures the hybrid suite's size and time cost natively and in WebAssembly; its ciphersuite recommendation (AC-5) must show how the plan meets this amendment.
