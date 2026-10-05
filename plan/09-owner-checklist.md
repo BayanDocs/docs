@@ -9,7 +9,9 @@ Agents can write code and documents, but some steps need your accounts, your mon
 - [x] **2. Confirm the licensing decision ([ADR-0003](../adr/0003-licensing-and-contribution-model.md)).** Confirmed 2026-10-04: GPL-3.0-or-later for engine, desktop and web; AGPL-3.0-or-later for the server; Apache-2.0 for protocol specifications and integration kits; plain-language FAQ in [LICENSING.md](../LICENSING.md).
 - [x] **2a. Decide on the app-store permission ([ADR-0003 §4](../adr/0003-licensing-and-contribution-model.md#4-app-store-permission--in-force)).** Adopted 2026-10-04 and in force with the license files since the same day. It lets BayanDocs be distributed through Apple's App Store (Mac App Store now, iPad and iPhone later) while keeping the source free.
 - [ ] **2b. Optional: have an open-source lawyer review the app-store permission wording.** The licenses are in force without a review. If you want one, send the lawyer ADR-0003 §4 and [LICENSING.md](../LICENSING.md) (expect a few hours of their time, or ask organizations that provide legal help to free-software projects), and do it before anyone outside the project contributes: until then you are the only copyright holder and can change the wording on your own.
-- [ ] **3. Protect `main` in each repository** (Settings → Rules → Rulesets): require a pull request before merging, require status checks to pass (add the checks once CI exists), block force pushes and deletions. Prefer squash merging (Settings → General → Pull Requests).
+Items 3–6a are applied by [scripts/github-settings.py](../scripts/github-settings.py), which keeps these settings as code: follow [developer/github-settings.md](../developer/github-settings.md) (create a 7-day token, run `audit`, then `apply`, do the few steps the report says only the web interface can do, then delete the token), and tick 3–6a once `audit` reports no differences. The items below say what the script sets.
+
+- [ ] **3. Protect `main` in each repository** (a ruleset, Settings → Rules → Rulesets): require a pull request before merging (with no approving review while you are the only maintainer, because GitHub does not let anyone approve their own pull request), require the CI checks to pass on a branch that is up to date with `main`, require a linear history, block force pushes and deletions, and allow nobody to bypass the rules. Squash merging only (Settings → General → Pull Requests). Release tags (`v*`) can never be moved or deleted.
 - [ ] **4. Turn on security alerts only, never update bots** (Settings → Advanced Security), in each repository:
   - enable **Dependabot alerts** (this also gives malware alerts);
   - leave **Dependabot security updates** and grouped security updates **disabled**, and never commit a `.github/dependabot.yml`;
@@ -19,8 +21,13 @@ Agents can write code and documents, but some steps need your accounts, your mon
   - require actions to be pinned to a full-length commit SHA;
   - allow only GitHub-authored actions plus an explicit allowlist (agents will propose the list in X-002);
   - set the default `GITHUB_TOKEN` permission to read-only;
-  - do not allow Actions to create or approve pull requests.
+  - do not allow Actions to create or approve pull requests;
+  - require approval before workflows from outside contributors' forks run.
 - [ ] **6. Enable immutable releases** for each repository (release settings), so published release tags and assets cannot be altered.
+- [ ] **6a. Restrict access in the organization:**
+  - require two-factor authentication for everyone (organization settings → Authentication security; the script checks this but GitHub's API cannot set it, and members without two-factor authentication are removed when you turn it on);
+  - set the members' base permission to none, so that access comes only from teams (the script creates two empty ones, Maintainers and Triage), and let only owners create repositories;
+  - require approval for fine-grained personal access tokens and restrict classic ones (organization settings → Personal access tokens).
 - [ ] **7. Reserve the npm organization `@bayandocs`** (free for public packages) so nobody else can take the scope used for the WebAssembly package.
 - [ ] **8. Choose a security contact address** (for example `security@` on a project domain) for `SECURITY.md`. Registering a project domain (for example `bayandocs.org`) is worthwhile now.
 

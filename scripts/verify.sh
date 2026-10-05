@@ -12,7 +12,8 @@
 #   5. the website builds with mdBook, from a copy of only the files Git tracks, into book/;
 #   6. every link between files works, including its #anchor, both in the Markdown (as GitHub shows it) and in the built website (lychee, offline);
 #   7. every external link works (lychee, online, results cached for a day; skipped with --offline);
-#   8. there are no known misspellings (typos, with the project dictionary in typos.toml).
+#   8. there are no known misspellings (typos, with the project dictionary in typos.toml);
+#   9. the unit tests of the scripts pass (scripts/tests/, Python's unittest).
 # Every check runs even when an earlier one fails (except that missing tools or a failed build stop the run), and a summary at the end lists what failed.
 #
 # Usage: scripts/verify.sh [--offline]
@@ -186,6 +187,10 @@ check_spelling() {
   typos
 }
 
+check_script_tests() {
+  python3 -m unittest discover --start-directory scripts/tests
+}
+
 run "Pinned tools are installed" check_tools
 if [[ ${#failures[@]} -gt 0 ]]; then
   echo "Stopping: install the tools first (scripts/dev-setup.sh)." >&2
@@ -206,6 +211,7 @@ else
   run "External links work" check_external_links
 fi
 run "No known misspellings (typos)" check_spelling
+run "The scripts' unit tests pass (scripts/tests)" check_script_tests
 
 echo
 if [[ ${#failures[@]} -gt 0 ]]; then
