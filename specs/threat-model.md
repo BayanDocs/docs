@@ -3,7 +3,7 @@
 - **Status:** v0 (initial, from the planning session). SRV-003 expands it into v1 with full data-flow diagrams for the server, sync and encryption; every phase gate reviews it.
 - **Owner stream:** SECURITY
 - **Method:** data-flow-based analysis with STRIDE categories (Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege).
-- **Related:** SEC-01…SEC-12, ADR-0006, ADR-0015, ADR-0016, ADR-0017, ADR-0023, [plan/07](../plan/07-quality-security-testing.md)
+- **Related:** SEC-01…SEC-12, ADR-0006, ADR-0015, ADR-0016, ADR-0017, ADR-0023, ADR-0028, [plan/07](../plan/07-quality-security-testing.md)
 
 ## 1. Assets
 
@@ -68,6 +68,7 @@
 | T19 | lab | I | Private corpus leaks | Private storage; aggregate-only reports; isolated reference machine | Planned |
 | T20 | 2, logs | I | Content leaks via logs, crash reports or recordings | No content in logs; opt-in, user-reviewed crash reports; recordings only on explicit request | Planned |
 | T21 | 4 | S, T, D, E | Third-party or modified clients, buggy or malicious, connect with a user's valid credentials | Server treats every client as untrusted (validation, limits, quotas, rate limits, fuzzed decoders); a new device needs approval from an existing trusted device and optionally an administrator; clients verify every update's signature and sender role; device lists with revocation; optional administrator policy on client applications (not a security boundary); public conformance suite (SEC-13, COL-13, COL-14) | Planned |
+| T22 | 4, 5 | I | Harvest now, decrypt later: an adversary records TLS traffic, or keeps MLS ciphertext (a hostile server operator keeps all of it), and decrypts it once a large quantum computer can break today's key exchange | Hybrid post-quantum key exchange (X25519MLKEM768) on the server's TLS connections and at the recommended reverse proxy (ADR-0028); collaboration ships only with the hybrid post-quantum MLS ciphersuite (ADR-0016, amendment 2026-10-04); symmetric algorithms such as AES are not meaningfully affected | Planned |
 
 ## 5. Accepted residual risks (v0)
 

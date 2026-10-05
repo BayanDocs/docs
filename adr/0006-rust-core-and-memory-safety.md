@@ -34,3 +34,9 @@ The engine parses hostile input all day: ZIP packages, XML, fonts, images, metaf
 ## Revisit when
 
 A required capability has no viable memory-safe implementation and cannot be isolated.
+
+## Amendment 2026-10-04: AWS-LC for the server's TLS
+
+Decided by the owner on 2026-10-04 during SRV-001 ([BayanDocs/bayan-server pull request 1](https://github.com/BayanDocs/bayan-server/pull/1)). The full decision, with the facts and the alternatives, is [ADR-0028](0028-server-tls.md).
+
+Decision 3 gains a second exception besides the planned one for local AI inference: **bayan-server may link AWS-LC, a C and assembly library, into its own process as the cryptographic provider of rustls, for TLS only.** AWS-LC processes data from the network (key shares, signatures and encrypted records) and decodes public keys, so this is an exception to Decision 3 rather than a case outside it. No maintained memory-safe provider currently offers post-quantum key exchange and works with the server's libraries, and running TLS in a separate process would split the single-binary server (ADR-0015), so Decision 3's requirement to run such code out of process or in a WebAssembly sandbox does not apply to this exception. It is narrow: rustls and its certificate verifier parse all TLS messages and certificates in Rust, and server code never calls AWS-LC's own parsing interfaces (X.509, PKCS#7, certificate revocation lists and the like). It does not extend to bayan-core, the desktop app or the web app. It is revisited under the triggers in ADR-0028, for example when a memory-safe provider qualifies.
