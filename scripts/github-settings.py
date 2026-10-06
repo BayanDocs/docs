@@ -479,8 +479,14 @@ def _normalized(value: Any) -> Any:
     return value
 
 
+# Rule parameters that GitHub accepts in a request but leaves out of its answer when they hold their default value, with that default. The update rule's update_allows_fetch_and_merge (whether a branch may pull changes from its upstream repository) came back missing from the release-tag rulesets after `apply` (2026-10-06), and the web interface shows no such option for tags.
+OMITTED_RULE_PARAMETERS: Dict[Tuple[str, str], Any] = {
+    ("update", "update_allows_fetch_and_merge"): False,
+}
+
+
 def ruleset_differences(have: Dict[str, Any], want: Dict[str, Any]) -> List[str]:
-    """How a ruleset on GitHub differs from the baseline. Parameters that GitHub adds with default values, and that the baseline does not mention, are ignored."""
+    """How a ruleset on GitHub differs from the baseline. Parameters that GitHub adds with default values, and that the baseline does not mention, are ignored; a parameter in OMITTED_RULE_PARAMETERS that GitHub leaves out counts as its default."""
     differences = []
     for key in ("target", "enforcement"):
         if have.get(key) != want[key]:
@@ -501,6 +507,8 @@ def ruleset_differences(have: Dict[str, Any], want: Dict[str, Any]) -> List[str]
     for rule_type in sorted(set(want_rules) & set(have_rules)):
         for parameter, value in sorted(want_rules[rule_type].items()):
             current = have_rules[rule_type].get(parameter)
+            if current is None:
+                current = OMITTED_RULE_PARAMETERS.get((rule_type, parameter))
             if _normalized(current) != _normalized(value):
                 differences.append(f"rule {rule_type}: {parameter} is {show(current)}, baseline {show(value)}")
     return differences

@@ -391,6 +391,9 @@ class FakeGitHub:
                 rule["parameters"].setdefault("required_reviewers", [])
             if rule["type"] == "required_status_checks":
                 rule["parameters"]["required_status_checks"].reverse()  # any order
+            # GitHub accepts the update rule's update_allows_fetch_and_merge, but leaves it out of its answer when it is false (seen on the release-tag rulesets, 2026-10-06).
+            if rule["type"] == "update" and rule.get("parameters", {}).get("update_allows_fetch_and_merge") is False:
+                del rule["parameters"]
         return ruleset
 
     def list_rulesets(self, match: Any, query: Any, body: Any) -> Tuple[int, Any]:
@@ -573,7 +576,23 @@ class GitHubSettingsTest(unittest.TestCase):
         reach_baseline(fake)
         run = Run(fake, "audit")
         self.assertIn('ok     Ruleset "Protect main": matches the baseline', run.output)
+        self.assertIn('ok     Ruleset "Protect release tags": matches the baseline', run.output)
         self.assertEqual(run.status, 0, run.output)
+
+    def test_a_tag_rule_that_allows_fetch_and_merge_is_still_reported(self) -> None:
+        # GitHub's answer leaves out update_allows_fetch_and_merge when it is false, so only its absence counts as false.
+        fake = FakeGitHub()
+        reach_baseline(fake)
+        tags = next(r for r in fake.repos["docs"]["_rulesets"].values() if r["name"] == "Protect release tags")
+        update = next(rule for rule in tags["rules"] if rule["type"] == "update")
+        update["parameters"] = {"update_allows_fetch_and_merge": True}
+        audit = Run(fake, "audit")
+        self.assertEqual(audit.status, 1, audit.output)
+        self.assertIn('DRIFT  Ruleset "Protect release tags": rule update: update_allows_fetch_and_merge is true, baseline false', audit.output)
+        before = len(fake.writes())
+        Run(fake, "apply", "--yes")
+        self.assertEqual(fake.writes()[before:], [("PUT", f"/repos/BayanDocs/docs/rulesets/{tags['id']}")])
+        self.assertEqual(Run(fake, "audit").status, 0)
 
     def test_an_edited_ruleset_is_repaired_in_place(self) -> None:
         fake = FakeGitHub()
