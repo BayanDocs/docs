@@ -39,7 +39,7 @@ precedence = "override"
 SPDX-FileCopyrightText = ["2014-2022 Knut Sveidqvist and Mermaid contributors", "The authors of the bundled packages listed in site/mermaid/THIRD-PARTY-NOTICES.txt"]
 SPDX-License-Identifier = "MIT AND ISC AND BSD-3-Clause AND Apache-2.0 AND (MPL-2.0 OR Apache-2.0)"
 
-# The Code of Conduct is the Contributor Covenant 2.1, copied verbatim from https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md (work package X-001). The Contributor Covenant project released version 2.1 under CC BY 4.0.
+# The Code of Conduct is the Contributor Covenant 2.1, copied from https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md with only its contact placeholder filled in (work package X-001). The Contributor Covenant project released version 2.1 under CC BY 4.0.
 [[annotations]]
 path = "CODE_OF_CONDUCT.md"
 precedence = "override"
