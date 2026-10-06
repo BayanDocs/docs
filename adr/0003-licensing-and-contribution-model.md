@@ -103,6 +103,18 @@ The BayanDocs name and logo are governed by a trademark policy (drafted before t
 - **Source-available licenses (BSL, SSPL, FSL, PolyForm, Commons Clause):** not open source; see Context.
 - **Dual licensing with a CLA:** would allow selling commercial licenses, but requires contributors to trust a single owner with relicensing power.
 
+## Amendment 2026-10-06: MIT-0 for the shared contribution tooling
+
+Decided by the owner on 2026-10-06, answering open question 5 of X-001 ([BayanDocs/docs#16](https://github.com/BayanDocs/docs/pull/16) and its four sibling pull requests) with option B.
+
+**Context.** X-001 added the same contribution tooling to all five repositories: the CI workflows, the DCO check (`.github/dco/`), the REUSE pins (`.github/reuse/`), the pull request and issue templates, `CODEOWNERS`, `.editorconfig` and `.gitattributes`. Most of these files are identical in all five repositories and are changed together. Under §1 they took each repository's own license: MIT-0 in docs (since DOCS-001), GPL-3.0-or-later with the BayanDocs App Store Permission in bayan-core, bayan-desktop and bayan-web, and AGPL-3.0-or-later in bayan-server. Because a contribution is licensed under the license of the files it changes (§5), a fix contributed to one copy would be licensed differently from the other copies, and could not be copied into them without its contributor's permission. The files are build and review tooling: none of them is part of what BayanDocs ships, so copyleft protects nothing there.
+
+**Decision.** In every repository, the `.github/` folder, `.editorconfig` and `.gitattributes` are licensed MIT-0, as they already are in docs. Each repository's `REUSE.toml` declares this after its default annotation, and `LICENSES/MIT-0.txt` comes from `reuse download MIT-0`. Everything else keeps its license under §1, including `CODE_OF_CONDUCT.md` (CC BY 4.0) and the Apache-2.0 areas. A third-party file added under `.github/` keeps its own license, recorded in `REUSE.toml` like any other third-party file.
+
+**Timing.** The owner is still the only copyright holder of these files, so the change needs nobody else's consent. After the first outside contribution to them, it would need that contributor's consent as well.
+
+**Consequences.** Anyone may copy the DCO check, the workflows and the templates into any project, under any license, and a fix to a shared file can be copied into all five repositories as it is.
+
 ## Revisit when
 
 An optional legal review of §4 recommends changes (ideally before the first outside contribution); the REUSE tool supports SPDX 3.0 `AdditionRef-` identifiers; the first outside contribution is about to be accepted (after which this decision is effectively permanent).
@@ -114,3 +126,4 @@ An optional legal review of §4 recommends changes (ideally before the first out
 - 2026-10-04 (later): the owner adopted the app-store permission (§4), subject to legal review of its final wording; clarified that third-party clients are governed by authentication, device approval and roles (§2).
 - 2026-10-04 (later still): the owner put the licenses and the app-store permission (version 1.0) into force without waiting for a legal review, which stays optional; `LICENSE`, `LICENSES/` and `REUSE.toml` were added to all five repositories.
 - 2026-10-04 (DOCS-001): the owner chose MIT-0, as for `scripts/`, for the docs repository's configuration files and CI workflows (`book.toml`, `lychee.toml`, `typos.toml`, `.gitignore`, `.github/`) and the website's Mermaid loader script (`site/mermaid/mermaid-init.js`), because CC BY 4.0 is meant for prose rather than code; `REUSE.toml` lists the files.
+- 2026-10-06 (X-001 follow-up 7): the owner chose MIT-0 for the shared contribution tooling (`.github/`, `.editorconfig` and `.gitattributes`) in every repository; see the amendment of that date.
