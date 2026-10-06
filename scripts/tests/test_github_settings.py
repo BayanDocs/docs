@@ -51,6 +51,7 @@ def fresh_repository(name: str) -> Dict[str, Any]:
         "allow_update_branch": False,
         "delete_branch_on_merge": False,
         "has_wiki": True,
+        "web_commit_signoff_required": False,
         "security_and_analysis": {
             "secret_scanning": {"status": "enabled"},
             "secret_scanning_push_protection": {"status": "disabled"},
@@ -507,6 +508,24 @@ class GitHubSettingsTest(unittest.TestCase):
         checks = next(rule for rule in main["rules"] if rule["type"] == "required_status_checks")["parameters"]
         self.assertEqual(sorted(c["context"] for c in checks["required_status_checks"]), sorted(gs.REPOSITORIES["bayan-core"]))
         self.assertTrue(all(c["integration_id"] == gs.GITHUB_ACTIONS_APP_ID for c in checks["required_status_checks"]))
+
+    def test_every_repository_requires_the_dco_and_reuse_checks(self) -> None:
+        fake = FakeGitHub()
+        reach_baseline(fake)
+        for name, repo in fake.repos.items():
+            main = next(r for r in repo["_rulesets"].values() if r["name"] == "Protect main")
+            checks = next(rule for rule in main["rules"] if rule["type"] == "required_status_checks")["parameters"]
+            contexts = [c["context"] for c in checks["required_status_checks"]]
+            self.assertIn("DCO", contexts, name)
+            self.assertIn("REUSE lint", contexts, name)
+
+    def test_web_commits_and_merges_are_signed_off(self) -> None:
+        fake = FakeGitHub()
+        audit = Run(fake, "audit")
+        self.assertIn("DRIFT  Commits made in the web interface, merges included, are signed off: false, baseline true", audit.output)
+        reach_baseline(fake)
+        self.assertTrue(all(repo["web_commit_signoff_required"] for repo in fake.repos.values()))
+        self.assertIn(("PATCH", "/repos/BayanDocs/docs"), fake.writes())
 
     def test_a_repository_without_ci_gets_no_required_checks_rule(self) -> None:
         with mock.patch.dict(gs.REPOSITORIES, {"no-ci": []}):

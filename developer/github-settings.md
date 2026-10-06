@@ -63,6 +63,7 @@ Because the base permission is "none", teams are the only way people get access.
 | Merging | Squash merging only; the commit is titled with the pull request's title and keeps the individual commit messages (with their co-author lines) | One commit per pull request on `main`, whose title is the Conventional Commit title of the pull request. |
 | Delete branches after merging | Yes | Agent branches (`claude/…`) do not pile up. |
 | Offer to update pull request branches | Yes | Needed because a branch must be up to date with `main` before it merges (below). |
+| Sign-off on web commits | Required, merges included | GitHub adds a `Signed-off-by:` line for the person who makes a commit in the web interface, and for the person who merges a pull request there. So the squash commit of a pull request merged in the web interface carries the merging person's sign-off, which [ADR-0003 §5](../adr/0003-licensing-and-contribution-model.md#5-contributions) asks for, without anyone pasting it. A merge made through the API (as an agent's merge is) must still end its message with the sign-off. |
 | Auto-merge | Off | A person merges each pull request. |
 | Wiki | Off | Documentation lives in this repository, where it is reviewed. |
 
@@ -80,15 +81,15 @@ A ruleset is GitHub's current form of branch protection. Every managed repositor
 
 Because nobody can push to `main` directly, every commit on it is a squash commit that GitHub creates and signs.
 
-The required checks are the CI jobs that run on every pull request:
+The required checks are the CI jobs that run on every pull request. Two of them run in every repository ([X-001](../workpackages/phase-0/X-001-repository-baseline.md)): `DCO`, which checks the Developer Certificate of Origin sign-offs and stays red on a pull request with commits written by an AI agent until the person submitting it adds their own `Signed-off-by:` line to its description, and `REUSE lint`, which checks that every file states its license.
 
 | Repository | Required checks |
 |---|---|
-| docs | `scripts/verify.sh` |
-| bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)` |
-| bayan-web | `pnpm verify (ubuntu-24.04)`, `pnpm verify (macos-15)`, `pnpm verify (macos-26-intel)` |
-| bayan-desktop | `Linux · verification gate`, `Linux · AddressSanitizer and UndefinedBehaviorSanitizer`, `macOS (arm64) · build and test`, `Windows (MSVC) · build and test` |
-| bayan-server | `Verification gate`, `PostgreSQL integration`, `Container image` |
+| docs | `scripts/verify.sh`, `DCO`, `REUSE lint` |
+| bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)`, `DCO`, `REUSE lint` |
+| bayan-web | `pnpm verify (ubuntu-24.04)`, `pnpm verify (macos-15)`, `pnpm verify (macos-26-intel)`, `DCO`, `REUSE lint` |
+| bayan-desktop | `Linux · verification gate`, `Linux · AddressSanitizer and UndefinedBehaviorSanitizer`, `macOS (arm64) · build and test`, `Windows (MSVC) · build and test`, `DCO`, `REUSE lint` |
+| bayan-server | `Verification gate`, `PostgreSQL integration`, `Container image`, `DCO`, `REUSE lint` |
 
 **"Protect release tags"** applies to tags starting with `v`: they can be created but never moved or deleted, so a version number always names the same code, even for a tag without a published release.
 
@@ -148,7 +149,7 @@ Change the constants near the top of the script in a pull request to this reposi
 - **A new repository:** add it to `REPOSITORIES` with the CI jobs that must pass. Until then, every audit reports it as not in the baseline.
 - **A CI job is renamed or added:** update the repository's list in `REPOSITORIES` and apply. Otherwise pull requests wait forever for a check that no longer runs ("Expected — Waiting for status to be reported").
 - **A workflow needs a third-party action** (X-002 adds OpenSSF Scorecard, for example): add `owner/repository@*` to the allowed actions list and apply it before merging the workflow; until then GitHub refuses to run it.
-- **A second maintainer joins:** add them to the Maintainers team in the web interface, and raise `required_approving_review_count` to 1.
+- **A second maintainer joins:** add them to the Maintainers team in the web interface, raise `required_approving_review_count` to 1, and set `require_code_owner_review` to true, so that changes to the security-sensitive paths in each repository's `CODEOWNERS` (including `.github/`) need a code owner's approval. Consider then also requiring the DCO check as a workflow that an organization ruleset runs from a pinned commit of a central repository, which a pull request cannot change (see "Decisions" below).
 
 Run `audit` in each monthly dependency session ([plan/06](../plan/06-agent-workflow.md#monthly-dependency-update-session)) and after adding a repository.
 
@@ -159,6 +160,8 @@ These are the choices most likely to need revisiting, with the reason for each.
 - **No approving review required.** While the owner is the only maintainer, a required review would block every merge: GitHub does not let anyone approve their own pull request, and pull requests opened by agents count as the owner's. The other merge rules still apply. Revisit when a second maintainer joins.
 - **Branches must be up to date before merging.** Two pull requests that each pass on their own can break `main` together; requiring an up-to-date branch prevents that, at the cost of re-running CI after `main` moves. A merge queue would remove that cost later; it needs every required workflow to also run on the `merge_group` event.
 - **Nobody can bypass the rules.** In an emergency, an owner changes the baseline in a pull request (or the ruleset in the web interface, then restores it with `apply`), which leaves a record either way.
+- **The DCO and REUSE checks judge themselves.** A workflow triggered by a pull request runs the pull request's own copy of `.github/`, so a pull request can change the checks that judge it. Required checks therefore guard against mistakes, not against a malicious pull request; review is the defense, and `.github/` is listed as security-sensitive in every repository's `CODEOWNERS`. A workflow required by an organization ruleset and kept in a central repository would close the gap; revisit it when a second maintainer joins.
+- **The squash commit message stays the list of commit messages.** It keeps the agents' `Co-Authored-By:` lines, and the sign-off on web commits adds the merging person's `Signed-off-by:` line at its end. Using the pull request's description as the message instead would leave the description's sign-off before its last lines (the "Generated with" notes), where Git no longer reads it as a trailer.
 - **Signed commits are not required.** GitHub can refuse to squash-merge a pull request whose own commits lack a signature it can verify, which would shut out contributors who do not sign their commits, and `main` already holds only commits that GitHub created and signed. Revisit if pull requests ever need to be merged in another way.
 - **Code scanning's default setup is off** in the configuration for new repositories, because X-002 adds CodeQL as workflows, and GitHub does not run both kinds of setup in one repository.
 - **Base permission "none" and empty teams.** Access is granted explicitly, team by team.
