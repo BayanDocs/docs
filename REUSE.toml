@@ -17,8 +17,9 @@ SPDX-FileCopyrightText = "2026 BayanDocs contributors"
 SPDX-License-Identifier = "MIT-0"
 
 # Configuration files, CI workflows and the website's Mermaid loader script: MIT-0 like the scripts, because CC BY 4.0 is meant for prose rather than code (the owner's decision of 2026-10-04, ADR-0003 History).
+# .editorconfig and .gitattributes are configuration files too (work package X-001).
 [[annotations]]
-path = [".github/**", ".gitignore", "book.toml", "lychee.toml", "typos.toml", "site/mermaid/mermaid-init.js"]
+path = [".github/**", ".editorconfig", ".gitattributes", ".gitignore", "book.toml", "lychee.toml", "typos.toml", "site/mermaid/mermaid-init.js"]
 SPDX-FileCopyrightText = "2026 BayanDocs contributors"
 SPDX-License-Identifier = "MIT-0"
 
@@ -37,3 +38,10 @@ path = "site/mermaid/mermaid.min.js"
 precedence = "override"
 SPDX-FileCopyrightText = ["2014-2022 Knut Sveidqvist and Mermaid contributors", "The authors of the bundled packages listed in site/mermaid/THIRD-PARTY-NOTICES.txt"]
 SPDX-License-Identifier = "MIT AND ISC AND BSD-3-Clause AND Apache-2.0 AND (MPL-2.0 OR Apache-2.0)"
+
+# The Code of Conduct is the Contributor Covenant 2.1, copied from https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md with only its contact placeholder filled in (work package X-001). The Contributor Covenant project released version 2.1 under CC BY 4.0.
+[[annotations]]
+path = "CODE_OF_CONDUCT.md"
+precedence = "override"
+SPDX-FileCopyrightText = "2014 Coraline Ada Ehmke and the Contributor Covenant contributors"
+SPDX-License-Identifier = "CC-BY-4.0"

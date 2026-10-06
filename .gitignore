@@ -4,5 +4,5 @@
 /.tools/
 # lychee's cache of external link results (scripts/verify.sh).
 /.lycheecache
-# Python's bytecode cache (from running the Python scripts in scripts/).
+# Python's bytecode cache (from running the Python scripts in scripts/ and the tests of the DCO check in .github/dco/).
 __pycache__/
