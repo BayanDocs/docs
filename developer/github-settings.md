@@ -21,6 +21,7 @@ Each value below is a constant near the top of the script, with a comment saying
 | Base permission of members | None | Being a member gives no access by itself; access comes from teams. A future private repository (such as the private corpus, owner checklist item 10) is then not readable by every member. |
 | Members can create repositories or GitHub Pages sites | No | Only owners create repositories, so every repository is created knowingly and added to the baseline. |
 | Deploy keys | Not allowed | Deploy keys are per-repository SSH keys that act outside anyone's account and two-factor authentication. Nothing uses them; CI publishes the website with GitHub's own short-lived credentials. |
+| Commits made in the web interface are signed off | Yes, in every repository | GitHub adds the committer's `Signed-off-by:` line to every commit made in its web interface (an edit, an accepted review suggestion), so such commits pass the DCO check ([X-001](../workpackages/phase-0/X-001-repository-baseline.md)). It applies to the web interface only: commits made with Git or through the API, as agents make them, are never signed off for anyone, so only a person certifies the Developer Certificate of Origin ([ADR-0003](../adr/0003-licensing-and-contribution-model.md)). |
 | Two-factor authentication required | Yes, set by hand | GitHub's API can read this setting but not change it. Turning it on removes members and outside collaborators who have not enabled two-factor authentication; the audit lists them (and those who rely on a weak second factor such as SMS) so you can check first. |
 
 ### GitHub Actions (every repository; repositories cannot loosen it)
@@ -60,7 +61,7 @@ Because the base permission is "none", teams are the only way people get access.
 | Setting | Baseline | Why |
 |---|---|---|
 | Default branch | `main` | Owner checklist item 1. |
-| Merging | Squash merging only; the commit is titled with the pull request's title and keeps the individual commit messages (with their co-author lines) | One commit per pull request on `main`, whose title is the Conventional Commit title of the pull request. |
+| Merging | Squash merging only; the commit is titled with the pull request's title, and its message is the pull request's description | One commit per pull request on `main`, whose title is the Conventional Commit title of the pull request. The description is the hand-off and carries the submitter's `Signed-off-by:` line, which the DCO check has verified, so the sign-off reaches `main` as ADR-0003 asks without anyone pasting it in. The messages of the individual commits are not kept. |
 | Delete branches after merging | Yes | Agent branches (`claude/…`) do not pile up. |
 | Offer to update pull request branches | Yes | Needed because a branch must be up to date with `main` before it merges (below). |
 | Auto-merge | Off | A person merges each pull request. |
@@ -80,15 +81,17 @@ A ruleset is GitHub's current form of branch protection. Every managed repositor
 
 Because nobody can push to `main` directly, every commit on it is a squash commit that GitHub creates and signs.
 
-The required checks are the CI jobs that run on every pull request:
+The required checks are the CI jobs that run on every pull request. Every repository requires the two checks from [X-001](../workpackages/phase-0/X-001-repository-baseline.md), `DCO` (the Developer Certificate of Origin rules of ADR-0003) and `REUSE lint` (complete licensing information), plus its own verification gate:
 
-| Repository | Required checks |
+| Repository | Required checks besides `DCO` and `REUSE lint` |
 |---|---|
 | docs | `scripts/verify.sh` |
 | bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)` |
 | bayan-web | `pnpm verify (ubuntu-24.04)`, `pnpm verify (macos-15)`, `pnpm verify (macos-26-intel)` |
 | bayan-desktop | `Linux · verification gate`, `Linux · AddressSanitizer and UndefinedBehaviorSanitizer`, `macOS (arm64) · build and test`, `Windows (MSVC) · build and test` |
 | bayan-server | `Verification gate`, `PostgreSQL integration`, `Container image` |
+
+`DCO` stays red on an agent's pull request until its submitter adds their `Signed-off-by:` line to the description, so with `DCO` required no agent work can be merged without a person's sign-off. That is the rule working, not a failure to fix.
 
 **"Protect release tags"** applies to tags starting with `v`: they can be created but never moved or deleted, so a version number always names the same code, even for a tag without a published release.
 
@@ -160,6 +163,7 @@ These are the choices most likely to need revisiting, with the reason for each.
 - **Branches must be up to date before merging.** Two pull requests that each pass on their own can break `main` together; requiring an up-to-date branch prevents that, at the cost of re-running CI after `main` moves. A merge queue would remove that cost later; it needs every required workflow to also run on the `merge_group` event.
 - **Nobody can bypass the rules.** In an emergency, an owner changes the baseline in a pull request (or the ruleset in the web interface, then restores it with `apply`), which leaves a record either way.
 - **Signed commits are not required.** GitHub can refuse to squash-merge a pull request whose own commits lack a signature it can verify, which would shut out contributors who do not sign their commits, and `main` already holds only commits that GitHub created and signed. Revisit if pull requests ever need to be merged in another way.
+- **The squash commit's message is the pull request's description.** It brings the verified sign-off onto `main` by itself, at the cost of long commit messages (the whole hand-off) and of the individual commits' messages. Check the first squash merge after applying: Git treats a `Signed-off-by:` line as a sign-off only in the last block of lines of a message (`CONTRIBUTING.md` says the same), so the submitter's line belongs at the very end of the description, after anything an agent appended, such as its "Generated with" footer.
 - **Code scanning's default setup is off** in the configuration for new repositories, because X-002 adds CodeQL as workflows, and GitHub does not run both kinds of setup in one repository.
 - **Base permission "none" and empty teams.** Access is granted explicitly, team by team.
 

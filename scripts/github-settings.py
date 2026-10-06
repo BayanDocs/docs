@@ -35,18 +35,22 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 ORG = "BayanDocs"
 
+# The checks that every repository runs on every pull request, from identical workflows (X-001): DCO enforces the Developer Certificate of Origin rules of ADR-0003 (people sign off their own commits; the person who submits an agent's pull request signs off in its description), and REUSE lint keeps the licensing information complete. DCO stays red on an agent's pull request until its submitter adds their sign-off, so requiring it means no agent work is merged without one.
+COMMON_CHECKS: List[str] = ["DCO", "REUSE lint"]
+
 # The repositories this script manages, each with the CI checks that must pass before a pull request can merge into main. A check is named after its CI job as GitHub shows it on a pull request; a matrix job carries its matrix value in parentheses. List only jobs that run on every pull request (a job skipped by a path filter would block merging forever). When a job is renamed or added, update its list here and run `apply`.
 REPOSITORIES: Dict[str, List[str]] = {
-    "docs": ["scripts/verify.sh"],
-    "bayan-core": ["verify (ubuntu-24.04)", "verify (windows-latest)", "verify (macos-latest)"],
-    "bayan-web": ["pnpm verify (ubuntu-24.04)", "pnpm verify (macos-15)", "pnpm verify (macos-26-intel)"],
+    "docs": ["scripts/verify.sh", *COMMON_CHECKS],
+    "bayan-core": ["verify (ubuntu-24.04)", "verify (windows-latest)", "verify (macos-latest)", *COMMON_CHECKS],
+    "bayan-web": ["pnpm verify (ubuntu-24.04)", "pnpm verify (macos-15)", "pnpm verify (macos-26-intel)", *COMMON_CHECKS],
     "bayan-desktop": [
         "Linux · verification gate",
         "Linux · AddressSanitizer and UndefinedBehaviorSanitizer",
         "macOS (arm64) · build and test",
         "Windows (MSVC) · build and test",
+        *COMMON_CHECKS,
     ],
-    "bayan-server": ["Verification gate", "PostgreSQL integration", "Container image"],
+    "bayan-server": ["Verification gate", "PostgreSQL integration", "Container image", *COMMON_CHECKS],
 }
 
 # Organization member privileges (organization settings → Member privileges), as (API field, description, baseline value). Base permission "none": being a member gives no access to any repository by itself, so access comes only from the teams below, and a future private repository (such as the private corpus) is not readable by every member. Only owners create repositories and publish GitHub Pages sites. Deploy keys (per-repository SSH keys that bypass people's accounts) are switched off.
@@ -60,6 +64,8 @@ ORG_SETTINGS: List[Tuple[str, str, Any]] = [
     ("members_can_create_public_pages", "Members can publish public GitHub Pages sites", False),
     ("members_can_create_private_pages", "Members can publish private GitHub Pages sites", False),
     ("deploy_keys_enabled_for_repositories", "Deploy keys allowed", False),
+    # GitHub signs off every commit made in its web interface (an edit, an accepted review suggestion) in the name of the person committing, so it passes the DCO check (X-001 follow-up 2). It applies to the web interface only: commits made with Git or through the API, as agents make them, are never signed off for anyone (ADR-0003: only a person certifies the DCO).
+    ("web_commit_signoff_required", "Commits made in the web interface are signed off", True),
 ]
 
 # Organization settings that GitHub's API can read but not change, as (API field, description, baseline value, where to change it). `audit` checks them; `apply` cannot fix them.
@@ -143,18 +149,19 @@ TEAMS: List[Team] = [
     Team("Triage", "triage", "Label, assign and close issues and pull requests. No write access.", "triage"),
 ]
 
-# Merge settings of every managed repository (repository settings → General). Squash merging only: each pull request becomes one commit on main, titled with the pull request's title (a Conventional Commit) and keeping the individual commit messages, including their co-author lines, in its body.
+# Merge settings of every managed repository (repository settings → General). Squash merging only: each pull request becomes one commit on main, titled with the pull request's title (a Conventional Commit), and GitHub fills in the pull request's description as its message. The description is the hand-off, and it carries the submitter's Signed-off-by line, which the DCO check has verified, so the sign-off reaches the commit on main as ADR-0003 asks without anyone pasting it in (X-001 follow-up 10). The messages of the individual commits are not kept.
 REPOSITORY_SETTINGS: List[Tuple[str, str, Any]] = [
     ("default_branch", "Default branch", "main"),
     ("allow_squash_merge", "Squash merging allowed", True),
     ("allow_merge_commit", "Merge commits allowed", False),
     ("allow_rebase_merge", "Rebase merging allowed", False),
     ("squash_merge_commit_title", "Squash commit title", "PR_TITLE"),
-    ("squash_merge_commit_message", "Squash commit message", "COMMIT_MESSAGES"),
+    ("squash_merge_commit_message", "Squash commit message", "PR_BODY"),
     ("allow_auto_merge", "Auto-merge allowed", False),
     ("allow_update_branch", "Offer to update pull request branches", True),
     ("delete_branch_on_merge", "Delete branches after merging", True),
     ("has_wiki", "Wiki enabled", False),  # documentation lives in the docs repository, where it is reviewed
+    ("web_commit_signoff_required", "Commits made in the web interface are signed off", True),  # also set organization-wide above
 ]
 
 # Secret scanning in every managed repository (repository settings → Advanced Security): find committed credentials, and block pushes that contain known secret formats.

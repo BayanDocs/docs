@@ -51,6 +51,7 @@ def fresh_repository(name: str) -> Dict[str, Any]:
         "allow_update_branch": False,
         "delete_branch_on_merge": False,
         "has_wiki": True,
+        "web_commit_signoff_required": False,
         "security_and_analysis": {
             "secret_scanning": {"status": "enabled"},
             "secret_scanning_push_protection": {"status": "disabled"},
@@ -94,6 +95,7 @@ class FakeGitHub:
             "members_can_create_public_pages": True,
             "members_can_create_private_pages": True,
             "deploy_keys_enabled_for_repositories": True,
+            "web_commit_signoff_required": False,
             "two_factor_requirement_enabled": False,
         }
         self.private_forks = {"run_workflows_from_fork_pull_requests": False, "send_write_tokens_to_workflows": False, "send_secrets_and_variables": False, "require_approval_for_fork_pr_workflows": True}
@@ -496,17 +498,29 @@ class GitHubSettingsTest(unittest.TestCase):
         self.assertEqual(fake.teams["maintainers"]["repos"], {name: "maintain" for name in gs.REPOSITORIES})
         self.assertEqual(fake.teams["triage"]["repos"], {name: "triage" for name in gs.REPOSITORIES})
         self.assertFalse(fake.org["members_can_create_public_pages"] or fake.org["members_can_create_private_pages"])
+        self.assertTrue(fake.org["web_commit_signoff_required"])
         self.assertEqual(fake.immutable, {"enforced_repositories": "all"})
         for name, repo in fake.repos.items():
             self.assertTrue(repo["_alerts"] and repo["_reporting"], name)
             self.assertFalse(repo["_security_updates"], name)
             self.assertEqual(repo["security_and_analysis"]["secret_scanning_push_protection"], {"status": "enabled"})
             self.assertEqual((repo["allow_squash_merge"], repo["allow_merge_commit"], repo["allow_rebase_merge"]), (True, False, False))
+            self.assertEqual((repo["squash_merge_commit_title"], repo["squash_merge_commit_message"]), ("PR_TITLE", "PR_BODY"), name)
+            self.assertTrue(repo["web_commit_signoff_required"], name)
+            main_ruleset = next(r for r in repo["_rulesets"].values() if r["name"] == "Protect main")
+            contexts = [c["context"] for rule in main_ruleset["rules"] if rule["type"] == "required_status_checks" for c in rule["parameters"]["required_status_checks"]]
+            self.assertTrue(set(gs.COMMON_CHECKS) <= set(contexts), (name, contexts))
             self.assertEqual(sorted(r["name"] for r in repo["_rulesets"].values()), ["Protect main", "Protect release tags"])
         main = next(r for r in fake.repos["bayan-core"]["_rulesets"].values() if r["name"] == "Protect main")
         checks = next(rule for rule in main["rules"] if rule["type"] == "required_status_checks")["parameters"]
         self.assertEqual(sorted(c["context"] for c in checks["required_status_checks"]), sorted(gs.REPOSITORIES["bayan-core"]))
         self.assertTrue(all(c["integration_id"] == gs.GITHUB_ACTIONS_APP_ID for c in checks["required_status_checks"]))
+
+    def test_every_repository_requires_the_dco_and_reuse_checks(self) -> None:
+        self.assertEqual(gs.COMMON_CHECKS, ["DCO", "REUSE lint"])
+        for name, checks in gs.REPOSITORIES.items():
+            self.assertTrue(set(gs.COMMON_CHECKS) <= set(checks), name)
+            self.assertEqual(len(checks), len(set(checks)), f"{name} lists a check twice")
 
     def test_a_repository_without_ci_gets_no_required_checks_rule(self) -> None:
         with mock.patch.dict(gs.REPOSITORIES, {"no-ci": []}):
