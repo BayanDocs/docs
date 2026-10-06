@@ -11,7 +11,7 @@ Agents can write code and documents, but some steps need your accounts, your mon
 - [ ] **2b. Optional: have an open-source lawyer review the app-store permission wording.** The licenses are in force without a review. If you want one, send the lawyer ADR-0003 §4 and [LICENSING.md](../LICENSING.md) (expect a few hours of their time, or ask organizations that provide legal help to free-software projects), and do it before anyone outside the project contributes: until then you are the only copyright holder and can change the wording on your own.
 Items 3–6a are applied by [scripts/github-settings.py](../scripts/github-settings.py), which keeps these settings as code: follow [developer/github-settings.md](../developer/github-settings.md) (create a 7-day token, run `audit`, then `apply`, do the few steps the report says only the web interface can do, then delete the token), and tick 3–6a once `audit` reports no differences. The items below say what the script sets.
 
-- [ ] **3. Protect `main` in each repository** (a ruleset, Settings → Rules → Rulesets): require a pull request before merging (with no approving review while you are the only maintainer, because GitHub does not let anyone approve their own pull request), require the CI checks to pass on a branch that is up to date with `main`, require a linear history, block force pushes and deletions, and allow nobody to bypass the rules. Squash merging only (Settings → General → Pull Requests). Release tags (`v*`) can never be moved or deleted.
+- [ ] **3. Protect `main` in each repository** (a ruleset, Settings → Rules → Rulesets): require a pull request before merging (with no approving review while you are the only maintainer, because GitHub does not let anyone approve their own pull request), require the CI checks to pass on a branch that is up to date with `main`, require a linear history, block force pushes and deletions, and allow nobody to bypass the rules. The required checks include `DCO` and `REUSE lint` in every repository (X-001). Squash merging only (Settings → General → Pull Requests), and sign-off required on commits made in the web interface (Settings → General), so GitHub adds your `Signed-off-by:` line when you merge a pull request there. Release tags (`v*`) can never be moved or deleted.
 - [ ] **4. Turn on security alerts only, never update bots** (Settings → Advanced Security), in each repository:
   - enable **Dependabot alerts** (this also gives malware alerts);
   - leave **Dependabot security updates** and grouped security updates **disabled**, and never commit a `.github/dependabot.yml`;
@@ -29,7 +29,7 @@ Items 3–6a are applied by [scripts/github-settings.py](../scripts/github-setti
   - set the members' base permission to none, so that access comes only from teams (the script creates two empty ones, Maintainers and Triage), and let only owners create repositories;
   - require approval for fine-grained personal access tokens and restrict classic ones (organization settings → Personal access tokens).
 - [ ] **7. Reserve the npm organization `@bayandocs`** (free for public packages) so nobody else can take the scope used for the WebAssembly package.
-- [ ] **8. Choose a security contact address** (for example `security@` on a project domain) for `SECURITY.md`. Registering a project domain (for example `bayandocs.org`) is worthwhile now.
+- [x] **8. Choose a security contact address** (for example `security@` on a project domain) for `SECURITY.md`. Registering a project domain (for example `bayandocs.org`) is worthwhile now. Done 2026-10-06: `security@bayandocs.org`, in `SECURITY.md` in all five repositories next to GitHub's private vulnerability reporting. The domain's mail goes through Cloudflare Email Routing; keep a routing rule that forwards `security@` (and `conduct@`, item 13) to an inbox you read.
 
 ## Soon — before Wave 3 of Phase 0
 
@@ -47,7 +47,7 @@ Items 3–6a are applied by [scripts/github-settings.py](../scripts/github-setti
   - macOS: join the Apple Developer Program (annual fee) for signing and notarization;
   - Linux: create a Flathub account for the Flatpak.
 - [ ] **12. Trademark:** run a basic search for "BayanDocs" in your main jurisdictions, register it, and approve the trademark policy an agent drafts. With the GPL licensing, the trademark is what stops others from selling or hosting their versions under the BayanDocs name, so do this before the project becomes widely visible.
-- [ ] **13. Community spaces:** enable GitHub Discussions; choose a chat space (for example Matrix); name a Code of Conduct contact.
+- [ ] **13. Community spaces:** enable GitHub Discussions; choose a chat space (for example Matrix); name a Code of Conduct contact. The Code of Conduct contact is named (2026-10-06): `conduct@bayandocs.org`, in `CODE_OF_CONDUCT.md` in all five repositories; Discussions and the chat space remain.
 
 ## Before collaboration GA (Phase 3)
 
