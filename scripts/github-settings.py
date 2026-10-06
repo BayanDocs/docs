@@ -35,18 +35,22 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 ORG = "BayanDocs"
 
+# The checks that every repository runs on every pull request (work package X-001): the Developer Certificate of Origin check (.github/workflows/dco.yml), which stays red on a pull request with commits written by an AI agent until the person submitting it adds their own sign-off to its description, and `reuse lint` (.github/workflows/reuse.yml).
+EVERY_REPOSITORY_CHECKS: List[str] = ["DCO", "REUSE lint"]
+
 # The repositories this script manages, each with the CI checks that must pass before a pull request can merge into main. A check is named after its CI job as GitHub shows it on a pull request; a matrix job carries its matrix value in parentheses. List only jobs that run on every pull request (a job skipped by a path filter would block merging forever). When a job is renamed or added, update its list here and run `apply`.
 REPOSITORIES: Dict[str, List[str]] = {
-    "docs": ["scripts/verify.sh"],
-    "bayan-core": ["verify (ubuntu-24.04)", "verify (windows-latest)", "verify (macos-latest)"],
-    "bayan-web": ["pnpm verify (ubuntu-24.04)", "pnpm verify (macos-15)", "pnpm verify (macos-26-intel)"],
+    "docs": ["scripts/verify.sh", *EVERY_REPOSITORY_CHECKS],
+    "bayan-core": ["verify (ubuntu-24.04)", "verify (windows-latest)", "verify (macos-latest)", *EVERY_REPOSITORY_CHECKS],
+    "bayan-web": ["pnpm verify (ubuntu-24.04)", "pnpm verify (macos-15)", "pnpm verify (macos-26-intel)", *EVERY_REPOSITORY_CHECKS],
     "bayan-desktop": [
         "Linux · verification gate",
         "Linux · AddressSanitizer and UndefinedBehaviorSanitizer",
         "macOS (arm64) · build and test",
         "Windows (MSVC) · build and test",
+        *EVERY_REPOSITORY_CHECKS,
     ],
-    "bayan-server": ["Verification gate", "PostgreSQL integration", "Container image"],
+    "bayan-server": ["Verification gate", "PostgreSQL integration", "Container image", *EVERY_REPOSITORY_CHECKS],
 }
 
 # Organization member privileges (organization settings → Member privileges), as (API field, description, baseline value). Base permission "none": being a member gives no access to any repository by itself, so access comes only from the teams below, and a future private repository (such as the private corpus) is not readable by every member. Only owners create repositories and publish GitHub Pages sites. Deploy keys (per-repository SSH keys that bypass people's accounts) are switched off.
@@ -144,6 +148,7 @@ TEAMS: List[Team] = [
 ]
 
 # Merge settings of every managed repository (repository settings → General). Squash merging only: each pull request becomes one commit on main, titled with the pull request's title (a Conventional Commit) and keeping the individual commit messages, including their co-author lines, in its body.
+# Commits made in the web interface are signed off: GitHub adds a "Signed-off-by:" line for the person who makes them, including when they merge a pull request there. So the squash commit of a pull request merged in the web interface carries the merging person's sign-off, which ADR-0003 §5 asks for, without anyone pasting it; a merge made through the API must still end its message with the sign-off. The squash commit message stays COMMIT_MESSAGES, because the pull request's description as the message would put the sign-off before the description's last lines, where Git no longer reads it as a trailer.
 REPOSITORY_SETTINGS: List[Tuple[str, str, Any]] = [
     ("default_branch", "Default branch", "main"),
     ("allow_squash_merge", "Squash merging allowed", True),
@@ -155,6 +160,7 @@ REPOSITORY_SETTINGS: List[Tuple[str, str, Any]] = [
     ("allow_update_branch", "Offer to update pull request branches", True),
     ("delete_branch_on_merge", "Delete branches after merging", True),
     ("has_wiki", "Wiki enabled", False),  # documentation lives in the docs repository, where it is reviewed
+    ("web_commit_signoff_required", "Commits made in the web interface, merges included, are signed off", True),
 ]
 
 # Secret scanning in every managed repository (repository settings → Advanced Security): find committed credentials, and block pushes that contain known secret formats.

@@ -64,7 +64,7 @@ No gate may be weakened to make a change pass (see [AGENTS.md §4](../AGENTS.md#
 ### Secure development lifecycle
 
 1. **Threat models** per component ([specs/threat-model.md](../specs/threat-model.md)), updated at each phase gate and whenever a work package changes a trust boundary.
-2. **Security-sensitive paths** (parsers, cryptography, authentication, authorization, the FFI boundary, update mechanisms) are listed in each repository's `CODEOWNERS`; changes to them require a dedicated security review session in addition to the normal review.
+2. **Security-sensitive paths** (parsers, cryptography, authentication, authorization, the FFI boundary, update mechanisms, and the CI workflows and the checks they run in `.github/`) are listed in each repository's `CODEOWNERS`; changes to them require a dedicated security review session in addition to the normal review. `.github/` is on the list because a workflow triggered by a pull request runs that pull request's own copy of it, so a change there can weaken the checks that judge it.
 3. **Static analysis:** strict lints, CodeQL for C++, TypeScript and workflows, a workflow security linter, `clang-tidy`.
 4. **Dynamic analysis:** fuzzing, sanitizers, Miri.
 5. **Dependencies:** ADR-0017 in full.
