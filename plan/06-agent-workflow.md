@@ -163,4 +163,4 @@ Agents stop and hand back instead of guessing in the situations listed in [AGENT
 4. Did it add or change dependencies? If so, is each one justified, and is each version at least 24 hours old?
 5. Does it change files outside the brief's scope? If so, is there a good reason in "Deviations"?
 6. Are there open questions for you? Answer them before merging.
-7. Once the DCO check is enabled (X-001), add your own `Signed-off-by: Your Name <email>` line to the pull request description and keep it in the squash-merge commit message. This is your certification, as the person submitting the work, that the project may use the contribution under its license; agents cannot make it for you (ADR-0003).
+7. Once the DCO check is enabled (X-001), add your own `Signed-off-by: Your Name <email>` line to the pull request description and keep it in the squash-merge commit message (GitHub adds it by itself when you merge in the web interface; when merging any other way, end the message with it). This is your certification, as the person submitting the work, that the project may use the contribution under its license; agents cannot make it for you (ADR-0003).
