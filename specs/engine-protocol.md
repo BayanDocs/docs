@@ -51,7 +51,7 @@ typedef int32_t BayanStatus;
 #define BAYAN_STATUS_NOT_FOUND 2             /* unknown blob, document or page */
 #define BAYAN_STATUS_BUFFER_TOO_SMALL 3      /* the output buffer is too small; the function says how to learn the size needed */
 #define BAYAN_STATUS_INTERNAL_ERROR 4        /* the engine failed or is stopping */
-#define BAYAN_STATUS_WRONG_THREAD 5          /* called from inside the engine's callback, where it would wait for itself */
+#define BAYAN_STATUS_WRONG_THREAD 5          /* called from inside any engine's callback, where it could wait for itself */
 typedef void (*BayanMessageCallback)(void *user_data, const uint8_t *json, size_t json_len);
 
 const char *bayan_version(void);
