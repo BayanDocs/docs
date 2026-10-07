@@ -23,8 +23,8 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 | [0004](0004-fidelity-contract-and-determinism.md) | Fidelity contract and layout determinism | Accepted |
 | [0005](0005-layout-units-and-deterministic-math.md) | Integer layout units (BLU) and deterministic math | Accepted |
 | [0006](0006-rust-core-and-memory-safety.md) | Rust core and memory-safety policy for untrusted input | Accepted; amended 2026-10-04 (AWS-LC for the server's TLS) |
-| [0007](0007-document-model.md) | Document model: a Word-shaped stream of stories and atoms | Accepted — validation gate (CORE-004) |
-| [0008](0008-crdt-engine-and-local-first.md) | CRDT engine (Loro) and local-first architecture | Accepted — validation gate (CORE-004) |
+| [0007](0007-document-model.md) | Document model: a Word-shaped stream of stories and atoms | Accepted — validated by CORE-004 (2026-10-07) |
+| [0008](0008-crdt-engine-and-local-first.md) | CRDT engine (Loro) and local-first architecture | Accepted — validation gate (CORE-004 reported 2026-10-07: criteria partly met; owner's decision pending) |
 | [0009](0009-text-stack.md) | Text stack: shaping, Unicode, line breaking and the Word measurement model | Accepted — validation gate (CORE-003) |
 | [0010](0010-font-strategy.md) | Font strategy and the bundled font library | Accepted |
 | [0011](0011-rendering-pipeline.md) | Rendering pipeline: display lists, reference rasterizer, PDF | Accepted — validation gate (CORE-003) |

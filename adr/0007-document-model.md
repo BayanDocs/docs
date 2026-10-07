@@ -1,6 +1,6 @@
 # ADR-0007: Document model — a Word-shaped stream of stories and atoms
 
-- **Status:** Accepted — validation gate (CORE-004)
+- **Status:** Accepted — validated by CORE-004 (2026-10-07)
 - **Date:** 2026-10-03
 - **Deciders:** Planner
 - **Related:** FID-03, COL-01, ADR-0008, [specs/document-model.md](../specs/document-model.md), CORE-004, CORE-101
@@ -37,6 +37,15 @@ The document model must (a) represent everything in WordprocessingML, including 
 ## Validation gate
 
 CORE-004 must demonstrate on Loro: the mapping of the model (including tables, fields, comments and preserved atoms); convergence with valid normalized structure in 100% of 1,000 randomized three-replica runs of 10,000 operations; and acceptable performance (criteria in the work package). If the mapping proves unworkable, the spike's report proposes an amendment.
+
+## Validation result (CORE-004, 2026-10-07)
+
+The gate is met; the [CORE-004 report](https://github.com/BayanDocs/bayan-core/pull/13) (`spikes/crdt-model/REPORT.md` in bayan-core) has the evidence.
+
+- **Mapping:** stories, atoms (paragraph ends, tabs, field delimiters, object anchors, range delimiters, table blocks, comment references), marks, paragraph properties, tables with movable row and cell lists, objects, comments, fields and bookmarks were implemented on Loro behind the `bayan-crdt` adapter, with the operations of the work package.
+- **Convergence:** 1,000 randomized three-replica runs of 10,000 operations each, with partitions, out-of-order delivery, undo and redo, all ended with identical views satisfying I1–I7; normalization was deterministic and idempotent in every run and in 100,000 randomly broken documents.
+- **Performance:** loading is limited by a bug in Loro (ADR-0008); the model's own costs are reported, and reading one map per paragraph is the part CORE-101 must keep in check.
+- **Specification amendments**, made in [specs/document-model.md](../specs/document-model.md): mark keys name their family before the first colon (§5); the paragraph mark's run properties live in the paragraph's properties, not in marks (§5, §6); materialization is committed outside undo (§14); new normalization rules N8 (default final-section properties) and N9 (nesting limit for tables), and clarifications of N3 and N7 (§14); the mapping as validated (§16).
 
 ## Revisit when
 

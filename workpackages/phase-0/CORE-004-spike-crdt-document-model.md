@@ -9,7 +9,7 @@
 | Size | L |
 | Depends on | CORE-001 |
 | Unblocks | CORE-101 (model v1), all editing and collaboration work |
-| Status | Ready |
+| Status | In review |
 | Requirements | FID-03, COL-01, COL-03, PERF-03, PERF-05 |
 | Decisions | ADR-0007 and ADR-0008 (this spike is their validation gate), ADR-0005, ADR-0006 |
 | Specs | [document-model.md](../../specs/document-model.md) (especially §4, §5, §7, §14, §16, §18) |

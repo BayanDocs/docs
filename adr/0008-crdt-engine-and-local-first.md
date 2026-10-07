@@ -1,6 +1,6 @@
 # ADR-0008: CRDT engine (Loro) and local-first architecture
 
-- **Status:** Accepted — validation gate (CORE-004)
+- **Status:** Accepted — validation gate (CORE-004 reported 2026-10-07: criteria partly met; the owner's decision on the recommended conditions is pending)
 - **Date:** 2026-10-03
 - **Deciders:** Planner
 - **Related:** COL-01…COL-08, ADR-0007, ADR-0016, CORE-004
@@ -38,6 +38,17 @@ Co-authoring must work without locks, offline, and through a server that cannot 
 ## Validation gate
 
 CORE-004 must show, on the BDM mapping: convergence and valid normalization in 100% of 1,000 randomized three-replica runs of 10,000 operations; correct mark-expansion behavior for Word-style formatting, hyperlinks and comments (including many concurrent comment ranges); undo that reverts only local changes; and, for a synthetic 500-page document in WebAssembly, load time, memory and update sizes within the limits recorded in the work package. A comparison run on Automerge 3 is included for reference.
+
+## Validation result (CORE-004, 2026-10-07)
+
+The [CORE-004 report](https://github.com/BayanDocs/bayan-core/pull/13) (`spikes/crdt-model/REPORT.md` in bayan-core) has the evidence; measurements are on a 500-page synthetic document (1.5 million characters, 15,000 paragraphs, 200 tables, 2,000 comments).
+
+- **Met:** convergence and valid normalization in 100% of 1,000 three-replica runs of 10,000 operations; mark expansion for run properties, hyperlinks and comments, including many overlapping comments (Loro configures expansion by the part of a key before its first colon, so `cmt:<id>` keys need one configured family); undo that reverts only local changes; WebAssembly memory (141 MB after loading and reading; limit 300 MB); update sizes (about 105 bytes per edit).
+- **Not met:** load time. Loro 1.16.2 decodes rich text from snapshots in quadratic time, so loading and reading the document takes 2.7 s natively and 7.0 s in WebAssembly (limits 0.3 s and 1 s). With a three-line fix to Loro, measured on a patched copy, it takes 0.53 s and 0.77 s. Applying a 1,000-operation update takes 62 ms natively and 99 ms in WebAssembly (limit 50 ms) the first time after opening, and 9 ms and 13 ms afterwards.
+- **History trimming (decision 6):** in Loro 1.16.2 a document opened from a shallow snapshot is slower than one opened from a full snapshot (with the decoding fix: the first update after opening 274 ms instead of 63 ms, an undo step 427 ms instead of 207 ms), so the storage and sync work packages must measure the trade-off before choosing the at-rest format.
+- **Untrusted updates:** fuzzing found that Loro panics on crafted updates whose checksum is valid, aborts the process on crafted headers that request absurd allocations, and overflows the stack on deeply nested values. The adapter imports with limits, contains panics (the replica is poisoned and discarded) and refuses deep values; allocation failures cannot be contained inside the process.
+- **Automerge 3** (the fallback of decision 7), on the same text, marks and block markers: loading and reading 1.5 s natively and 2.6 s in WebAssembly, 330 to 400 MB of memory, about 2 s to apply a 1,000-change update. Only its snapshots are smaller (0.93 MB against Loro's 5.0 MB). It is not a better choice.
+- **Recommendation of the report (for the owner's decision; not binding until accepted as an amendment):** confirm Loro on three conditions: the quadratic decoding is fixed upstream before the model work packages measure loading again; the engine's hosts isolate the import of untrusted updates and restart an engine that aborts; CORE-101 addresses the cost of per-paragraph maps, the latency of applying updates and the latency of undo (about 0.2 s per step in a 500-page document). The report also drafts upstream issues for every Loro finding.
 
 ## Revisit when
 
