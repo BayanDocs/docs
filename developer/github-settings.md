@@ -89,7 +89,7 @@ The required checks are the CI jobs that run on every pull request. Four of them
 | bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
 | bayan-web | `pnpm verify (ubuntu-24.04)`, `pnpm verify (macos-15)`, `pnpm verify (macos-26-intel)`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
 | bayan-desktop | `Linux · verification gate`, `Linux · AddressSanitizer and UndefinedBehaviorSanitizer`, `macOS (arm64) · build and test`, `Windows (MSVC) · build and test`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
-| bayan-server | `Verification gate`, `PostgreSQL integration`, `Container image`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
+| bayan-server | `Supply-chain checks`, `Verification gate`, `PostgreSQL integration`, `Container image`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
 
 **"Protect release tags"** applies to tags starting with `v`: they can be created but never moved or deleted, so a version number always names the same code, even for a tag without a published release.
 
