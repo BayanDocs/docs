@@ -13,7 +13,7 @@ These are ADR-0017's rules, as they apply to the work of a session:
 - **No update bots.** Never add Dependabot version updates, Renovate or anything like them. The supply-chain workflow fails on their configuration files.
 - **Install scripts stay disabled.** Never allow a package's install or build script (`allowBuilds` entries stay `false`); a Rust crate with a build script is reviewed before it is added.
 - **Every gate stays green and strong.** Run the repository's full verification gate, fix what breaks, and never weaken, skip or disable a check to get green. If a check is genuinely wrong, fix it in its own commit and explain why.
-- **Licenses.** A new package must use a license on the ADR-0017 allowlist; cargo-deny and bayan-web's licence-notice check enforce this for what they cover.
+- **Licenses.** A new package must use a license on the ADR-0017 allowlist. cargo-deny enforces this for Rust crates; for npm packages, Python tools and everything else, check the license yourself and state it in the pull request (bayan-web's licence-notice check only makes sure that the license text of every bundled package ships with the app).
 - **One pull request per repository per session**, whose description lists every change (see [The pull request](#the-pull-request)). If the change alters a repository's dependency posture (a new mechanism, a new kind of exception), update its `AGENTS.md` dependency section, and ADR-0017 if needed, in the same pull request.
 
 ## How the rules are enforced
@@ -36,7 +36,7 @@ Knowing what the machines check tells you what is left for you to check by hand.
 | npm package | `pnpm view <package> time --json` (every version with its publish time). |
 | Python package | `https://pypi.org/pypi/<package>/<version>/json` (`upload_time_iso_8601` of each file); `scripts/python-tool-hashes.py` only considers files uploaded before the cutoff you give it. |
 | GitHub release (cargo-deny, grype, mdBook, lychee, pinact, cargo-fuzz) | The release page, or `gh release view <tag> --repo <owner>/<repository>`. Take the SHA-256 from the release's published checksum file when it has one, and say so in the pin's comment. |
-| GitHub Action | `pinact run --update --min-age 1` only picks releases at least one day old; `pinact run --check --verify-min-age --min-age 1` confirms it. |
+| GitHub Action | `pinact run --check --verify-min-age --min-age 1` reports every pinned action whose release is less than a day old (it asks GitHub's API); the release page shows the date too. |
 | Rust toolchain | The release announcement on blog.rust-lang.org, or the `date` in `https://static.rust-lang.org/dist/channel-rust-<version>.toml`. Nightly toolchains are named by their date. |
 | Node.js | `https://nodejs.org/dist/index.json` (`date` of each version) and the release's `SHASUMS256.txt`, whose signature by a Node.js release key must be checked before its hashes are used. |
 | Qt | The release announcement on qt.io and the `<ReleaseDate>` in the repository index (`https://download.qt.io/online/qtsdkrepository/<platform>/desktop/qt6_<version>/qt6_<version>/Updates.xml`). Record the later of the two, as `qt_released` in bayan-desktop's `deps/qt.json`. |
@@ -70,7 +70,7 @@ Some files are identical in all five repositories. When one of them changes, cha
 |---|---|---|
 | `.github/reuse/requirements.txt`, `.github/reuse/build-requirements.txt` | REUSE and its build backend, for the REUSE workflow | `python3 scripts/python-tool-hashes.py 'reuse==<version>' <cutoff>` and `python3 scripts/python-tool-hashes.py 'poetry-core==<version>' <cutoff>` in the docs repository (they need `uv`); keep the files' header comments and update their dates. The same lists are `req_reuse` and `req_poetry_core` in `docs/scripts/cloud-environment-setup.sh`, and the docs repository's tests fail until both agree. |
 | `.github/supply-chain/pip-audit-requirements.txt` | pip-audit and its dependencies | `python3 scripts/python-tool-hashes.py 'pip-audit==<version>' <cutoff>`; keep the header and update the publish dates in it. |
-| `.github/workflows/dco.yml`, `reuse.yml`, `supply-chain.yml` and the other workflows | GitHub Actions, by full commit SHA with the version in a comment | `pinact run --update --min-age 1`, then `pinact run --check --verify-min-age --min-age 1` and `zizmor .github/workflows`. pinact asks GitHub's API; set `GITHUB_TOKEN` if it hits the rate limit. Keep every shared workflow identical in all five repositories. |
+| `.github/workflows/dco.yml`, `reuse.yml`, `supply-chain.yml` and the other workflows | GitHub Actions, by full commit SHA with the version in a comment | `pinact run --update --min-age 1`, then confirm with `pinact run --check --verify-min-age --min-age 1` and `zizmor .github/workflows`; if the check reports a release younger than a day, put that action's previous pin back for this month. pinact asks GitHub's API; set `GITHUB_TOKEN` if it hits the rate limit. Keep every shared workflow identical in all five repositories. |
 | `.github/supply-chain/pip-audit-canary.txt` | A deliberately vulnerable pin (jinja2 3.1.4) that proves pip-audit still works | Never update it; it must stay vulnerable. |
 
 After changing any of them, run `python3 .github/supply-chain/audit_python_tools.py`, which audits every hash-pinned requirements file of the repository.
