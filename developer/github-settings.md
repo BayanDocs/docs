@@ -81,15 +81,15 @@ A ruleset is GitHub's current form of branch protection. Every managed repositor
 
 Because nobody can push to `main` directly, every commit on it is a squash commit that GitHub creates and signs.
 
-The required checks are the CI jobs that run on every pull request. Two of them run in every repository ([X-001](../workpackages/phase-0/X-001-repository-baseline.md)): `DCO`, which checks the Developer Certificate of Origin sign-offs and stays red on a pull request with commits written by an AI agent until the person submitting it adds their own `Signed-off-by:` line to its description, and `REUSE lint`, which checks that every file states its license.
+The required checks are the CI jobs that run on every pull request. Four of them run in every repository: `DCO`, which checks the Developer Certificate of Origin sign-offs and stays red on a pull request with commits written by an AI agent until the person submitting it adds their own `Signed-off-by:` line to its description, and `REUSE lint`, which checks that every file states its license ([X-001](../workpackages/phase-0/X-001-repository-baseline.md)); `No update bots`, which fails when configuration for Dependabot version updates, Renovate or a similar service appears, and `pip-audit`, which audits the hash-pinned Python tools of CI ([X-003](../workpackages/phase-0/X-003-supply-chain-enforcement.md); both are jobs of `.github/workflows/supply-chain.yml`).
 
 | Repository | Required checks |
 |---|---|
-| docs | `scripts/verify.sh`, `DCO`, `REUSE lint` |
-| bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)`, `DCO`, `REUSE lint` |
-| bayan-web | `pnpm verify (ubuntu-24.04)`, `pnpm verify (macos-15)`, `pnpm verify (macos-26-intel)`, `DCO`, `REUSE lint` |
-| bayan-desktop | `Linux · verification gate`, `Linux · AddressSanitizer and UndefinedBehaviorSanitizer`, `macOS (arm64) · build and test`, `Windows (MSVC) · build and test`, `DCO`, `REUSE lint` |
-| bayan-server | `Verification gate`, `PostgreSQL integration`, `Container image`, `DCO`, `REUSE lint` |
+| docs | `scripts/verify.sh`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
+| bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
+| bayan-web | `pnpm verify (ubuntu-24.04)`, `pnpm verify (macos-15)`, `pnpm verify (macos-26-intel)`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
+| bayan-desktop | `Linux · verification gate`, `Linux · AddressSanitizer and UndefinedBehaviorSanitizer`, `macOS (arm64) · build and test`, `Windows (MSVC) · build and test`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
+| bayan-server | `Verification gate`, `PostgreSQL integration`, `Container image`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
 
 **"Protect release tags"** applies to tags starting with `v`: they can be created but never moved or deleted, so a version number always names the same code, even for a tag without a published release.
 
@@ -160,7 +160,7 @@ These are the choices most likely to need revisiting, with the reason for each.
 - **No approving review required.** While the owner is the only maintainer, a required review would block every merge: GitHub does not let anyone approve their own pull request, and pull requests opened by agents count as the owner's. The other merge rules still apply. Revisit when a second maintainer joins.
 - **Branches must be up to date before merging.** Two pull requests that each pass on their own can break `main` together; requiring an up-to-date branch prevents that, at the cost of re-running CI after `main` moves. A merge queue would remove that cost later; it needs every required workflow to also run on the `merge_group` event.
 - **Nobody can bypass the rules.** In an emergency, an owner changes the baseline in a pull request (or the ruleset in the web interface, then restores it with `apply`), which leaves a record either way.
-- **The DCO and REUSE checks judge themselves.** A workflow triggered by a pull request runs the pull request's own copy of `.github/`, so a pull request can change the checks that judge it. Required checks therefore guard against mistakes, not against a malicious pull request; review is the defense, and `.github/` is listed as security-sensitive in every repository's `CODEOWNERS`. A workflow required by an organization ruleset and kept in a central repository would close the gap; revisit it when a second maintainer joins.
+- **The DCO, REUSE and supply-chain checks judge themselves.** A workflow triggered by a pull request runs the pull request's own copy of `.github/`, so a pull request can change the checks that judge it. Required checks therefore guard against mistakes, not against a malicious pull request; review is the defense, and `.github/` is listed as security-sensitive in every repository's `CODEOWNERS`. A workflow required by an organization ruleset and kept in a central repository would close the gap; revisit it when a second maintainer joins.
 - **The squash commit message stays the list of commit messages.** It keeps the agents' `Co-Authored-By:` lines, and the sign-off on web commits adds the merging person's `Signed-off-by:` line at its end. Using the pull request's description as the message instead would leave the description's sign-off before its last lines (the "Generated with" notes), where Git no longer reads it as a trailer.
 - **Signed commits are not required.** GitHub can refuse to squash-merge a pull request whose own commits lack a signature it can verify, which would shut out contributors who do not sign their commits, and `main` already holds only commits that GitHub created and signed. Revisit if pull requests ever need to be merged in another way.
 - **Code scanning's default setup is off** in the configuration for new repositories, because X-002 adds CodeQL as workflows, and GitHub does not run both kinds of setup in one repository.
