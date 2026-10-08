@@ -35,8 +35,8 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 ORG = "BayanDocs"
 
-# The checks that every repository runs on every pull request (work package X-001): the Developer Certificate of Origin check (.github/workflows/dco.yml), which stays red on a pull request with commits written by an AI agent until the person submitting it adds their own sign-off to its description, and `reuse lint` (.github/workflows/reuse.yml).
-EVERY_REPOSITORY_CHECKS: List[str] = ["DCO", "REUSE lint"]
+# The checks that every repository runs on every pull request: the Developer Certificate of Origin check (.github/workflows/dco.yml), which stays red on a pull request with commits written by an AI agent until the person submitting it adds their own sign-off to its description, and `reuse lint` (.github/workflows/reuse.yml), both from work package X-001; and the two jobs of the supply-chain workflow (.github/workflows/supply-chain.yml, work package X-003), which fail on update-bot configuration and on known vulnerabilities in the hash-pinned Python tools of CI.
+EVERY_REPOSITORY_CHECKS: List[str] = ["DCO", "REUSE lint", "No update bots", "pip-audit"]
 
 # The repositories this script manages, each with the CI checks that must pass before a pull request can merge into main. A check is named after its CI job as GitHub shows it on a pull request; a matrix job carries its matrix value in parentheses. List only jobs that run on every pull request (a job skipped by a path filter would block merging forever). When a job is renamed or added, update its list here and run `apply`.
 REPOSITORIES: Dict[str, List[str]] = {
@@ -50,7 +50,8 @@ REPOSITORIES: Dict[str, List[str]] = {
         "Windows (MSVC) · build and test",
         *EVERY_REPOSITORY_CHECKS,
     ],
-    "bayan-server": ["Verification gate", "PostgreSQL integration", "Container image", *EVERY_REPOSITORY_CHECKS],
+    # "Supply-chain checks" runs first and the jobs that build wait for it; a job that waits on a failed one is skipped, and GitHub counts a skipped required check as passing, so the first job is required itself.
+    "bayan-server": ["Supply-chain checks", "Verification gate", "PostgreSQL integration", "Container image", *EVERY_REPOSITORY_CHECKS],
 }
 
 # Organization member privileges (organization settings → Member privileges), as (API field, description, baseline value). Base permission "none": being a member gives no access to any repository by itself, so access comes only from the teams below, and a future private repository (such as the private corpus) is not readable by every member. Only owners create repositories and publish GitHub Pages sites. Deploy keys (per-repository SSH keys that bypass people's accounts) are switched off.
