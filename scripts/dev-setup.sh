@@ -7,8 +7,9 @@
 # The pins live in one place: scripts/cloud-environment-setup.sh, which changes only in the monthly dependency session (ADR-0017). This script reads the versions, download addresses and hashes from it, so cloud sessions, CI and local machines always run the same tools.
 #
 # Usage:
-#   scripts/dev-setup.sh           install any missing tool into .tools/bin inside this repository (ignored by Git)
-#   scripts/dev-setup.sh --check   only check that the pinned versions are available; change nothing
+#   scripts/dev-setup.sh               install any missing tool into .tools/bin inside this repository (ignored by Git)
+#   scripts/dev-setup.sh --check       only check that the pinned versions are available; change nothing
+#   scripts/dev-setup.sh --pip-audit   install only pip-audit, which the supply-chain check .github/supply-chain/audit_python_tools.py runs (work package X-003), into ~/.local/share/bayandocs/pip-audit-<hash of its pins> and link it as ~/.local/bin/pip-audit. Its pins are .github/supply-chain/pip-audit-requirements.txt (exact versions with SHA-256 hashes, the same file in every BayanDocs repository), installed with pip --require-hashes as wheels only, on Linux x86-64.
 # Running it again is safe: a tool already present at its pinned version is left alone.
 set -euo pipefail
 
@@ -21,8 +22,33 @@ mode=install
 case "${1:-}" in
   "") ;;
   --check) mode=check ;;
-  *) echo "usage: scripts/dev-setup.sh [--check]" >&2; exit 2 ;;
+  --pip-audit) mode=pip-audit ;;
+  *) echo "usage: scripts/dev-setup.sh [--check | --pip-audit]" >&2; exit 2 ;;
 esac
+
+# pip-audit lives in a virtual environment named after a hash of its pin file, so that a changed pin always gets a fresh environment and an unchanged one is reused.
+if [[ $mode == pip-audit ]]; then
+  if [[ $(uname -s) != Linux || $(uname -m) != x86_64 ]]; then
+    echo "error: the pinned pip-audit wheels are for Linux x86-64; elsewhere, install the versions in .github/supply-chain/pip-audit-requirements.txt yourself." >&2
+    exit 1
+  fi
+  requirements="$repo/.github/supply-chain/pip-audit-requirements.txt"
+  venv="${XDG_DATA_HOME:-$HOME/.local/share}/bayandocs/pip-audit-$(sha256sum "$requirements" | cut -c1-12)"
+  link_dir="$HOME/.local/bin"
+  if [[ ! -x $venv/bin/pip-audit ]]; then
+    rm -rf -- "$venv"
+    python3 -m venv "$venv"
+    "$venv/bin/pip" install --quiet --no-input --disable-pip-version-check --require-hashes --only-binary :all: --requirement "$requirements"
+  fi
+  mkdir -p "$link_dir"
+  ln -sfn "$venv/bin/pip-audit" "$link_dir/pip-audit"
+  echo "ok       $("$venv/bin/pip-audit" --version) ($link_dir/pip-audit)"
+  case ":$PATH:" in
+    *":$link_dir:"*) ;;
+    *) echo "note: add $link_dir to your PATH, or run $venv/bin/pip-audit" ;;
+  esac
+  exit 0
+fi
 
 # Prints the pin of a release binary from the BINARIES list in the cloud setup script as "version url sha256 member", where member is the path of the binary inside the archive.
 binary_pin() {
