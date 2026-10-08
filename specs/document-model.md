@@ -87,14 +87,14 @@ A mark key starts with its **family** (`r`, `link`, `cmt`, `rev`), followed, in 
 
 | Mark family | Keys | Expansion when typing at the boundary |
 |---|---|---|
-| Run properties | one key per `w:rPr` property, named after the element path, for example `r:b`, `r:i`, `r:sz`, `r:szCs`, `r:rFonts.ascii`, `r:rFonts.eastAsia`, `r:color.val`, `r:color.themeColor`, `r:u.val`, `r:highlight`, `r:lang.val`, `r:rStyle`, `r:w14.ligatures` | **after** (typing at the end of a run continues its formatting), subject to Word Behavior Notes for edge cases |
+| Run properties | one key per `w:rPr` property: the element's name for its `w:val` attribute, and the element's name, a dot and the attribute's name for any other attribute, for example `r:b`, `r:i`, `r:sz`, `r:szCs`, `r:rFonts.ascii`, `r:rFonts.eastAsia`, `r:color`, `r:color.themeColor`, `r:u`, `r:highlight`, `r:lang`, `r:rStyle`, `r:w14.ligatures` | **after** (typing at the end of a run continues its formatting), subject to Word Behavior Notes for edge cases |
 | Hyperlink | `link` → { target (relationship or anchor), tooltip, history, preserved } | **none** (to be confirmed by a Word Behavior Note) |
 | Comment highlight | `cmt:<CommentId>` → true (one key per comment, so comments can overlap freely) | **none** |
 | Revisions | `rev:ins`, `rev:del`, `rev:moveFrom`, `rev:moveTo` → { id, author, date }; `rev:rPrChange` → { author, date, previous run properties } | **none** (the editing layer marks new text explicitly when tracking is on) |
 | Paragraph-mark formatting | not marks: the run properties of the paragraph mark (`w:pPr/w:rPr`) are stored in the paragraph's properties as `rPr.<property>` (§6), because a run-property mark that ends on a ParagraphEnd and expands after would spread into the next paragraph (CORE-004) | — |
 | Unknown run properties | `r:preserved` → list of raw XML fragments | **after** |
 
-Run-property marks never apply to structural atoms (ParagraphEnd, RangeStart and RangeEnd, TableBlock): the view ignores them there.
+No mark applies to a structural atom (ParagraphEnd, RangeStart and RangeEnd, TableBlock): the view drops every mark there, whatever its family, because these atoms have no glyph of their own, and the paragraph mark's formatting, its revisions included, lives in the paragraph's properties (§6). A comment over nothing but an empty paragraph therefore highlights no character in the view; whether Word shows such a comment on the paragraph mark is a question for a Word Behavior Note in CORE-101 (CORE-004).
 
 Effective formatting is **not** stored in marks: marks hold only direct formatting. `bayan-styles` computes effective properties from defaults, styles and direct formatting.
 
@@ -178,9 +178,9 @@ A range entity is delimited by RangeStart/RangeEnd (inline) or BlockRangeStart/B
 | I2 | Field atoms nest properly: Begin, optional Separator, End; fields may nest inside codes and results. |
 | I3 | Each RangeId has at most one start and one end atom, the end after the start. |
 | I4 | Block-level atoms appear only at block positions. |
-| I5 | Every special atom references an existing entity, and each object, note and comment entity is referenced exactly once. |
+| I5 | Every special atom references an existing entity, and each object, note and comment entity is referenced exactly once. Every mark that names an entity (a comment highlight `cmt:<CommentId>`) names one that exists. |
 | I6 | Every table has at least one row and every row at least one cell; every cell story satisfies I1. |
-| I7 | The final section has properties. |
+| I7 | The final section has its page size and margins, as integers: the page size positive, the left and right margins not negative. |
 
 Concurrent edits can violate these. **Normalization** is a deterministic projection applied when building the view used by layout, export and accessibility. It never writes to the shared state by itself; the next local edit that touches an affected region writes the normalized structure explicitly (**materialization**), so all replicas converge. Materialization uses the identifiers and properties the view already shows, so it does not change the view, and it is committed outside undo, so undoing the edit returns the view to its state before the edit.
 
@@ -190,13 +190,15 @@ Concurrent edits can violate these. **Normalization** is a deterministic project
 | N2 | Unmatched field delimiters are dropped from the view; the content between them is treated as ordinary text. |
 | N3 | An unmatched RangeStart becomes a zero-length range at its position; an unmatched RangeEnd is dropped. Matching is per story: a start and an end in different stories are both unmatched. |
 | N4 | A block-level atom found mid-paragraph splits the paragraph in the view; the leading part takes a virtual ParagraphEnd copying the containing paragraph's properties. |
-| N5 | Special atoms whose entity is missing are dropped from the view; entities that nothing references are invisible but retained (undo may restore their reference). |
+| N5 | Special atoms whose entity is missing are dropped from the view; entities that nothing references are invisible but retained (undo may restore their reference). Marks that name an entity missing from the view (a comment highlight whose comment is not shown) are dropped too, and text that differed only by them merges. |
 | N6 | Tables with no rows and rows with no cells are omitted; ragged rows are kept. |
 | N7 | If two atoms reference the same entity, the first in document order wins and later ones are dropped from the view. Document order is the order in which normalization traverses the stories (a table's cell stories at the table's position), so a table reached again inside its own cells is dropped there: concurrent moves that nest tables in each other cannot make normalization loop. |
-| N8 | A final section without properties gets default properties (A4 page, 2.54 cm margins), which I7 requires. |
+| N8 | Final-section properties that are missing, not integers, or outside what I7 allows get defaults (A4 page, 2.54 cm margins). The defaults are **provisional** until a Word Behavior Note records what Word assumes for a document without section properties, because they change layout. OOXML allows left and right margins of 0 and negative top and bottom margins, so of the integer values present, N8 replaces only a page size that is not positive and a negative left or right margin. |
 | N9 | Tables nested more than 32 levels deep are dropped from the view, so that a hostile document cannot exhaust the stack (a resource limit, like those of ADR-0006). |
 
-CORE-004 proved with property-based tests over randomly broken documents, and in 1,000 randomized three-replica runs of 10,000 operations, that normalization is deterministic, idempotent and always yields a model satisfying I1–I7 (§18).
+Two more details complete the projection. A C0 control character that is not a placeholder bound to an existing entity of its kind is dropped, because C0 characters are reserved for placeholders (§4). A cell or comment whose story is missing, or was already reached as another cell's or comment's story (N7 for stories), gets an empty story whose identifier is derived from its owner's, so that I1 and I6 hold.
+
+CORE-004 showed with property-based tests over randomly broken documents, and in 1,000 randomized three-replica runs of 10,000 operations, that normalization is deterministic, idempotent and always yields a model satisfying I1–I7, as judged by an invariant checker that has a test for each invariant (§18).
 
 ## 15. Operations and transactions
 
@@ -213,15 +215,15 @@ CORE-004 implemented and validated this mapping on Loro 1.16.2 (`bayan-crdt` and
 | Story | the main story is a root rich-text container; every other story is a rich-text container in a root `stories` map keyed by `StoryId`, created as a *mergeable* child so that two replicas creating the same story concurrently end up with one |
 | Special atom payload binding | placeholder character plus a mark `atom` = `"<kind code>:<id>"` (for example `p:` and the paragraph's 32 hexadecimal digits) with no expansion |
 | Run properties, hyperlinks, comments, revisions | rich-text marks, with expansion configured per family (§5) |
-| Paragraph properties | a mergeable child map per `ParagraphId` in a root `paragraphs` map; nested maps for complex values (tabs, borders, numbering reference, section properties). Reading one container per paragraph costs about a quarter of loading a 500-page document; CORE-101 decides between reading properties lazily and flatter maps (CORE-004 report) |
+| Paragraph properties | a mergeable child map per `ParagraphId` in a root `paragraphs` map; nested maps for complex values (tabs, borders, numbering reference, section properties). Reading one container per entity is 38% of the first read of a 500-page document; CORE-101 decides between reading properties lazily and flatter maps (CORE-004 report) |
 | Tables | root `tables` map: per table a map with properties, grid and a movable list `rows` of row identifiers; root `rows` map: per row a map with a movable list `cells` of cell identifiers; root `cells` map: per cell its properties and its story identifier |
 | Objects, notes, comments, fields, ranges, equations | root maps keyed by identifier, one mergeable child map per entity |
 | Styles, numbering, settings, theme, font table | root maps |
 | Media | references only; blobs live in a content-addressed store outside the CRDT |
 | Undo | the CRDT's undo manager, excluding remote changes. Creating an entity and materializing normalized structure (§14) are committed outside undo; undo removes only references, and unreferenced entities stay invisible (N5) |
-| History | shallow snapshots for trimming; checkout for version views. In Loro 1.16.2 a document opened from a shallow snapshot pays more for its first update and for undo than one opened from a full snapshot (CORE-004 report, F11), so the at-rest format is chosen by measurement |
+| History | shallow snapshots for trimming; checkout for version views. In Loro 1.16.2 a document opened from a shallow snapshot pays more for its first update and for undo than one opened from a full snapshot, and about 0.2 s for every concurrent keystroke it imports (CORE-004 report, F11), so the at-rest format is chosen by measurement |
 | Loading | a snapshot is imported before anything subscribes to the document: with a subscriber, the import computes the whole document as one change event (seconds for 500 pages) instead of decoding lazily |
-| Untrusted updates | refused before decoding beyond size, change and operation limits; refused after decoding when a value is nested too deeply; a panic inside the library is contained and poisons the replica, which the host discards and reloads (CORE-004 report) |
+| Untrusted updates | checked against size, change and operation limits that Loro counts by decoding the whole blob, so a hostile blob is decoded before it can be refused, and that decoding can itself panic, abort the process on an absurd allocation, or overflow the stack on a deeply nested value; a value nested too deeply is refused after the import only if it survived decoding; a panic inside the library is contained and poisons the replica, which then refuses everything and which the host discards and reloads. Aborts and stack overflows cannot be contained inside the process, so imports from untrusted peers need isolation (CORE-004 report §8.3) |
 
 ## 17. Derived views
 
@@ -232,9 +234,9 @@ CORE-004 implemented and validated this mapping on Loro 1.16.2 (`bayan-crdt` and
 The [CORE-004 report](https://github.com/BayanDocs/bayan-core/pull/13) (`spikes/crdt-model/REPORT.md` in bayan-core) gives the evidence for each answer.
 
 1. **Does Loro support per-key expansion for dynamically named mark keys (`cmt:<id>`)?** Yes: Loro configures expansion by the part of a key before its first colon, so the family `cmt` governs every `cmt:<id>` key, however many comments overlap (§5).
-2. **Is the placeholder-plus-mark binding robust under concurrent deletion and re-insertion?** Yes. Typing next to an atom never extends its binding, undo restores atoms with their bindings, and cut and paste racing with formatting and deletion converges. Races that bind two atoms to one entity are resolved by N7; run-property marks must not touch structural atoms, which is why paragraph-mark formatting moved into the paragraph's properties (§5).
-3. **Memory and load time of many small maps for a 500-page document in WebAssembly?** 141 MB of WebAssembly memory after loading and reading a 500-page document with 21,000 paragraph maps, 200 tables and 2,000 comments; 0.77 s to load and read once a quadratic decoding bug in Loro 1.16.2 is fixed (7.0 s without the fix). Reading one map per paragraph is about a quarter of that time (§16).
+2. **Is the placeholder-plus-mark binding robust under concurrent deletion and re-insertion?** Yes. Typing next to an atom never extends its binding, undo restores atoms with their bindings, and cut and paste racing with formatting and deletion converges. Races that bind two atoms to one entity are resolved by N7; no mark applies to structural atoms, which is why paragraph-mark formatting moved into the paragraph's properties (§5).
+3. **Memory and load time of many small maps for a 500-page document in WebAssembly?** 142 MB of WebAssembly memory after loading and reading a 500-page document with 21,000 paragraph maps, 200 tables and 2,000 comments; 0.76 s to load and read once a quadratic decoding bug in Loro 1.16.2 is fixed (7.0 s without the fix). Reading one map per entity is 38% of the first read natively (§16).
 4. **Movable lists or a movable tree for table rows and nested structures?** Movable lists: nesting is expressed by stories, not by a container tree. Cycles from concurrent moves of table atoms cannot make normalization loop (N7), and nesting depth is limited (N9).
 5. **How does undo interact with materialization?** Materialization is committed outside undo and does not change the view, so undoing an edit returns the view to its state before the edit (§14).
 6. **Snapshot and update sizes for typical editing sessions?** About 105 bytes per edit sent alone and 18.6 KB for 1,000 edits sent together; 9.2 MB for the 500-page document with its whole history and 5.4 MB as a shallow snapshot (which is slower to work with in Loro 1.16.2, §16).
-7. **Resource limits needed when importing untrusted updates?** Size, change, operation and value-depth limits, plus containment: Loro 1.16.2 panics on crafted updates and aborts the process on some crafted headers that request absurd allocations, so the adapter contains panics and the engine's hosts must isolate imports and restart an engine that aborts (§16, ADR-0008).
+7. **Resource limits needed when importing untrusted updates?** Size, change, operation and value-depth limits, but limits are not enough: Loro checks the first three only by decoding the whole blob, and its decoding panics on crafted updates, aborts the process on crafted headers that request absurd allocations, and overflows the stack on deeply nested values before the depth limit can look at them. The adapter contains panics (the poisoned replica refuses everything afterwards); the engine's hosts must isolate imports from untrusted peers and restart an engine that aborts (§16, ADR-0008).
