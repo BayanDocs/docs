@@ -31,19 +31,19 @@ In BayanDocs cloud sessions the project's tools are preinstalled at pinned versi
 
 ## 4. The verification gate is sacred
 
-- Run the repository's full verification gate before every push (each repo's `AGENTS.md` names the command). CI also runs the DCO check and `reuse lint` on every pull request in every repository ([CONTRIBUTING.md](CONTRIBUTING.md#developer-certificate-of-origin)); they must pass too. Both run the pull request's own copy of their files, so a pull request can change the checks that judge it: treat every change under `.github/` as security-relevant in review.
+- Run the repository's full verification gate before every push (each repo's `AGENTS.md` names the command). CI also runs the DCO check, `reuse lint` and the supply-chain checks (no update-bot configuration, pip-audit on the hash-pinned Python tools) on every pull request in every repository ([CONTRIBUTING.md](CONTRIBUTING.md#developer-certificate-of-origin), [the runbook](developer/dependency-update-runbook.md#how-the-rules-are-enforced)); they must pass too. All of them run the pull request's own copy of their files, so a pull request can change the checks that judge it: treat every change under `.github/` as security-relevant in review.
 - Never weaken, skip, disable, quarantine or delete a test, lint, check or CI job to make a change pass. If a check is genuinely wrong, fix the check in its own commit and explain why, or escalate.
 - Every behavior change has tests. Every bug fix has a regression test. Any change that alters layout output must include Fidelity Lab evidence (see [specs/fidelity-lab.md](specs/fidelity-lab.md)).
 
 ## 5. Dependencies (strict — see ADR-0017)
 
 - **Never add automated version-update bots**: no `.github/dependabot.yml`, no Renovate, no equivalent. GitHub Dependabot *security alerts* stay enabled as a repository setting; they open no pull requests.
-- **Minimum age 24 hours.** Never install, pin or upgrade to a dependency version published less than 24 hours ago. Check the publish time (crates.io API `created_at`, npm `time`, release date) and state it in the PR.
+- **Minimum age 24 hours.** Never install, pin or upgrade to a dependency version published less than 24 hours ago. Check the publish time (crates.io index `pubtime` or API `created_at`, npm `time`, release date) and state it in the PR.
 - **Exact pins and committed lockfiles.** No version ranges in manifests where the ecosystem allows exact pins; `Cargo.lock` and `pnpm-lock.yaml` are always committed; CI builds with `--locked` / `--frozen-lockfile`.
 - **Install scripts are disabled** (`ignore-scripts=true` and pnpm's build-script allowlist). Do not enable a package's install script without an approved justification in the PR.
-- **Audit and lockfile-lint gates must stay green.** Licenses must be on the allowlist in ADR-0017.
+- **Audit and lockfile-integrity gates must stay green** (bayan-web's lockfile-integrity script takes the place of lockfile-lint, which cannot read pnpm's lockfile). Licenses must be on the allowlist in ADR-0017.
 - **Every new dependency is justified in the PR**: what it does, why we cannot reasonably write it, alternatives considered, license, maintenance status, publish date of the pinned version, and how many transitive dependencies it adds. Prefer fewer, well-maintained dependencies.
-- Routine upgrades happen only in the batched dependency-update session ([plan/06-agent-workflow.md](plan/06-agent-workflow.md#monthly-dependency-update-session)), never as drive-by changes. If a security alert requires an immediate update, follow the same session procedure for just that alert.
+- Routine upgrades happen only in the batched dependency-update session ([plan/06-agent-workflow.md](plan/06-agent-workflow.md#monthly-dependency-update-session)), never as drive-by changes. If a security alert requires an immediate update, follow the same session procedure for just that alert. The [dependency update runbook](developer/dependency-update-runbook.md) gives the steps for each repository, and lists the checks that enforce these rules.
 - If a repository documents its dependency posture (ADR or handoff doc), update that document in the same pull request as any posture change.
 
 ## 6. Security and privacy
