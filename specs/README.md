@@ -5,7 +5,7 @@ Specifications define contracts that more than one crate or repository depends o
 | Spec | Version | Owner stream | Consumers |
 |---|---|---|---|
 | [document-model.md](document-model.md) | v0 (draft, validated by CORE-004) | MODEL | every core crate |
-| [engine-protocol.md](engine-protocol.md) | v0 (draft, implemented by CORE-007) | UI / engine | bayan-desktop, bayan-web |
+| [engine-protocol.md](engine-protocol.md) | v0 (draft; details fixed by CORE-007) | UI / engine | bayan-desktop, bayan-web |
 | [fidelity-lab.md](fidelity-lab.md) | v1 | LAB | bayan-core CI, all layout work |
 | [font-compatibility.md](font-compatibility.md) | v0 (verified by CORE-008) | TEXT | bayan-fonts, packaging |
 | [coverage-matrix.md](coverage-matrix.md) | v1 | all | planning, release notes |
