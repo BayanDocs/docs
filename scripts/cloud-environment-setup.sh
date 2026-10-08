@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2026 BayanDocs contributors
 # SPDX-License-Identifier: MIT-0
 #
-# BayanDocs cloud environment setup script, version 2026-10-07.1.
+# BayanDocs cloud environment setup script, version 2026-10-04.4.
 #
 # Installs the tools that BayanDocs agent sessions need in a Claude Code cloud environment (Ubuntu 24.04, x86-64, run as root before Claude Code starts). Paste this whole file into the environment's settings: the cloud environment menu in the session's title bar, then Edit, then "Setup script". The result is cached for about seven days, or until this script or the network settings change. Canonical copy: https://github.com/BayanDocs/docs/blob/main/scripts/cloud-environment-setup.sh
 #
@@ -25,7 +25,7 @@ export NODE_EXTRA_CA_CERTS="${NODE_EXTRA_CA_CERTS:-$SYSTEM_CA}"
 # ---------------------------------------------------------------------------------------------------------------------
 # Pins. Update only in the monthly dependency session, checking each publish date (at least 24 hours old) and hash.
 # ---------------------------------------------------------------------------------------------------------------------
-SCRIPT_VERSION=2026-10-07.1
+SCRIPT_VERSION=2026-10-04.4
 APT_SNAPSHOT=20261003T000000Z    # Ubuntu archive as of 2026-10-03 00:00 UTC (snapshot.ubuntu.com)
 APT_PACKAGES="libgl-dev libegl-dev libvulkan-dev libxkbcommon-dev libfontconfig-dev libdbus-1-dev shellcheck"
 RUST_STABLE=1.99.0               # released 2026-10-01; keep equal to rust-toolchain.toml in bayan-core and bayan-server
@@ -432,6 +432,4 @@ write_profile
 } >"$LOG_DIR/summary.txt"
 cat "$LOG_DIR/summary.txt"
 if [ -x /home/user/bayan-web/scripts/dev-setup.sh ]; then /home/user/bayan-web/scripts/dev-setup.sh >/var/log/bayandocs-setup/bayan-web.log 2>&1 || echo "bayan-web dev-setup failed; see /var/log/bayandocs-setup/bayan-web.log"; fi
-# pip-audit, for the supply-chain check of the Python tools' pins (.github/supply-chain/ in every repository, work package X-003): installed by this repository's scripts/dev-setup.sh from the hash-pinned .github/supply-chain/pip-audit-requirements.txt into /root/.local/share/bayandocs, and linked as /root/.local/bin/pip-audit. It does nothing when the docs repository is not attached.
-if [ -x /home/user/docs/scripts/dev-setup.sh ]; then /home/user/docs/scripts/dev-setup.sh --pip-audit >/var/log/bayandocs-setup/pip-audit.log 2>&1 || echo "pip-audit setup failed; see /var/log/bayandocs-setup/pip-audit.log"; fi
 exit 0
