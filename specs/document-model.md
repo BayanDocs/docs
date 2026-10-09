@@ -1,6 +1,6 @@
 # Bayan Document Model (BDM) — v0
 
-- **Status:** Draft v0. Binding in its principles (ADR-0007); details are validated and finalized by CORE-004, then promoted to v1 by CORE-101. CORE-004 validated this draft on Loro on 2026-10-07; its amendments are included (§5, §6, §14, §16) and its answers and report are in §18.
+- **Status:** Draft v0. Binding in its principles (ADR-0007); details are validated and finalized by CORE-004, then promoted to v1 by CORE-101. CORE-004 validated this draft on Loro (reported on 2026-10-07; revised after review, its last convergence runs completed on 2026-10-09); its amendments are included (§5, §6, §14, §16) and its answers and report are in §18.
 - **Owner stream:** MODEL
 - **Related:** ADR-0005, ADR-0007, ADR-0008, ADR-0018, [coverage-matrix.md](coverage-matrix.md)
 
@@ -198,7 +198,7 @@ Concurrent edits can violate these. **Normalization** is a deterministic project
 
 Four more details complete the projection. A C0 control character that is neither a tab (whose atom names no entity) nor a placeholder bound to an existing entity of its kind is dropped, because C0 characters are reserved for placeholders (§4). A cell or comment whose story is missing, or was already reached as another cell's or comment's story (N7 for stories), gets an empty story whose identifier is derived from its owner's, so that I1 and I6 hold. A row or cell that the stored lists of rows and cells hold twice, which happens when two replicas delete it and both undo (each undo inserts it again), is shown once, where it first appears (N7 for rows and cells); operations on columns count columns as the view shows them, so they change such a row once and count such a cell once. The identifier of a virtual paragraph end (N1, N4) is derived deterministically and avoids every identifier that the stored state already takes, bound by a stored paragraph end or with an entry of any kind in the paragraph registry, so that materialization writes a new map with exactly the properties the view shows.
 
-CORE-004 showed with property-based tests over randomly broken documents, and in 1,000 randomized three-replica runs of 10,000 operations, that normalization is deterministic, idempotent and always yields a model satisfying I1–I7, as judged by an invariant checker that has a test for each invariant (§18).
+CORE-004 showed with property-based tests over randomly broken documents, and in 1,000 randomized three-replica runs of 10,000 operations before its review and again after it, with 100 more on its final code, that normalization is deterministic, idempotent and always yields a model satisfying I1–I7, as judged by an invariant checker that has a test for each invariant (§18).
 
 ## 15. Operations and transactions
 
