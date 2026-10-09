@@ -30,3 +30,4 @@ Loro = "Loro"  # CRDT library (ADR-0008)
 harfrust = "harfrust"  # text shaping library (ADR-0009)
 skrifa = "skrifa"  # font reading library (ADR-0009)
 OOXML = "OOXML"  # Office Open XML
+certifi = "certifi"  # the Python package of Mozilla's root certificates, a dependency of pip-audit (.github/supply-chain/)
