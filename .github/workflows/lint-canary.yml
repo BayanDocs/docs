@@ -1,0 +1,24 @@
+# Temporary canary for the verification of work package X-002: it names an action by its version tag instead of a commit SHA, which the workflow-lint job must reject. It runs only when started by hand, and a later commit of this pull request removes it.
+name: Workflow lint canary
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: lint-canary-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  canary:
+    name: Canary
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read # check out the repository
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
