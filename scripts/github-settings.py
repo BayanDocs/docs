@@ -35,23 +35,32 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 ORG = "BayanDocs"
 
-# The checks that every repository runs on every pull request: the Developer Certificate of Origin check (.github/workflows/dco.yml), which stays red on a pull request with commits written by an AI agent until the person submitting it adds their own sign-off to its description, and `reuse lint` (.github/workflows/reuse.yml), both from work package X-001; and the two jobs of the supply-chain workflow (.github/workflows/supply-chain.yml, work package X-003), which fail on update-bot configuration and on known vulnerabilities in the hash-pinned Python tools of CI.
-EVERY_REPOSITORY_CHECKS: List[str] = ["DCO", "REUSE lint", "No update bots", "pip-audit"]
+# The checks that every repository runs on every pull request: the Developer Certificate of Origin check (.github/workflows/dco.yml), which stays red on a pull request with commits written by an AI agent until the person submitting it adds their own sign-off to its description, and `reuse lint` (.github/workflows/reuse.yml), both from work package X-001; the two jobs of the supply-chain workflow (.github/workflows/supply-chain.yml, work package X-003), which fail on update-bot configuration and on known vulnerabilities in the hash-pinned Python tools of CI; and, from work package X-002, the workflow lint (.github/workflows/workflow-lint.yml: zizmor and pinact) and the CodeQL scans of the workflows and the Python scripts (.github/workflows/codeql.yml, one job per language). A CodeQL job fails only when the analysis cannot run, not because it finds something; its alerts are in code scanning.
+EVERY_REPOSITORY_CHECKS: List[str] = ["DCO", "REUSE lint", "No update bots", "pip-audit", "Workflow lint", "CodeQL (actions)", "CodeQL (python)"]
 
 # The repositories this script manages, each with the CI checks that must pass before a pull request can merge into main. A check is named after its CI job as GitHub shows it on a pull request; a matrix job carries its matrix value in parentheses. List only jobs that run on every pull request (a job skipped by a path filter would block merging forever). When a job is renamed or added, update its list here and run `apply`.
 REPOSITORIES: Dict[str, List[str]] = {
-    "docs": ["scripts/verify.sh", *EVERY_REPOSITORY_CHECKS],
-    "bayan-core": ["verify (ubuntu-24.04)", "verify (windows-latest)", "verify (macos-latest)", *EVERY_REPOSITORY_CHECKS],
-    "bayan-web": ["pnpm verify (ubuntu-24.04)", "pnpm verify (macos-15)", "pnpm verify (macos-26-intel)", *EVERY_REPOSITORY_CHECKS],
+    "docs": ["scripts/verify.sh", "CodeQL (javascript-typescript)", *EVERY_REPOSITORY_CHECKS],
+    "bayan-core": [
+        "verify (ubuntu-24.04)",
+        "verify (windows-latest)",
+        "verify (macos-latest)",
+        "CodeQL (javascript-typescript)",
+        "CodeQL (c-cpp)",
+        "CodeQL (rust)",
+        *EVERY_REPOSITORY_CHECKS,
+    ],
+    "bayan-web": ["pnpm verify (ubuntu-24.04)", "pnpm verify (macos-15)", "pnpm verify (macos-26-intel)", "CodeQL (javascript-typescript)", *EVERY_REPOSITORY_CHECKS],
     "bayan-desktop": [
         "Linux · verification gate",
         "Linux · AddressSanitizer and UndefinedBehaviorSanitizer",
         "macOS (arm64) · build and test",
         "Windows (MSVC) · build and test",
+        "CodeQL (c-cpp)",
         *EVERY_REPOSITORY_CHECKS,
     ],
     # "Supply-chain checks" runs first and the jobs that build wait for it; a job that waits on a failed one is skipped, and GitHub counts a skipped required check as passing, so the first job is required itself.
-    "bayan-server": ["Supply-chain checks", "Verification gate", "PostgreSQL integration", "Container image", *EVERY_REPOSITORY_CHECKS],
+    "bayan-server": ["Supply-chain checks", "Verification gate", "PostgreSQL integration", "Container image", "CodeQL (rust)", *EVERY_REPOSITORY_CHECKS],
 }
 
 # Organization member privileges (organization settings → Member privileges), as (API field, description, baseline value). Base permission "none": being a member gives no access to any repository by itself, so access comes only from the teams below, and a future private repository (such as the private corpus) is not readable by every member. Only owners create repositories and publish GitHub Pages sites. Deploy keys (per-repository SSH keys that bypass people's accounts) are switched off.
@@ -93,7 +102,7 @@ ACTIONS_PERMISSIONS: List[Tuple[str, str, Any]] = [
 ACTIONS_ALLOWED: List[Tuple[str, str, Any]] = [
     ("github_owned_allowed", "GitHub's own actions allowed", True),  # actions/* and github/*
     ("verified_allowed", "Marketplace 'verified creator' actions allowed", False),  # no blanket trust
-    # Third-party actions, one "owner/repository@*" pattern each. Any commit of an allowed action may be used, because the SHA pin in each workflow is what reviewers check. Keep the list sorted. X-002 proposes additions (for example OpenSSF Scorecard); until a pattern is added here and applied, a workflow that uses that action fails.
+    # Third-party actions, one "owner/repository@*" pattern each. Any commit of an allowed action may be used, because the SHA pin in each workflow is what reviewers check. Keep the list sorted. Until a pattern is added here and applied, a workflow that uses that action fails. The list is empty: X-002 runs OpenSSF Scorecard as a checksum-verified program rather than through its action, whose container image is pinned only by a tag, and installs zizmor and pinact the same way.
     ("patterns_allowed", "Third-party actions allowed", []),
 ]
 ACTIONS_WORKFLOW: List[Tuple[str, str, Any]] = [
@@ -122,7 +131,7 @@ SECURITY_CONFIGURATION: List[Tuple[str, str, Any]] = [
     ("dependency_graph_autosubmit_action", "Automatic dependency submission", "disabled"),
     ("dependabot_alerts", "Dependabot alerts", "enabled"),
     ("dependabot_security_updates", "Dependabot security update pull requests", "disabled"),
-    ("code_scanning_default_setup", "Code scanning default setup", "disabled"),  # X-002 adds CodeQL as workflows instead
+    ("code_scanning_default_setup", "Code scanning default setup", "disabled"),  # X-002 adds CodeQL as workflows instead (.github/workflows/codeql.yml)
     ("secret_scanning", "Secret scanning", "enabled"),
     ("secret_scanning_push_protection", "Push protection", "enabled"),
     ("private_vulnerability_reporting", "Private vulnerability reporting", "enabled"),
