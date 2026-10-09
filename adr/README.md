@@ -32,7 +32,7 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 | [0013](0013-desktop-shell.md) | Desktop shell: Qt 6 Quick with thin C++ | Accepted — validation gate (DESK-002) |
 | [0014](0014-web-shell.md) | Web shell: React and TypeScript, engine in a Web Worker | Accepted — validation gate (WEB-002) |
 | [0015](0015-server-architecture.md) | Server: single Rust binary, zero-knowledge relay | Accepted |
-| [0016](0016-e2ee-and-identity.md) | End-to-end encryption and identity with MLS | Accepted — validation gate (SRV-002, external review before GA); amended 2026-10-04 (post-quantum encryption from the first release) |
+| [0016](0016-e2ee-and-identity.md) | End-to-end encryption and identity with MLS | Accepted — validation gate (SRV-002, met 2026-10-07; external review before GA); amended 2026-10-04 (post-quantum encryption from the first release) and 2026-10-07 (SRV-002 results and design details) |
 | [0017](0017-supply-chain-and-dependency-policy.md) | Supply-chain and dependency policy | Accepted; amended 2026-10-04 (agent environment; installing Qt for bayan-desktop; what the license allowlist covers; pnpm without Corepack; root certificate data for the server's TLS) and 2026-10-08 (the libFuzzer license for fuzzing) |
 | [0018](0018-file-formats-and-priorities.md) | File formats and conversion priorities | Accepted |
 | [0019](0019-shared-ui-manifest.md) | Shared UI manifest; Classic and Focus modes | Accepted |
