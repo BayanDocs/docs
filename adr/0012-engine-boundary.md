@@ -32,6 +32,16 @@ Two shells in different languages (C++/QML and TypeScript) must drive the same e
 - **Typed foreign-function bindings (Diplomat, cxx, UniFFI) instead of messages:** good for direct calls, but the Web Worker boundary still needs serialization, and record/replay is harder.
 - **CXX-Qt (Rust objects exposed to QML):** attractive, but version 0.10 is still in early development with frequent API changes.
 
+## Amendment 2026-10-08: Loro's randomness and clock, a temporary exception
+
+Decided by the owner on 2026-10-08 during CORE-004 ([BayanDocs/bayan-core pull request 13](https://github.com/BayanDocs/bayan-core/pull/13)), answering question 6 of its report.
+
+**Context.** Decision 5 says the engine never touches the outside world itself. CORE-004 found two platform calls that Loro 1.16.2, the CRDT library of [ADR-0008](0008-crdt-engine-and-local-first.md), makes on its own. Every new Loro document draws a random peer identifier from the platform's random-number generator (natively the operating system's; in the browser build `crypto.getRandomValues`), and every import draws one more, for the throwaway document into which Loro decodes an update to count its changes; the adapter replaces the identifier of every document it keeps with the one the host passes. And Loro's undo manager reads the wall clock on every recorded local change, to group changes into undo steps, which the adapter switches off because of the report's finding F12 (undo steps merge when the clock steps backwards, even with a merge interval of 0). Neither call changes a document's content.
+
+**Decision.** The two calls are accepted as a **temporary, documented exception** to decision 5, until Loro lets the host supply randomness and time; asking for that is one of the upstream requests the owner sends ([BayanDocs/bayan-core issue 14](https://github.com/BayanDocs/bayan-core/issues/14)). The exception covers only these two calls of Loro: any other platform call, by Loro or by another dependency, needs its own amendment. F12 is tracked with it: when Loro takes time from the host, the adapter's undo grouping is reviewed.
+
+**Consequences.** The work package that first links bayan-crdt into bayan-engine and bayan-wasm checks that the engine's WebAssembly imports contain these two calls and nothing more (CORE-004 report §8.4). The dependency session adopts the Loro release that lets the host supply randomness and time, and the exception then ends.
+
 ## Revisit when
 
 Profiling shows JSON encoding or decoding above 1 ms per frame on a hot path; then switch the encoding to CBOR (supported natively by Qt and by Rust's serde ecosystem) without changing message shapes.

@@ -23,17 +23,17 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 | [0004](0004-fidelity-contract-and-determinism.md) | Fidelity contract and layout determinism | Accepted |
 | [0005](0005-layout-units-and-deterministic-math.md) | Integer layout units (BLU) and deterministic math | Accepted |
 | [0006](0006-rust-core-and-memory-safety.md) | Rust core and memory-safety policy for untrusted input | Accepted; amended 2026-10-04 (AWS-LC for the server's TLS) |
-| [0007](0007-document-model.md) | Document model: a Word-shaped stream of stories and atoms | Accepted — validation gate (CORE-004) |
-| [0008](0008-crdt-engine-and-local-first.md) | CRDT engine (Loro) and local-first architecture | Accepted — validation gate (CORE-004) |
+| [0007](0007-document-model.md) | Document model: a Word-shaped stream of stories and atoms | Accepted — validated by CORE-004 (2026-10-09), except preserved atoms (not modelled; CORE-101); performance on the conditions of ADR-0008 |
+| [0008](0008-crdt-engine-and-local-first.md) | CRDT engine (Loro) and local-first architecture | Accepted — confirmed after the CORE-004 validation gate; amended 2026-10-08 (Loro on three conditions; the native load target; the advisory exceptions for Loro's dependencies) |
 | [0009](0009-text-stack.md) | Text stack: shaping, Unicode, line breaking and the Word measurement model | Accepted — validation gate (CORE-003) |
 | [0010](0010-font-strategy.md) | Font strategy and the bundled font library | Accepted |
 | [0011](0011-rendering-pipeline.md) | Rendering pipeline: display lists, reference rasterizer, PDF | Accepted — validation gate (CORE-003) |
-| [0012](0012-engine-boundary.md) | Engine boundary: JSON message protocol, C ABI and WebAssembly | Accepted |
+| [0012](0012-engine-boundary.md) | Engine boundary: JSON message protocol, C ABI and WebAssembly | Accepted; amended 2026-10-08 (a temporary exception for Loro's randomness and clock) |
 | [0013](0013-desktop-shell.md) | Desktop shell: Qt 6 Quick with thin C++ | Accepted — validation gate (DESK-002) |
 | [0014](0014-web-shell.md) | Web shell: React and TypeScript, engine in a Web Worker | Accepted — validation gate (WEB-002) |
 | [0015](0015-server-architecture.md) | Server: single Rust binary, zero-knowledge relay | Accepted |
 | [0016](0016-e2ee-and-identity.md) | End-to-end encryption and identity with MLS | Accepted — validation gate (SRV-002, external review before GA); amended 2026-10-04 (post-quantum encryption from the first release) |
-| [0017](0017-supply-chain-and-dependency-policy.md) | Supply-chain and dependency policy | Accepted; amended 2026-10-04 (agent environment; installing Qt for bayan-desktop; what the license allowlist covers; pnpm without Corepack; root certificate data for the server's TLS) |
+| [0017](0017-supply-chain-and-dependency-policy.md) | Supply-chain and dependency policy | Accepted; amended 2026-10-04 (agent environment; installing Qt for bayan-desktop; what the license allowlist covers; pnpm without Corepack; root certificate data for the server's TLS) and 2026-10-08 (the libFuzzer license for fuzzing) |
 | [0018](0018-file-formats-and-priorities.md) | File formats and conversion priorities | Accepted |
 | [0019](0019-shared-ui-manifest.md) | Shared UI manifest; Classic and Focus modes | Accepted |
 | [0020](0020-accessibility-release-gate.md) | Accessibility is a release gate | Accepted |
