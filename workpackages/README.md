@@ -19,7 +19,7 @@ A work package (WP) is a self-contained brief that one agent session can execute
 | [X-002](phase-0/X-002-ci-security-baseline.md) | CI security baseline | all | S | scaffolds | 2 | Ready |
 | [X-003](phase-0/X-003-supply-chain-enforcement.md) | Supply-chain enforcement and update runbook | all code repos | M | CORE-001, SRV-001, WEB-001, DESK-001 | 2 | Done |
 | [CORE-002](phase-0/CORE-002-bayan-units.md) | `bayan-units` | core | S | CORE-001 | 2 | Done |
-| [CORE-004](phase-0/CORE-004-spike-crdt-document-model.md) | Spike: document model on Loro | core | L | CORE-001 | 2 | In review |
+| [CORE-004](phase-0/CORE-004-spike-crdt-document-model.md) | Spike: document model on Loro | core | L | CORE-001 | 2 | Done |
 | [CORE-005](phase-0/CORE-005-bayan-opc.md) | `bayan-opc` | core | M | CORE-001 | 2 | Ready |
 | [CORE-006](phase-0/CORE-006-bayan-xml.md) | `bayan-xml` | core | M | CORE-001 | 2 | Ready |
 | [CORE-007](phase-0/CORE-007-engine-skeleton.md) | Engine skeleton: protocol v0, C ABI, WebAssembly | core | L | CORE-001 | 2 | Done |
