@@ -74,9 +74,13 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         source = Path(tmp, "in.txt")
         source.write_text(requirement + "\n")
+        # A universal resolution treats the Python version as the lowest one to support. Without
+        # --python-version, uv takes the version of the Python it runs with, and leaves out the
+        # dependencies that only older versions need (typing-extensions for cyclonedx-python-lib
+        # on Python 3.12 and older, for example), so pip --require-hashes then fails there.
         resolved = subprocess.run(
-            ["uv", "pip", "compile", "-q", "--universal", "--exclude-newer", cutoff,
-             "--no-header", "--no-annotate", str(source)],
+            ["uv", "pip", "compile", "-q", "--universal", "--python-version", f"3.{min(PYTHON_MINORS)}",
+             "--exclude-newer", cutoff, "--no-header", "--no-annotate", str(source)],
             check=True, capture_output=True, text=True,
         ).stdout
     for line in resolved.splitlines():

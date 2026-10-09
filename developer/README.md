@@ -5,3 +5,4 @@
 Available now:
 
 - [GitHub Settings Baseline](github-settings.md): the organization's and repositories' GitHub settings as code, and how an owner checks and applies them.
+- [Dependency update runbook](dependency-update-runbook.md): the step-by-step procedure for the monthly dependency update session and the security-alert session in each repository, and the checks that enforce the dependency policy.

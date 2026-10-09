@@ -115,5 +115,6 @@
 - [User Handbook](handbook/README.md)
 - [Developer Guide](developer/README.md)
   - [GitHub Settings Baseline](developer/github-settings.md)
+  - [Dependency update runbook](developer/dependency-update-runbook.md)
 - [Self-Hosting Guide](deploy/README.md)
 - [API Reference](api/README.md)

@@ -129,6 +129,16 @@ Decided by the owner on 2026-10-04 during SRV-001 ([BayanDocs/bayan-server pull 
 
 **Decision.** CDLA-Permissive-2.0 is accepted **for the `webpki-roots` crate only**, recorded as a per-crate license exception in bayan-server's `deny.toml`, not as a new entry in the general allowlist. Wherever a library can use the operating system's certificate store (the container's CA bundle) instead, the server uses that, as ADR-0028 requires; this exception exists because sqlx offers no such option with aws-lc-rs. ADR-0028 also accepts `aws-lc-sys`, a `-sys` crate whose build script compiles AWS-LC's C code; like `libsqlite3-sys`, it is a documented exception to "avoid `-sys` crates that compile C" in the Rust row of the mechanisms table.
 
+## Amendment 2026-10-08: the libFuzzer license for fuzzing
+
+Decided by the owner on 2026-10-08 during CORE-004 ([BayanDocs/bayan-core pull request 13](https://github.com/BayanDocs/bayan-core/pull/13)), answering question 3 of its report.
+
+**Context.** Every parser gets a fuzz target ([ADR-0025](0025-quality-gates.md), decision 4), and bayan-core's `fuzz/` folder, a separate Cargo workspace for them, plans to use cargo-fuzz (CORE-005, CORE-006). cargo-fuzz's targets depend on the crate libfuzzer-sys, which bundles LLVM's libFuzzer and is licensed `(MIT OR Apache-2.0) AND NCSA`. NCSA (the University of Illinois/NCSA Open Source License, a permissive license) is not on the allowlist of decision 8, and the amendment "what the license allowlist covers" applies the allowlist to every package dependency of our code, so CORE-004 fuzzed with a dependency-free fuzzer of its own instead.
+
+**Decision.** NCSA is accepted **only for fuzzing dependencies that never ship**: the dependencies of bayan-core's separate `fuzz/` workspace and its fuzz targets, such as libfuzzer-sys, which are never linked into, or shipped with, BayanDocs software. The license allowlist otherwise stays as it is: nothing that ships, and no dependency of the main workspaces, may use NCSA. Every other rule of this ADR applies to the fuzzing dependencies too: exact pins, a committed lockfile, the 24-hour minimum age and a justification in the pull request that adds them.
+
+**Consequences.** CORE-005 and CORE-006 can add their fuzz targets with cargo-fuzz, as `fuzz/README.md` in bayan-core assumes; the work package that adds the first target records the NCSA exception in the `fuzz/` workspace's own license check, never in the main workspace's `deny.toml`. Continuous fuzzing in CI becomes possible, and is a follow-up.
+
 ## Revisit when
 
 Ecosystem tools change (for example Cargo re-checking lockfile ages natively, or lockfile-lint supporting pnpm), a supply-chain incident affects us, or the owner changes the policy.

@@ -9,7 +9,7 @@
 | Size | L |
 | Depends on | CORE-001 |
 | Unblocks | CORE-101 (model v1), all editing and collaboration work |
-| Status | Ready |
+| Status | In review |
 | Requirements | FID-03, COL-01, COL-03, PERF-03, PERF-05 |
 | Decisions | ADR-0007 and ADR-0008 (this spike is their validation gate), ADR-0005, ADR-0006 |
 | Specs | [document-model.md](../../specs/document-model.md) (especially §4, §5, §7, §14, §16, §18) |
@@ -33,7 +33,7 @@ Implement a minimal but representative BDM on Loro, prove convergence and determ
 - Property-based tests: three replicas apply random operations (including concurrent structural edits), exchange updates in random orders with partitions, and must end with identical views satisfying I1–I7. Target: 1,000 runs of 10,000 operations (a smaller default in CI; the full run documented in the report). Normalization must be shown deterministic and idempotent.
 - Undo tests: undo reverts only local changes and composes with remote edits sensibly.
 - Mark-expansion tests matching the expectations in spec §5 (including many overlapping comments).
-- Performance on a synthetic 500-page document (about 1.5 million characters, 15,000 paragraphs, 200 tables, 2,000 comments): load from snapshot, memory, applying a 1,000-operation update, snapshot and update sizes, natively and in wasm32 under Node. Initial targets, to be confirmed or revised with justification: load ≤ 300 ms native and ≤ 1 s in WebAssembly; applying 1,000 operations ≤ 50 ms; WebAssembly memory ≤ 300 MB.
+- Performance on a synthetic 500-page document (about 1.5 million characters, 15,000 paragraphs, 200 tables, 2,000 comments): load from snapshot, memory, applying a 1,000-operation update, snapshot and update sizes, natively and in wasm32 under Node. Initial targets, to be confirmed or revised with justification: load ≤ 300 ms native and ≤ 1 s in WebAssembly; applying 1,000 operations ≤ 50 ms; WebAssembly memory ≤ 300 MB. (The owner relaxed the native load target to 600 ms for now on 2026-10-08, after this work package's results: [ADR-0008](../../adr/0008-crdt-engine-and-local-first.md), amendment 2026-10-08.)
 - A fuzz target importing untrusted Loro updates through the adapter with resource limits.
 - A time-boxed comparison on Automerge 3 for the text-with-marks-and-block-markers subset and the same performance measurements.
 - A report in `spikes/crdt-model/REPORT.md` answering every question in spec §18, and a docs pull request updating the spec and the validation status of ADR-0007/0008.
