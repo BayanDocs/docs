@@ -16,7 +16,7 @@ A work package (WP) is a self-contained brief that one agent session can execute
 | [DESK-001](phase-0/DESK-001-desktop-scaffold.md) | Desktop scaffold and CI | desktop | M | — | 1 | Done |
 | [WEB-001](phase-0/WEB-001-web-scaffold.md) | Web scaffold and CI | web | M | — | 1 | Done |
 | [SRV-001](phase-0/SRV-001-server-scaffold.md) | Server scaffold, container and CI | server | M | — | 1 | Done |
-| [X-002](phase-0/X-002-ci-security-baseline.md) | CI security baseline | all | S | scaffolds | 2 | Ready |
+| [X-002](phase-0/X-002-ci-security-baseline.md) | CI security baseline | all | S | scaffolds | 2 | Done |
 | [X-003](phase-0/X-003-supply-chain-enforcement.md) | Supply-chain enforcement and update runbook | all code repos | M | CORE-001, SRV-001, WEB-001, DESK-001 | 2 | Done |
 | [CORE-002](phase-0/CORE-002-bayan-units.md) | `bayan-units` | core | S | CORE-001 | 2 | Done |
 | [CORE-004](phase-0/CORE-004-spike-crdt-document-model.md) | Spike: document model on Loro | core | L | CORE-001 | 2 | Done |
