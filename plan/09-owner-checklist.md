@@ -19,7 +19,7 @@ Items 3–6a are applied by [scripts/github-settings.py](../scripts/github-setti
   - enable **private vulnerability reporting**.
 - [ ] **5. Harden GitHub Actions** (Settings → Actions → General), in each repository or once at organization level:
   - require actions to be pinned to a full-length commit SHA;
-  - allow only GitHub-authored actions plus an explicit allowlist (agents will propose the list in X-002);
+  - allow only GitHub-authored actions plus an explicit allowlist (X-002 proposes none: Scorecard, zizmor and pinact run as checksum-verified programs instead of third-party actions, so the list stays empty);
   - set the default `GITHUB_TOKEN` permission to read-only;
   - do not allow Actions to create or approve pull requests;
   - require approval before workflows from outside contributors' forks run.
