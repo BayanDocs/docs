@@ -139,6 +139,18 @@ Decided by the owner on 2026-10-08 during CORE-004 ([BayanDocs/bayan-core pull r
 
 **Consequences.** CORE-005 and CORE-006 can add their fuzz targets with cargo-fuzz, as `fuzz/README.md` in bayan-core assumes; the work package that adds the first target records the NCSA exception in the `fuzz/` workspace's own license check, never in the main workspace's `deny.toml`. Continuous fuzzing in CI becomes possible, and is a follow-up.
 
+## Amendment 2026-10-10: CodeQL for code scanning in CI
+
+Decided by the owner on 2026-10-10 in the review of work package X-002 ([BayanDocs/docs pull request 30](https://github.com/BayanDocs/docs/pull/30) and the four pull requests that go with it), choosing option A below.
+
+**Context.** X-002 adds code scanning with CodeQL, GitHub's static analysis, to all five repositories: the work package asks for it by name, and OpenSSF Scorecard's SAST check looks for it. CodeQL runs only in CI. Its engine, the CodeQL bundle (the CodeQL command-line program with its extractors and queries), may be used at no cost to analyse open-source code, but under the GitHub CodeQL Terms and Conditions, which are not an open-source license. The amendment "what the license allowlist covers" lets standalone CI tools use any OSI-approved open-source license and says nothing about other licenses, so the bundle needs a decision of its own. The action that runs it, `github/codeql-action`, is MIT-licensed and needs no exception.
+
+**Options considered.** (A) Accept the CodeQL bundle as a narrow exception for code scanning in CI, with every other rule of this ADR still applying to it. (B) Leave CodeQL out of X-002: no static analysis of the project's C++, Rust, TypeScript, JavaScript, Python and workflows, and Scorecard's SAST check stays at 0. The owner chose A.
+
+**Decision.** The CodeQL bundle, as GitHub publishes it in the `codeql-bundle-v<version>` releases of `github/codeql-action`, is accepted under the GitHub CodeQL Terms and Conditions **only for code scanning of BayanDocs' own repositories in CI**, run through `github/codeql-action`. It is never linked into, shipped with or needed to build BayanDocs software, and neither releases nor developer machines need it. Every other rule of this ADR applies to it: an exact version (`CODEQL_VERSION` in each repository's `.github/workflows/codeql.yml`), whose release must be at least 24 hours old; its SHA-256, taken from the release's checksum file, written in the workflow and checked before the bundle runs; the same age rule for the Rust toolchain that its Rust extractor installs; and a justification in the pull request that adds or changes it. This amendment accepts no other tool that is not open source.
+
+**Consequences.** The CodeQL workflows of X-002 may stay, code scanning shows their results, and Scorecard's SAST check can pass. The monthly dependency session updates the bundle together with `github/codeql-action`, as the dependency update runbook describes. If GitHub's terms change so that the bundle can no longer be used this way, the CodeQL workflows are removed, and a replacement needs the owner's decision.
+
 ## Revisit when
 
 Ecosystem tools change (for example Cargo re-checking lockfile ages natively, or lockfile-lint supporting pnpm), a supply-chain incident affects us, or the owner changes the policy.
