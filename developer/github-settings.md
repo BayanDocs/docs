@@ -27,7 +27,7 @@ Each value below is a constant near the top of the script, with a comment saying
 
 | Setting | Baseline | Why |
 |---|---|---|
-| Allowed actions | GitHub's own (`actions/*`, `github/*`) plus a reviewed list of third-party actions, empty today | CI is part of the supply chain (threat T16 in the [threat model](../specs/threat-model.md)). Every action is code that runs with access to the repository; each third-party one is added deliberately, in a pull request. |
+| Allowed actions | GitHub's own (`actions/*`, `github/*`) plus a reviewed list of third-party actions, empty today | CI is part of the supply chain (threat T16 in the [threat model](../specs/threat-model.md)). Every action is code that runs with access to the repository; each third-party one is added deliberately, in a pull request. [X-002](../workpackages/phase-0/X-002-ci-security-baseline.md) needed none: OpenSSF Scorecard, zizmor and pinact run as programs pinned by version and checked against a SHA-256, because Scorecard's action runs a container image that it names only by a movable tag. |
 | Actions must be pinned to a full commit SHA | Yes | [ADR-0017](../adr/0017-supply-chain-and-dependency-policy.md): a version tag can be moved to different code, a commit SHA cannot. GitHub now rejects workflows that break this rule instead of relying on review. |
 | Default `GITHUB_TOKEN` permission | Read-only | Each job asks for what it needs in its `permissions:` block ([X-002](../workpackages/phase-0/X-002-ci-security-baseline.md)). |
 | Actions can create or approve pull requests | No | A compromised workflow cannot approve its own changes. |
@@ -81,15 +81,15 @@ A ruleset is GitHub's current form of branch protection. Every managed repositor
 
 Because nobody can push to `main` directly, every commit on it is a squash commit that GitHub creates and signs.
 
-The required checks are the CI jobs that run on every pull request. Four of them run in every repository: `DCO`, which checks the Developer Certificate of Origin sign-offs and stays red on a pull request with commits written by an AI agent until the person submitting it adds their own `Signed-off-by:` line to its description, and `REUSE lint`, which checks that every file states its license ([X-001](../workpackages/phase-0/X-001-repository-baseline.md)); `No update bots`, which fails when configuration for Dependabot version updates, Renovate or a similar service appears, and `pip-audit`, which audits the hash-pinned Python tools of CI ([X-003](../workpackages/phase-0/X-003-supply-chain-enforcement.md); both are jobs of `.github/workflows/supply-chain.yml`).
+The required checks are the CI jobs that run on every pull request. Seven of them run in every repository: `DCO`, which checks the Developer Certificate of Origin sign-offs and stays red on a pull request with commits written by an AI agent until the person submitting it adds their own `Signed-off-by:` line to its description, and `REUSE lint`, which checks that every file states its license ([X-001](../workpackages/phase-0/X-001-repository-baseline.md)); `No update bots`, which fails when configuration for Dependabot version updates, Renovate or a similar service appears, and `pip-audit`, which audits the hash-pinned Python tools of CI ([X-003](../workpackages/phase-0/X-003-supply-chain-enforcement.md); both are jobs of `.github/workflows/supply-chain.yml`); and `Workflow lint`, which fails when zizmor finds a problem in a workflow or pinact finds an action that is not pinned to a commit at least a day old, and `CodeQL (actions)` and `CodeQL (python)`, the CodeQL scans of the workflows and the Python scripts ([X-002](../workpackages/phase-0/X-002-ci-security-baseline.md); `.github/workflows/workflow-lint.yml` and `.github/workflows/codeql.yml`). A CodeQL job fails only when the analysis cannot run; what it finds appears under Security → Code scanning, and on the pull request.
 
 | Repository | Required checks |
 |---|---|
-| docs | `scripts/verify.sh`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
-| bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
-| bayan-web | `pnpm verify (ubuntu-24.04)`, `pnpm verify (macos-15)`, `pnpm verify (macos-26-intel)`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
-| bayan-desktop | `Linux · verification gate`, `Linux · AddressSanitizer and UndefinedBehaviorSanitizer`, `macOS (arm64) · build and test`, `Windows (MSVC) · build and test`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
-| bayan-server | `Supply-chain checks`, `Verification gate`, `PostgreSQL integration`, `Container image`, `DCO`, `REUSE lint`, `No update bots`, `pip-audit` |
+| docs | `scripts/verify.sh`, `CodeQL (javascript-typescript)`, and the seven shared checks: `DCO`, `REUSE lint`, `No update bots`, `pip-audit`, `Workflow lint`, `CodeQL (actions)`, `CodeQL (python)` |
+| bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)`, `CodeQL (javascript-typescript)`, `CodeQL (c-cpp)`, `CodeQL (rust)`, and the seven shared checks |
+| bayan-web | `pnpm verify (ubuntu-24.04)`, `pnpm verify (macos-15)`, `pnpm verify (macos-26-intel)`, `CodeQL (javascript-typescript)`, and the seven shared checks |
+| bayan-desktop | `Linux · verification gate`, `Linux · AddressSanitizer and UndefinedBehaviorSanitizer`, `macOS (arm64) · build and test`, `Windows (MSVC) · build and test`, `CodeQL (c-cpp)`, and the seven shared checks |
+| bayan-server | `Supply-chain checks`, `Verification gate`, `PostgreSQL integration`, `Container image`, `CodeQL (rust)`, and the seven shared checks |
 
 **"Protect release tags"** applies to tags starting with `v`: they can be created but never moved or deleted, so a version number always names the same code, even for a tag without a published release.
 
@@ -148,7 +148,7 @@ Change the constants near the top of the script in a pull request to this reposi
 
 - **A new repository:** add it to `REPOSITORIES` with the CI jobs that must pass. Until then, every audit reports it as not in the baseline.
 - **A CI job is renamed or added:** update the repository's list in `REPOSITORIES` and apply. Otherwise pull requests wait forever for a check that no longer runs ("Expected — Waiting for status to be reported").
-- **A workflow needs a third-party action** (X-002 adds OpenSSF Scorecard, for example): add `owner/repository@*` to the allowed actions list and apply it before merging the workflow; until then GitHub refuses to run it.
+- **A workflow needs a third-party action:** first check whether the tool can run as a program pinned by version and checked against a SHA-256 instead, as X-002 does for OpenSSF Scorecard ([the workflow conventions](../AGENTS.md#workflow-conventions)). If the action is really needed, and the owner approves it, add `owner/repository@*` to the allowed actions list and apply it before merging the workflow; until then GitHub refuses to run it.
 - **A second maintainer joins:** add them to the Maintainers team in the web interface, raise `required_approving_review_count` to 1, and set `require_code_owner_review` to true, so that changes to the security-sensitive paths in each repository's `CODEOWNERS` (including `.github/`) need a code owner's approval. Consider then also requiring the DCO check as a workflow that an organization ruleset runs from a pinned commit of a central repository, which a pull request cannot change (see "Decisions" below).
 
 Run `audit` in each monthly dependency session ([plan/06](../plan/06-agent-workflow.md#monthly-dependency-update-session)) and after adding a repository.

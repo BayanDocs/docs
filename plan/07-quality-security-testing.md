@@ -55,7 +55,7 @@ A nightly integration workflow builds the desktop and web shells against the lat
 | web | frozen-lockfile install with scripts disabled, lint and format, type check, unit tests, end-to-end tests in three engines, accessibility rules, bundle budget, audit and lockfile integrity | integration against latest core |
 | server | as core, plus integration tests on SQLite and PostgreSQL, container build and scan | load tests, migration tests |
 | docs | site build, link check, spell check | — |
-| all | workflow security lint, secret scanning with push protection | OpenSSF Scorecard |
+| all | workflow security lint (zizmor and pinact), CodeQL, secret scanning with push protection | workflow security lint (nightly), CodeQL and OpenSSF Scorecard (weekly) |
 
 No gate may be weakened to make a change pass (see [AGENTS.md §4](../AGENTS.md#4-the-verification-gate-is-sacred)).
 
@@ -65,7 +65,7 @@ No gate may be weakened to make a change pass (see [AGENTS.md §4](../AGENTS.md#
 
 1. **Threat models** per component ([specs/threat-model.md](../specs/threat-model.md)), updated at each phase gate and whenever a work package changes a trust boundary.
 2. **Security-sensitive paths** (parsers, cryptography, authentication, authorization, the FFI boundary, update mechanisms, and the CI workflows and the checks they run in `.github/`) are listed in each repository's `CODEOWNERS`; changes to them require a dedicated security review session in addition to the normal review. `.github/` is on the list because a workflow triggered by a pull request runs that pull request's own copy of it, so a change there can weaken the checks that judge it.
-3. **Static analysis:** strict lints, CodeQL for C++, TypeScript and workflows, a workflow security linter, `clang-tidy`.
+3. **Static analysis:** strict lints, CodeQL, a workflow security linter (zizmor, with pinact for the action pins), `clang-tidy`. CodeQL scans the GitHub Actions workflows and the Python scripts in every repository, C++ in desktop (built with CI's Linux steps), JavaScript and TypeScript in web, core (the worker host and drivers) and docs (the website's Mermaid loader), Rust in core and server, and C in core (the C driver, without a build); the QML of desktop is not scanned, as CodeQL does not support it (X-002, with CodeQL 2.27.2). The [workflow conventions](../AGENTS.md#workflow-conventions) list the rules that workflows follow.
 4. **Dynamic analysis:** fuzzing, sanitizers, Miri.
 5. **Dependencies:** ADR-0017 in full.
 6. **External audits:** the cryptographic design and server before collaboration GA (Phase 3); a full audit before 1.0. Funding programmes for open source (see the owner checklist) sometimes include audits.

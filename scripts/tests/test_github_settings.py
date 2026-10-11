@@ -512,15 +512,15 @@ class GitHubSettingsTest(unittest.TestCase):
         self.assertEqual(sorted(c["context"] for c in checks["required_status_checks"]), sorted(gs.REPOSITORIES["bayan-core"]))
         self.assertTrue(all(c["integration_id"] == gs.GITHUB_ACTIONS_APP_ID for c in checks["required_status_checks"]))
 
-    def test_every_repository_requires_the_dco_and_reuse_checks(self) -> None:
+    def test_every_repository_requires_the_shared_checks(self) -> None:
         fake = FakeGitHub()
         reach_baseline(fake)
         for name, repo in fake.repos.items():
             main = next(r for r in repo["_rulesets"].values() if r["name"] == "Protect main")
             checks = next(rule for rule in main["rules"] if rule["type"] == "required_status_checks")["parameters"]
             contexts = [c["context"] for c in checks["required_status_checks"]]
-            self.assertIn("DCO", contexts, name)
-            self.assertIn("REUSE lint", contexts, name)
+            for check in ("DCO", "REUSE lint", "No update bots", "pip-audit", "Workflow lint", "CodeQL (actions)", "CodeQL (python)"):
+                self.assertIn(check, contexts, name)
 
     def test_web_commits_and_merges_are_signed_off(self) -> None:
         fake = FakeGitHub()
