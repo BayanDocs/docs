@@ -29,7 +29,7 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 | [0010](0010-font-strategy.md) | Font strategy and the bundled font library | Accepted |
 | [0011](0011-rendering-pipeline.md) | Rendering pipeline: display lists, reference rasterizer, PDF | Accepted — validation gate (CORE-003) |
 | [0012](0012-engine-boundary.md) | Engine boundary: JSON message protocol, C ABI and WebAssembly | Accepted; amended 2026-10-08 (a temporary exception for Loro's randomness and clock) |
-| [0013](0013-desktop-shell.md) | Desktop shell: Qt 6 Quick with thin C++ | Accepted — validation gate (DESK-002): automated part met, manual tests pending |
+| [0013](0013-desktop-shell.md) | Desktop shell: Qt 6 Quick with thin C++ | Accepted — validation gate (DESK-002) open: built and tested automatically 2026-10-12; manual tests on Windows, macOS and Linux pending |
 | [0014](0014-web-shell.md) | Web shell: React and TypeScript, engine in a Web Worker | Accepted — validation gate (WEB-002) |
 | [0015](0015-server-architecture.md) | Server: single Rust binary, zero-knowledge relay | Accepted |
 | [0016](0016-e2ee-and-identity.md) | End-to-end encryption and identity with MLS | Accepted — validation gate (SRV-002, met 2026-10-07; external review before GA); amended 2026-10-04 (post-quantum encryption from the first release) and 2026-10-07 (SRV-002 results and design details) |
