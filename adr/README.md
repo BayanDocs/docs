@@ -25,9 +25,9 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 | [0006](0006-rust-core-and-memory-safety.md) | Rust core and memory-safety policy for untrusted input | Accepted; amended 2026-10-04 (AWS-LC for the server's TLS) |
 | [0007](0007-document-model.md) | Document model: a Word-shaped stream of stories and atoms | Accepted — validated by CORE-004 (2026-10-09), except preserved atoms (not modelled; CORE-101); performance on the conditions of ADR-0008 |
 | [0008](0008-crdt-engine-and-local-first.md) | CRDT engine (Loro) and local-first architecture | Accepted — confirmed after the CORE-004 validation gate; amended 2026-10-08 (Loro on three conditions; the native load target; the advisory exceptions for Loro's dependencies) |
-| [0009](0009-text-stack.md) | Text stack: shaping, Unicode, line breaking and the Word measurement model | Accepted — validation gate (CORE-003) |
+| [0009](0009-text-stack.md) | Text stack: shaping, Unicode, line breaking and the Word measurement model | Accepted — validated by CORE-003 (2026-10-12) |
 | [0010](0010-font-strategy.md) | Font strategy and the bundled font library | Accepted |
-| [0011](0011-rendering-pipeline.md) | Rendering pipeline: display lists, reference rasterizer, PDF | Accepted — validation gate (CORE-003) |
+| [0011](0011-rendering-pipeline.md) | Rendering pipeline: display lists, reference rasterizer, PDF | Accepted — validated by CORE-003 (2026-10-12); vello_cpu not adopted for interactive rendering |
 | [0012](0012-engine-boundary.md) | Engine boundary: JSON message protocol, C ABI and WebAssembly | Accepted; amended 2026-10-08 (a temporary exception for Loro's randomness and clock) |
 | [0013](0013-desktop-shell.md) | Desktop shell: Qt 6 Quick with thin C++ | Accepted — validation gate (DESK-002) |
 | [0014](0014-web-shell.md) | Web shell: React and TypeScript, engine in a Web Worker | Accepted — validation gate (WEB-002) |
