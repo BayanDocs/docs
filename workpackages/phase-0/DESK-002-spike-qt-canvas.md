@@ -9,7 +9,7 @@
 | Size | L |
 | Depends on | DESK-001, CORE-007 |
 | Unblocks | DESK-101, DESK-103 |
-| Status | Ready |
+| Status | In review |
 | Requirements | A11Y-02, I18N-07, PERF-04 |
 | Decisions | ADR-0013 (this spike is its validation gate), ADR-0012, ADR-0020 |
 | Specs | [engine-protocol.md](../../specs/engine-protocol.md) |
