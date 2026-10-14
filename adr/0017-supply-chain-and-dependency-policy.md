@@ -151,6 +151,25 @@ Decided by the owner on 2026-10-10 in the review of work package X-002 ([BayanDo
 
 **Consequences.** The CodeQL workflows of X-002 may stay, code scanning shows their results, and Scorecard's SAST check can pass. The monthly dependency session updates the bundle together with `github/codeql-action`, as the dependency update runbook describes. If GitHub's terms change so that the bundle can no longer be used this way, the CodeQL workflows are removed, and a replacement needs the owner's decision.
 
+## Amendment 2026-10-12: the bayan-core commit that a shell builds from
+
+Decided by the owner on 2026-10-12 during DESK-002 ([BayanDocs/bayan-desktop pull request 6](https://github.com/BayanDocs/bayan-desktop/pull/6)), choosing option B below.
+
+**Context.** During Phase 0, before bayan-core publishes its first release, shells may build the engine from a pinned bayan-core commit in CI ([ADR-0002](0002-repository-topology-and-contracts.md), decision 4). DESK-002 does so for bayan-desktop: its `deps/bayan-core.json` pins a commit on bayan-core's `main`, and its `scripts/build-engine-sdk.sh` fetches exactly that commit, checks that it is on `main`, and builds the engine's C SDK from it with bayan-core's committed `Cargo.lock`. Rule 4 asks for a 24-hour minimum age for "every package, toolchain, CI action and tool version", and the [dependency update runbook](../developer/dependency-update-runbook.md) calls a dependency anything the project downloads instead of writing itself; neither says whether BayanDocs' own code, fetched from another of its repositories, counts. The commit that DESK-002 pinned was 10 hours 41 minutes old when it was pinned.
+
+**Options considered.** (A) Apply the minimum age to first-party pins too: a check like bayan-desktop's `scripts/check-qt-release-age.py` makes sure that the pinned commit is at least 24 hours older than the commit that pins it, and than now. A work package that needs a newer engine then waits up to a day, and a bad or hijacked bayan-core commit gets the same day to be noticed as a third-party release. (B) Exempt commits on bayan-core's `main` from the minimum age, because they are first-party code that has passed bayan-core's own gate. The owner chose B.
+
+**Decision.** A commit on bayan-core's `main` that a shell pins in order to build the engine from source during Phase 0 (ADR-0002, decision 4; today `deps/bayan-core.json` in bayan-desktop) is exempt from rule 4's 24-hour minimum age. The rule guards against third-party releases that are published and withdrawn within hours, like the `arrayref` release in this ADR's context; such a commit is BayanDocs' own code, which reaches `main` only through a pull request whose required checks, bayan-core's verification gate on Linux, Windows and macOS among them, have passed (the `main` ruleset of [scripts/github-settings.py](../scripts/github-settings.py)). Everything else still applies:
+
+- **The pin** is a full 40-character commit hash on bayan-core's `main`, and the shell's build script fetches exactly that commit and fails unless it is on `main` (in bayan-desktop, `scripts/build-engine-sdk.sh` does both).
+- **What the commit brings in is not exempt.** Every crate in its `Cargo.lock` stays subject to the 24-hour rule through bayan-core's own lockfile-age check (`cargo xtask check-lockfile-age`) and is built with `--locked`, and the Rust toolchain that the commit pins in `rust-toolchain.toml` stays subject to it too.
+- **Every other rule of this ADR** applies to the pin and to the build.
+- **Shipped builds** use released SDKs and packages pinned by version and SHA-256 (ADR-0002, decision 4), never a commit.
+
+The exemption covers nothing else: not other first-party pins, and not bayan-server's Git dependencies on core crates (ADR-0002, decision 4). Each would need a decision of its own.
+
+**Consequences.** A shell can move its bayan-core pin to a new commit on `main` as soon as a work package needs it, without waiting a day. bayan-core's pull requests and its gate, rather than the age rule, are the defense against a bad commit, while the age rule keeps covering the third-party crates and the toolchain that the commit brings in. bayan-desktop's `AGENTS.md` and the dependency update runbook cite this amendment where they describe the pin. The exemption lapses with Phase 0, when shells stop building from commits and pin released SDKs and packages instead.
+
 ## Revisit when
 
 Ecosystem tools change (for example Cargo re-checking lockfile ages natively, or lockfile-lint supporting pnpm), a supply-chain incident affects us, or the owner changes the policy.
