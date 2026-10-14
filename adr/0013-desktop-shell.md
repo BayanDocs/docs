@@ -1,6 +1,6 @@
 # ADR-0013: Desktop shell — Qt 6 Quick with thin C++
 
-- **Status:** Accepted — validation gate (DESK-002) open: canvas and bridges built and tested automatically on 2026-10-12; manual tests on Windows, macOS and Linux pending
+- **Status:** Accepted — validation gate (DESK-002) open: canvas and bridges built and tested automatically on 2026-10-12; manual tests on Windows, macOS and Linux deferred by the owner on 2026-10-14
 - **Date:** 2026-10-03
 - **Deciders:** Planner (the owner specified C++ and Qt)
 - **Related:** ARC-03, ARC-04, UI-01…UI-09, A11Y-02, PLT-01, ADR-0012, ADR-0019, DESK-001, DESK-002
@@ -50,6 +50,8 @@ DESK-002 ([bayan-desktop#6](https://github.com/BayanDocs/bayan-desktop/pull/6)) 
 - **Qt's interfaces** (`QQuickItem`, the scene graph, `inputMethodQuery` and `inputMethodEvent`, `QAccessible` factories and the text, editable-text and action interfaces) expressed everything the engine offers, so the decision needs no amendment. The gaps found are in engine protocol v0, which has no message for replacing text near the caret, hit-testing or moving the caret to an offset, and no selection or line ranges in its accessibility tree; the report recommends them for the protocol's next version.
 
 The planner marks the gate passed or failed once the owner's results of the manual tests are recorded in the report.
+
+**2026-10-14:** the owner deferred the manual tests and had DESK-002 merged (bayan-desktop#6 as a001348), so that the desktop work packages that build on it, DESK-101 and DESK-103, can start. DESK-002 is marked Done with AC-1 to AC-3 open, as WEB-002 was with its manual passes outstanding. The gate stays open until the manual tests are run; their script is [`docs/spikes/DESK-002-manual-tests.md`](https://github.com/BayanDocs/bayan-desktop/blob/main/docs/spikes/DESK-002-manual-tests.md) in bayan-desktop.
 
 ## Revisit when
 

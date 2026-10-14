@@ -29,7 +29,7 @@ A work package (WP) is a self-contained brief that one agent session can execute
 | [CORE-003](phase-0/CORE-003-spike-deterministic-text.md) | Spike: deterministic text pipeline | core | L | CORE-002 | 3 | Done |
 | [LAB-002](phase-0/LAB-002-word-ground-truth-harness.md) | Word ground-truth harness | core | M | LAB-001; reference machine | 3 | Ready (needs owner hardware) |
 | [LAB-004](phase-0/LAB-004-metrics-and-report.md) | Comparison metrics and fidelity report | core | M | LAB-003 | 3 | Ready |
-| [DESK-002](phase-0/DESK-002-spike-qt-canvas.md) | Spike: Qt Quick canvas, input, accessibility | desktop | L | DESK-001, CORE-007 | 3 | In review |
+| [DESK-002](phase-0/DESK-002-spike-qt-canvas.md) | Spike: Qt Quick canvas, input, accessibility | desktop | L | DESK-001, CORE-007 | 3 | Done |
 | [WEB-002](phase-0/WEB-002-spike-worker-canvas.md) | Spike: worker canvas, input bridge, accessibility mirror | web | L | WEB-001, CORE-007 | 3 | Done |
 | [CORE-008](phase-0/CORE-008-font-audit.md) | Font audit and bundled-library proposal | core + docs | M | CORE-003, LAB-002 | 4 | Ready |
 | [LAB-005](phase-0/LAB-005-probes-and-first-study.md) | Probe generator and first Word study | core + docs | L | LAB-002, LAB-003, CORE-003 | 4 | Ready |
