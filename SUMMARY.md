@@ -56,6 +56,8 @@
   - [ADR-0026: Release engineering, signing and updates](adr/0026-release-engineering.md)
   - [ADR-0027: Documentation tooling](adr/0027-documentation-tooling.md)
   - [ADR-0028: Server TLS — rustls with aws-lc-rs, HTTPS through a reverse proxy](adr/0028-server-tls.md)
+  - [ADR-0029: Identity keys, device approval and account recovery](adr/0029-identity-devices-and-recovery.md)
+  - [ADR-0030: Commit acceptance, departures and group repair](adr/0030-commit-acceptance-and-group-repair.md)
   - [ADR template](adr/0000-template.md)
 
 # Specifications
