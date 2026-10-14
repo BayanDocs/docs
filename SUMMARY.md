@@ -68,7 +68,7 @@
   - [Fidelity Lab — v1](specs/fidelity-lab.md)
   - [Font Compatibility — v0](specs/font-compatibility.md)
   - [Word Feature Coverage Matrix — v1](specs/coverage-matrix.md)
-  - [Threat Model — v0](specs/threat-model.md)
+  - [Threat Model — v1](specs/threat-model.md)
   - [Protocol specifications (Apache-2.0)](specs/protocols/README.md)
   - [Word Behavior Notes (WBN)](specs/word-behavior/README.md)
     - [Word Behavior Note template](specs/word-behavior/TEMPLATE.md)

@@ -9,7 +9,7 @@ Specifications define contracts that more than one crate or repository depends o
 | [fidelity-lab.md](fidelity-lab.md) | v1 | LAB | bayan-core CI, all layout work |
 | [font-compatibility.md](font-compatibility.md) | v0 (verified by CORE-008) | TEXT | bayan-fonts, packaging |
 | [coverage-matrix.md](coverage-matrix.md) | v1 | all | planning, release notes |
-| [threat-model.md](threat-model.md) | v0 (expanded by SRV-003) | SECURITY | all repositories |
+| [threat-model.md](threat-model.md) | v1 (SRV-003, 2026-10-14; reviewed at every phase gate) | SECURITY | all repositories |
 | [word-behavior/](word-behavior/README.md) | living | LAB | bayan-text, bayan-layout, bayan-edit |
 | [protocols/](protocols/README.md) | living; **Apache-2.0** | SERVER | third-party clients and integrations, bayan-core, bayan-server |
 
