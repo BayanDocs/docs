@@ -11,7 +11,7 @@
 #   4. the vendored Mermaid script matches its recorded checksums (site/mermaid/README.md);
 #   5. the website builds with mdBook, from a copy of only the files Git tracks, into book/;
 #   6. every link between files works, including its #anchor, both in the Markdown (as GitHub shows it) and in the built website (lychee, offline);
-#   7. every external link works (lychee, online, results cached for a day; skipped with --offline);
+#   7. every external link works (lychee, online, results cached for a day; skipped with --offline); timeouts, rate limits and temporary server errors do not fail it, but every link that gets one is listed (scripts/link-report.py);
 #   8. there are no known misspellings (typos, with the project dictionary in typos.toml);
 #   9. the unit tests of the scripts pass (scripts/tests/, Python's unittest).
 # Every check runs even when an earlier one fails (except that missing tools or a failed build stop the run), and a summary at the end lists what failed.
@@ -180,8 +180,20 @@ check_internal_links() {
   return "$failed"
 }
 
+# lychee decides which links fail (lychee.toml), and its exit status is the result. Its own summary leaves out the answers that lychee.toml accepts although they are not a success (rate limits and temporary server errors), so lychee writes a JSON report instead, which lists them only with --verbose, and scripts/link-report.py prints that report. lychee's messages, mostly one line per link it skipped, are shown only when it could not check the links (exit status other than 0 or 2) or its report could not be read.
 check_external_links() {
-  printf '%s\n' "${link_sources[@]}" | lychee --config lychee.toml --cache --scheme https --scheme http --no-progress --files-from -
+  local report messages status=0
+  report=$(mktemp)
+  messages=$(mktemp)
+  printf '%s\n' "${link_sources[@]}" | lychee --config lychee.toml --cache --scheme https --scheme http --no-progress --verbose --format json --output "$report" --files-from - 2>"$messages" || status=$?
+  if [[ $status -ne 0 && $status -ne 2 ]] || ! python3 scripts/link-report.py "$report"; then
+    cat "$messages" >&2
+    if [[ $status -eq 0 ]]; then
+      status=1
+    fi
+  fi
+  rm -f -- "$report" "$messages"
+  return "$status"
 }
 
 check_spelling() {
