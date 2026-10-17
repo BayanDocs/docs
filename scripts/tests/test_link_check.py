@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT-0
 #
 # Tests for the external-link check of scripts/verify.sh:
-#   - the rules in lychee.toml, run with the pinned lychee and the command line of check_external_links in scripts/verify.sh against a small web server on this machine that answers each link with the status code in its path, so no other site is contacted: rate limits and temporary server errors (429, 503, 504) pass and are not cached, while other error statuses, a missing page, a name that does not resolve and a refused connection fail the check;
+#   - the rules in lychee.toml, run with the pinned lychee and the command line of check_external_links in scripts/verify.sh against a small web server on this machine that answers each link with the status code in its path, so no other site is contacted: rate limits and temporary server errors (429, 500, 503, 504) pass and are not cached, while other error statuses, a missing page, a name that does not resolve and a refused connection fail the check;
 #   - scripts/link-report.py, which prints lychee's report, including the answers that lychee accepts although they are not a success.
 # The lychee tests are skipped when the pinned lychee is not installed (scripts/dev-setup.sh installs it; scripts/verify.sh checks that it is there before it runs these tests).
 #
@@ -149,18 +149,27 @@ class LycheeConfigurationTests(unittest.TestCase):
             data = json.loads(report.read_text(encoding="utf-8")) if report.exists() and report.stat().st_size else {}
             return result.returncode, data, cache, result.stderr
 
+    def accepted_links(self) -> Dict[str, str]:
+        """A page that works, then one link for each answer that lychee.toml accepts although it is not a success, in this order (lines 3 to 7 of the file)."""
+        return {
+            "page": self.server.url(200),
+            "rate limited": self.server.url(429),
+            "server error": self.server.url(500),
+            "unavailable": self.server.url(503),
+            "gateway timeout": self.server.url(504),
+        }
+
     def answers(self, report: Dict[str, Any], key: str) -> Dict[str, Any]:
         return {body["url"]: body["status"].get("code") for body in report.get(key, {}).get("links.md", [])}
 
     def test_rate_limits_and_temporary_server_errors_pass(self) -> None:
-        links = {"page": self.server.url(200), "rate limited": self.server.url(429), "unavailable": self.server.url(503), "gateway timeout": self.server.url(504)}
-        status, report, _, messages = self.run_lychee(links)
+        status, report, _, messages = self.run_lychee(self.accepted_links())
         self.assertEqual(status, 0, messages)
-        self.assertEqual(self.answers(report, "success_map"), {self.server.url(code): code for code in (200, 429, 503, 504)})
+        self.assertEqual(self.answers(report, "success_map"), {self.server.url(code): code for code in (200, 429, 500, 503, 504)})
         self.assertEqual(report["error_map"], {})
 
     def test_answers_that_are_not_a_success_are_not_cached(self) -> None:
-        _, _, cache, _ = self.run_lychee({"page": self.server.url(200), "rate limited": self.server.url(429), "unavailable": self.server.url(503), "gateway timeout": self.server.url(504)})
+        _, _, cache, _ = self.run_lychee(self.accepted_links())
         cached = [line.split(",")[0] for line in cache.splitlines()]
         self.assertEqual(cached, [self.server.url(200)], "only the successful answer may be kept, so that the others are checked again next time")
 
@@ -168,7 +177,6 @@ class LycheeConfigurationTests(unittest.TestCase):
         broken = {
             "404 Not Found": self.server.url(404),
             "410 Gone": self.server.url(410),
-            "500 Internal Server Error": self.server.url(500),
             "502 Bad Gateway": self.server.url(502),
             "a name that does not resolve": UNRESOLVABLE,
             "a refused connection": f"http://127.0.0.1:{unused_port()}/page",
@@ -183,10 +191,12 @@ class LycheeConfigurationTests(unittest.TestCase):
                 self.assertNotIn(url, cache)
 
     def test_the_report_lists_the_accepted_answers(self) -> None:
-        _, report, _, _ = self.run_lychee({"page": self.server.url(200), "unavailable": self.server.url(503), "gateway timeout": self.server.url(504)})
+        _, report, _, _ = self.run_lychee(self.accepted_links())
         lines = link_report.describe(report)
-        self.assertIn(f"[503] {self.server.url(503)} (at 4:3) | 503 Service Unavailable", lines)
-        self.assertIn(f"[504] {self.server.url(504)} (at 5:3) | 504 Gateway Timeout", lines)
+        self.assertIn(f"[429] {self.server.url(429)} (at 4:3) | 429 Too Many Requests", lines)
+        self.assertIn(f"[500] {self.server.url(500)} (at 5:3) | 500 Internal Server Error", lines)
+        self.assertIn(f"[503] {self.server.url(503)} (at 6:3) | 503 Service Unavailable", lines)
+        self.assertIn(f"[504] {self.server.url(504)} (at 7:3) | 504 Gateway Timeout", lines)
         self.assertNotIn(f"[200] {self.server.url(200)} (at 3:3) | 200 OK", lines)
 
 

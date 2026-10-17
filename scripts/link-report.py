@@ -4,7 +4,7 @@
 #
 # Prints the result of the external-link check of scripts/verify.sh from the JSON report that lychee writes (lychee --verbose --format json --output FILE).
 #
-# lychee decides which links fail, with the rules in lychee.toml, and verify.sh takes its exit status as the result; this script only shows what lychee found. It exists because lychee's own summary leaves out the answers that lychee.toml accepts although they are not a success: "429 Too Many Requests", "503 Service Unavailable" and "504 Gateway Timeout" (lychee counts them as OK). Listing every such link on every run keeps a site that stays unavailable from going unnoticed. Those answers are never cached (cache_exclude_status in lychee.toml), so each of these links is checked again on the next run.
+# lychee decides which links fail, with the rules in lychee.toml, and verify.sh takes its exit status as the result; this script only shows what lychee found. It exists because lychee's own summary leaves out the answers that lychee.toml accepts although they are not a success: "429 Too Many Requests", "500 Internal Server Error", "503 Service Unavailable" and "504 Gateway Timeout" (lychee counts them as OK). Listing every such link on every run keeps a site that stays unavailable from going unnoticed. Those answers are never cached (cache_exclude_status in lychee.toml), so each of these links is checked again on the next run.
 #
 # Usage: python3 scripts/link-report.py REPORT
 # Exit status: 0 when the report was read and printed, 2 when it could not be read (then verify.sh shows lychee's own messages).
