@@ -32,7 +32,7 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 | [0013](0013-desktop-shell.md) | Desktop shell: Qt 6 Quick with thin C++ | Accepted — validation gate (DESK-002) open: built and tested automatically 2026-10-12; manual tests on Windows, macOS and Linux deferred (owner, 2026-10-14) |
 | [0014](0014-web-shell.md) | Web shell: React and TypeScript, engine in a Web Worker | Accepted — validation gate (WEB-002, met in part 2026-10-12; manual passes outstanding); amended 2026-10-12 (WEB-002 results; one Trusted Types policy; integrity of the engine's files) |
 | [0015](0015-server-architecture.md) | Server: single Rust binary, zero-knowledge relay | Accepted |
-| [0016](0016-e2ee-and-identity.md) | End-to-end encryption and identity with MLS | Accepted — validation gate (SRV-002, met 2026-10-07; external review before GA); amended 2026-10-04 (post-quantum encryption from the first release) and 2026-10-07 (SRV-002 results and design details); further details proposed in ADR-0029 and ADR-0030 |
+| [0016](0016-e2ee-and-identity.md) | End-to-end encryption and identity with MLS | Accepted — validation gate (SRV-002, met 2026-10-07; external review before GA); amended 2026-10-04 (post-quantum encryption from the first release), 2026-10-07 (SRV-002 results and design details) and 2026-10-17 (details in ADR-0029 and ADR-0030) |
 | [0017](0017-supply-chain-and-dependency-policy.md) | Supply-chain and dependency policy | Accepted; amended 2026-10-04 (agent environment; installing Qt for bayan-desktop; what the license allowlist covers; pnpm without Corepack; root certificate data for the server's TLS), 2026-10-08 (the libFuzzer license for fuzzing), 2026-10-10 (CodeQL for code scanning in CI) and 2026-10-12 (the bayan-core commit that a shell builds from) |
 | [0018](0018-file-formats-and-priorities.md) | File formats and conversion priorities | Accepted |
 | [0019](0019-shared-ui-manifest.md) | Shared UI manifest; Classic and Focus modes | Accepted |
@@ -45,5 +45,5 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 | [0026](0026-release-engineering.md) | Release engineering, signing and updates | Accepted |
 | [0027](0027-documentation-tooling.md) | Documentation tooling | Accepted |
 | [0028](0028-server-tls.md) | Server TLS: rustls with aws-lc-rs, HTTPS through a reverse proxy | Accepted (owner, 2026-10-04) |
-| [0029](0029-identity-devices-and-recovery.md) | Identity keys, device approval and account recovery | Proposed (SRV-003, 2026-10-14) |
-| [0030](0030-commit-acceptance-and-group-repair.md) | Commit acceptance, departures and group repair | Proposed (SRV-003, 2026-10-14) |
+| [0029](0029-identity-devices-and-recovery.md) | Identity keys, device approval and account recovery | Accepted (owner, 2026-10-17) — validation gate (Phase-3 identity and recovery work package) |
+| [0030](0030-commit-acceptance-and-group-repair.md) | Commit acceptance, departures and group repair | Accepted (owner, 2026-10-17), with its three departures — validation gate (SRV-103 and Phase 3) |

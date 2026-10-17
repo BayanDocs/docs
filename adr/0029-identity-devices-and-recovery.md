@@ -1,8 +1,8 @@
 # ADR-0029: Identity keys, device approval and account recovery
 
-- **Status:** Proposed (SRV-003, 2026-10-14). Not binding until the owner accepts it. An expert review of its constructions is a condition before the Phase-3 work package that builds them starts (validation gate below), and the external audit before collaboration leaves beta covers it (SEC-08).
-- **Date:** 2026-10-14
-- **Deciders:** proposed by the SRV-003 implementer session; the owner decides (ADR-0001 Decision 5: it changes a security design)
+- **Status:** Accepted (owner, 2026-10-17) — validation gate (the Phase-3 work package that builds identity and recovery, below). The owner decided against the expert review of its constructions before Phase 3 that the proposal made a condition; the external audit of the cryptographic design before collaboration leaves beta reviews them (ADR-0016 Decision 12, SEC-08).
+- **Date:** 2026-10-14 (proposed); 2026-10-17 (accepted, without the expert review before Phase 3)
+- **Deciders:** Owner, on 2026-10-17, answering the open questions of SRV-003's [pull request](https://github.com/BayanDocs/docs/pull/42), on the recommendation of the SRV-003 implementer session (ADR-0001 Decision 5: it changes a security design)
 - **Related:** COL-05, COL-06, COL-13, SEC-08, SEC-11, SEC-13, OPS-09, [ADR-0012](0012-engine-boundary.md), [ADR-0015](0015-server-architecture.md), [ADR-0016](0016-e2ee-and-identity.md), [ADR-0028](0028-server-tls.md), [ADR-0030](0030-commit-acceptance-and-group-repair.md), [threat model v1](../specs/threat-model.md) (§5, flows F3, F5, F9, F10, F11; threats T11, T23, T24, T27–T30, T39), SRV-002, SRV-003, SRV-101, SRV-103
 
 ## Context
@@ -73,7 +73,7 @@ Facts verified on 2026-10-14:
     - The user makes a new recovery kit, a new key-backup key (devices seal the current snapshot keys to it again) and a new device-signing key, and certifies the remaining devices again.
     - If a hostile party may hold an older secret store, the user also makes a new identity key, which contacts see as a change.
     - Every recovery ends with a new kit and a new key-backup key, because a recovery may run on a device or in a browser the user does not fully trust.
-12. **Cryptography.** Everything here uses Ed25519, HKDF, AEAD and HPKE, including the hybrid KEM, as provided by OpenMLS's crypto provider; no other primitive, no password hashing, no password-authenticated key exchange and no secret sharing is used (ADR-0016 Decision 12). The constructions that combine them go to the expert review: device certificates and device lists, the secret store, the key backup, passkey wrapping, the authenticated approval exchange, link signing (threat model F5) and the device's proof of possession. The Phase-3 work package specifies every byte format, label and associated data, with test vectors.
+12. **Cryptography.** Everything here uses Ed25519, HKDF, AEAD and HPKE, including the hybrid KEM, as provided by OpenMLS's crypto provider; no other primitive, no password hashing, no password-authenticated key exchange and no secret sharing is used (ADR-0016 Decision 12). The constructions that combine them are device certificates and device lists, the secret store, the key backup, passkey wrapping, the authenticated approval exchange, link signing (threat model F5) and the device's proof of possession; the external audit before collaboration leaves beta reviews them (SEC-08). The Phase-3 work package specifies every byte format, label and associated data, with test vectors.
 
 ## Consequences
 
@@ -85,6 +85,7 @@ Facts verified on 2026-10-14:
 - The server stores three new kinds of ciphertext (secret store, key backup, passkey wraps), pending approvals and the directory; the threat model's metadata inventory (§9) lists them.
 - The validator and every client must check credential chains, device lists, resyncs and recovery joins; the Phase-1 server work packages prepare for it (device-bound sessions, pending devices) and Phase 3 builds it.
 - At first contact without verification, users still trust the server's directory, until key transparency.
+- Without an expert review before Phase 3, the constructions of item 12 rest on the Phase-3 work package's specification, test vectors and code review until the external audit before collaboration leaves beta; a flaw that the audit finds then means changing code that is already built.
 
 ## Alternatives considered
 
@@ -100,7 +101,7 @@ Facts verified on 2026-10-14:
 
 ## Validation gate
 
-An expert review of the constructions of item 12 comes first. The Phase-3 work package that builds identity and recovery (epic E3-DEVICES-KEYS in [plan/05](../plan/05-work-breakdown.md)) must then show, natively and in WebAssembly, with tests:
+The Phase-3 work package that builds identity and recovery (epic E3-DEVICES-KEYS in [plan/05](../plan/05-work-breakdown.md)) must show, natively and in WebAssembly, with tests:
 
 - chains checked by the validator and by clients, including refusal of a broken or revoked chain, and existing leaves that stay valid after a rotation of the device-signing key;
 - approval refusing a pending device whose keys differ from the scanned or compared ones;
@@ -112,8 +113,8 @@ An expert review of the constructions of item 12 comes first. The Phase-3 work p
 - an alarm when the device list changes in a device's name without that device;
 - device loss followed by rotation of the device-signing key.
 
-The external audit (SEC-08) follows.
+The external audit (SEC-08) follows. The proposal also asked for an expert review of the constructions of item 12 before that work package starts; the owner decided against it on 2026-10-17, so the external audit is their first review from outside the project.
 
 ## Revisit when
 
-The IETF publishes key transparency or an audited implementation fits the stack; OpenMLS lets an external commit remove a leaf that the application accepts; post-quantum signatures are adopted (ADR-0016, amendment 2026-10-04); MLS's extensions (draft-ietf-mls-extensions) are published; platforms let apps use passkeys for any domain; the expert review or the external audit asks for changes.
+The IETF publishes key transparency or an audited implementation fits the stack; OpenMLS lets an external commit remove a leaf that the application accepts; post-quantum signatures are adopted (ADR-0016, amendment 2026-10-04); MLS's extensions (draft-ietf-mls-extensions) are published; platforms let apps use passkeys for any domain; the external audit asks for changes.

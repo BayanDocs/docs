@@ -1,9 +1,9 @@
 # Threat Model — v1
 
-- **Status:** v1, written by work package [SRV-003](../workpackages/phase-0/SRV-003-threat-model.md) on 2026-10-14. It replaces v0 (the planning session, 2026-10-03), keeps every threat number of v0, and is reviewed at every phase gate and whenever a work package changes a trust boundary ([plan/07](../plan/07-quality-security-testing.md#3-security-program)).
+- **Status:** v1, written by work package [SRV-003](../workpackages/phase-0/SRV-003-threat-model.md) on 2026-10-14; the owner accepted the two ADRs it proposed, ADR-0029 and ADR-0030, on 2026-10-17. It replaces v0 (the planning session, 2026-10-03), keeps every threat number of v0, and is reviewed at every phase gate and whenever a work package changes a trust boundary ([plan/07](../plan/07-quality-security-testing.md#3-security-program)).
 - **Owner stream:** SECURITY
 - **Method:** data-flow diagrams analysed with STRIDE, per element (§4.5, §4.6) and per flow (§6). STRIDE names six kinds of threat: **S**poofing (pretending to be someone else), **T**ampering (changing data), **R**epudiation (denying having done something), **I**nformation disclosure, **D**enial of service and **E**levation of privilege (getting more power than allowed).
-- **Proposals it relies on:** some of the designs analysed here are proposed in [ADR-0029](../adr/0029-identity-devices-and-recovery.md) (identity keys, device approval and recovery) and [ADR-0030](../adr/0030-commit-acceptance-and-group-repair.md) (commit acceptance, departures and group repair). Both are **Proposed**: they bind nobody until the owner accepts them. Rows that depend on them say "proposed".
+- **Decisions it relies on:** some of the designs analysed here are decided in [ADR-0029](../adr/0029-identity-devices-and-recovery.md) (identity keys, device approval and recovery) and [ADR-0030](../adr/0030-commit-acceptance-and-group-repair.md) (commit acceptance, departures and group repair), which SRV-003 proposed and the owner accepted on 2026-10-17, ADR-0030 together with its three departures from the owner's earlier direction (§7.2).
 - **Related:** SEC-01…SEC-13, COL-01…COL-14, OPS-01…OPS-09, [ADR-0006](../adr/0006-rust-core-and-memory-safety.md), [ADR-0008](../adr/0008-crdt-engine-and-local-first.md), [ADR-0012](../adr/0012-engine-boundary.md), [ADR-0014](../adr/0014-web-shell.md), [ADR-0015](../adr/0015-server-architecture.md), [ADR-0016](../adr/0016-e2ee-and-identity.md), [ADR-0017](../adr/0017-supply-chain-and-dependency-policy.md), [ADR-0023](../adr/0023-automation-macros-active-content.md), [ADR-0026](../adr/0026-release-engineering.md), [ADR-0028](../adr/0028-server-tls.md), the [engine protocol](engine-protocol.md), and the report of the MLS spike SRV-002, [`spikes/mls/REPORT.md`](https://github.com/BayanDocs/bayan-server/blob/4bc4633f80e6ccce49a975587990875cdd0597eb/spikes/mls/REPORT.md) in bayan-server.
 
 ## Summary for the owner
@@ -12,14 +12,14 @@
 - **What a hostile server can do anyway.** It can refuse service, delay or withhold messages, split a group into parts that no longer see each other's edits, and see the metadata listed field by field in §9: who works with whom, when, how much, and from where.
 - **The two exceptions, and the largest remaining risks.** First, when you share with someone for the first time, your app has to ask the server who that person is. A hostile server could answer with a fake identity of its own (a "ghost user", T23) and then read what you share with them. Comparing safety numbers prevents this; key transparency, a later addition, would make it detectable without effort. Second, the web app runs code that the server delivers, so a hostile server could deliver code that steals the keys of people using BayanDocs in a browser (T11). The desktop app does not have this weakness. But an account that is also used in a browser carries the risk into everything shared with that account, until its browser devices are revoked. The same weakness limits link sharing and passkey unlock in the browser.
 - **Signing in is not the same as having the keys.** Someone who takes over your sign-in (through your company's identity provider, a stolen passkey, or an administrator) gets no keys. They cannot read documents, and any device they add stays powerless until one of your own devices approves it after comparing a code. Passkey unlock is the exception: an opt-in convenience that lets one passkey both sign in and unlock the keys (F10).
-- **Four problems in the current design, with proposed fixes.** The analysis found four problems in ADR-0016 as it stands after its amendment of 2026-10-07:
+- **Four problems in the design, and their fixes.** The analysis found four problems in ADR-0016 as it stands after its amendment of 2026-10-07:
   1. A user who loses every device can get their identity back with the recovery kit but cannot rejoin their documents. A document whose only owner loses every device can never change its members again.
   2. A user cannot leave a document unless an owner is online to remove them.
   3. Approving a new device must compare a code or scan a QR code in both directions, or the server could slip in its own device, or its own keys, at the same moment.
   4. Restoring the server from a backup would stall every document that changed since the backup.
 
-  [ADR-0029](../adr/0029-identity-devices-and-recovery.md) and [ADR-0030](../adr/0030-commit-acceptance-and-group-repair.md) propose fixes. ADR-0030 also gives the details of the "two-phase acceptance" you chose on 2026-10-09 against members who stall a group (§7). It departs from that choice in three named points for you to decide: owners' commits take effect at once; a commit that no other member checks within 72 hours is dropped without punishing its sender; and quarantine applies to the sender's whole account.
-- **What needs your decision.** §13.2 lists it: whether to accept, change or reject the two proposed ADRs, including those three departures, and whether to arrange the expert cryptography review that ADR-0029 makes a condition of building its constructions. The question ADR-0016 left to SRV-003, whether the server may learn which updates are comments, needs no new decision: §7.4 confirms what you decided on 2026-10-09.
+  [ADR-0029](../adr/0029-identity-devices-and-recovery.md) and [ADR-0030](../adr/0030-commit-acceptance-and-group-repair.md) fix them, and you accepted both on 2026-10-17. ADR-0030 also gives the details of the "two-phase acceptance" you chose on 2026-10-09 against members who stall a group (§7). It departs from that choice in three named points, which you accepted too: owners' commits take effect at once; a commit that no other member checks within 72 hours is dropped without punishing its sender; and quarantine applies to the sender's whole account.
+- **What you decided.** On 2026-10-17 you accepted both ADRs, including ADR-0030's three departures, and decided against an expert cryptography review of ADR-0029's constructions before Phase 3 builds them; the external audit before collaboration leaves beta (SEC-08) still reviews them (§13.2). The question ADR-0016 left to SRV-003, whether the server may learn which updates are comments, needed no new decision: §7.4 confirms what you decided on 2026-10-09.
 
 ## 1. Scope, method and assumptions
 
@@ -62,13 +62,13 @@ Most of what v1 analyses is built in Phase 1 (SRV-101…SRV-105: identity, stora
 | Public state, roster | What the server knows about a group without any key: the ratchet tree (every member device's credential and public keys) and the group context, which holds the *roster* of accounts and their roles (ADR-0016, amendment 2026-10-07). |
 | Validator | The part of the server that follows each group's public state and refuses commits and updates that break the role policy (SRV-002). |
 | Ed25519, HKDF, AEAD, HPKE | The building blocks MLS's providers offer: Ed25519 makes and checks signatures; HKDF derives keys from a secret; an AEAD encrypts and authenticates data under a key; HPKE encrypts to someone's public key. The hybrid post-quantum ciphersuite uses an HPKE whose key exchange combines ML-KEM-768 with X25519. |
-| Identity key, device-signing key, device key | The three signing keys of an account (proposed in ADR-0029, §5.1): the identity key says who the user is, the device-signing key says which devices belong to the user, and each device signs its own messages with its device key. |
+| Identity key, device-signing key, device key | The three signing keys of an account (ADR-0029, §5.1): the identity key says who the user is, the device-signing key says which devices belong to the user, and each device signs its own messages with its device key. |
 | Device certificate, device list | A device certificate is the device-signing key's signature over a device's key; the device list is the user's signed, numbered list of current and revoked devices. |
 | Recovery kit, secret store, key backup | The recovery kit is a random secret the user saves or prints. It opens the *secret store*, an encrypted copy of the account's long-term keys kept on the server, and the *key backup*, the latest snapshot keys of the user's documents, also encrypted (ADR-0029). |
 | Key package, Welcome | A key package is a device's one-time public key, published so that others can add the device to a group. A Welcome gives newly added devices the group's secrets. |
 | Snapshot | An encrypted copy of a document's current state, for devices that join later and cannot read earlier epochs (ADR-0016 Decision 4). |
-| Witness, two-phase acceptance, quarantine | A commit from a member who is not an owner takes effect only after another account's device (a *witness*) confirms that it can process it, and no witness refuses it. A refused commit is dropped, and its sender's account is *quarantined*: it cannot commit in that group until an owner lifts the quarantine (proposed in ADR-0030, §7.2). |
-| Resync, recovery join | Two ways to enter a group with an MLS external commit, without another member's help (proposed in ADR-0029). A device that fell behind *resyncs*: it rejoins with its own device key and replaces its own old place in the group (RFC 9420 §12.4.3.2). A new device of a user who has a role makes a *recovery join*: it joins, then removes the user's lost devices with ordinary commits. |
+| Witness, two-phase acceptance, quarantine | A commit from a member who is not an owner takes effect only after another account's device (a *witness*) confirms that it can process it, and no witness refuses it. A refused commit is dropped, and its sender's account is *quarantined*: it cannot commit in that group until an owner lifts the quarantine (ADR-0030, §7.2). |
+| Resync, recovery join | Two ways to enter a group with an MLS external commit, without another member's help (ADR-0029). A device that fell behind *resyncs*: it rejoins with its own device key and replaces its own old place in the group (RFC 9420 §12.4.3.2). A new device of a user who has a role makes a *recovery join*: it joins, then removes the user's lost devices with ordinary commits. |
 | TOFU | Trust on first use: a client remembers ("pins") the identity key it first saw for a contact and warns if it ever changes. |
 | Safety number | A fingerprint of two users' identity keys, long enough that nobody can make a key that matches it, which they can compare in person or by QR code to make sure no one sits in between. |
 | PKCE, HSTS | PKCE (RFC 7636) ties a sign-in code to the app that started the sign-in, so a stolen code is useless. HSTS tells browsers to use HTTPS only for a site. |
@@ -323,7 +323,7 @@ No flow covers these elements in full, so their threats are listed here.
 
 ## 5. Keys, credentials and sessions
 
-The flows in §6 rely on the key design below. ADR-0016 Decisions 6 and 7 fix its principles; the details are proposed in [ADR-0029](../adr/0029-identity-devices-and-recovery.md).
+The flows in §6 rely on the key design below. ADR-0016 Decisions 6 and 7 fix its principles; the details are decided in [ADR-0029](../adr/0029-identity-devices-and-recovery.md).
 
 ### 5.1 Keys
 
@@ -341,7 +341,7 @@ The flows in §6 rely on the key design below. ADR-0016 Decisions 6 and 7 fix it
 | Passkey unlock key | Derived with HKDF from a passkey's PRF output (opt-in) | Derived when needed | Per passkey | A copy of the recovery secret wrapped for that passkey (F10) |
 | Session token | Random 256-bit secret | The client; the server stores only a hash | Each sign-in; rotated | Server access for one device |
 
-All of this uses primitives that OpenMLS's provider already offers (Ed25519, HKDF, AEAD, HPKE including the hybrid KEM), so it adds no new primitive (ADR-0016 Decision 12); the constructions that combine them (certificates, the secret store, the key backup, passkey wrapping, the approval exchange, link signing and the device's proof of possession) go to an expert review before Phase 3 builds them (ADR-0029). Nothing is protected by a password or passphrase: that would need a password-hashing function such as Argon2id, which MLS's providers do not include, so the recovery kit is always a generated secret. The account's root secrets (secret store, passkey wraps) and link keys use 256-bit AEAD keys, a margin for keys that guard everything else for years; document data, snapshots and backup entries use the AEAD of the group's ciphersuite, as ADR-0016 decided (AES-128-GCM in the hybrid suite, which quantum computers do not meaningfully weaken).
+All of this uses primitives that OpenMLS's provider already offers (Ed25519, HKDF, AEAD, HPKE including the hybrid KEM), so it adds no new primitive (ADR-0016 Decision 12); the constructions that combine them (certificates, the secret store, the key backup, passkey wrapping, the approval exchange, link signing and the device's proof of possession) are reviewed by the external audit before collaboration leaves beta (SEC-08); the owner decided on 2026-10-17 against a separate expert review before Phase 3 builds them (ADR-0029). Nothing is protected by a password or passphrase: that would need a password-hashing function such as Argon2id, which MLS's providers do not include, so the recovery kit is always a generated secret. The account's root secrets (secret store, passkey wraps) and link keys use 256-bit AEAD keys, a margin for keys that guard everything else for years; document data, snapshots and backup entries use the AEAD of the group's ciphersuite, as ADR-0016 decided (AES-128-GCM in the hybrid suite, which quantum computers do not meaningfully weaken).
 
 **After an exposure.** Whoever obtains the recovery kit, or a passkey with passkey unlock, can open the secret store and, with the server's stored data alone, the latest snapshot of every document, including later ones, until the user acts (T28). The response is: a new recovery kit, a new key-backup key (devices seal the current snapshot keys to it again), a new device-signing key with the remaining devices certified again, and, if a hostile party may have kept an older secret store, a new identity key, which contacts see as a change. Passkey unlock is switched off for an exposed passkey. A new kit and a new key-backup key after every recovery are good practice, because a recovery may run on a device or in a browser the user does not fully trust.
 
@@ -362,7 +362,7 @@ All of this uses primitives that OpenMLS's provider already offers (Ed25519, HKD
 
 ## 6. Flows
 
-Every flow has a sequence diagram and a STRIDE table. "Proposed" marks a mitigation that depends on ADR-0029 or ADR-0030. Paths such as `/auth/oidc/start` are illustrative; SRV-105 publishes the real API in `specs/protocols/server-api.md`.
+Every flow has a sequence diagram and a STRIDE table. Paths such as `/auth/oidc/start` are illustrative; SRV-105 publishes the real API in `specs/protocols/server-api.md`.
 
 ### 6.1 F1: Signing in with OpenID Connect
 
@@ -472,7 +472,7 @@ sequenceDiagram
 
 ### 6.3 F3: Device enrollment, approval and cross-signing
 
-*Server groundwork in Phase 1 (SRV-101); cross-signing in Phase 3. Proposed in ADR-0029.* A new device makes its own device key and a one-time transfer key, signs in and registers as pending. One of the user's approved native (desktop) devices then approves it, and the approval must be authenticated in both directions:
+*Server groundwork in Phase 1 (SRV-101); cross-signing in Phase 3; ADR-0029.* A new device makes its own device key and a one-time transfer key, signs in and registers as pending. One of the user's approved native (desktop) devices then approves it, and the approval must be authenticated in both directions:
 
 - The approving device must approve *this* device, not one the server slipped in at the same moment.
 - The new device must accept its user's identity key and key-backup key only from that approving device, not from the server.
@@ -510,7 +510,7 @@ sequenceDiagram
 
 | # | STRIDE | Element | Threat | Mitigation | Remaining risk |
 |---|---|---|---|---|---|
-| F3.1 | S | P5, E1 | The server registers its own pending device and the user approves it (T24) | Approval always compares the new device's keys out of band, by QR code or short code; a bare "Approve?" button is never offered (proposed) | A user who approves without comparing, or who scans a code shown by someone else's device, approves the wrong device |
+| F3.1 | S | P5, E1 | The server registers its own pending device and the user approves it (T24) | Approval always compares the new device's keys out of band, by QR code or short code; a bare "Approve?" button is never offered (ADR-0029) | A user who approves without comparing, or who scans a code shown by someone else's device, approves the wrong device |
 | F3.2 | S | P5 | The server hands the new device its own identity key and key-backup key, so that the device trusts the server's identity and seals its snapshot keys to the server | The approval is authenticated with the out-of-band secret, and the new device accepts its user's identity key and key-backup key only from it (HPKE alone would not do: anyone can seal to a public key) | — |
 | F3.3 | S | P4, P5 | A sign-in attacker (F1.1) registers a pending device (T27) | Pending devices are powerless; the user's devices show each request with its client application and time; pending requests expire after 24 hours; administrators can require their approval too | — |
 | F3.4 | T | DF1 | The server changes the certificate, the device list or the sealed approval | Signatures by the device-signing key; the approval's authentication; the new device checks the chain | The server can withhold them (availability) |
@@ -526,7 +526,7 @@ sequenceDiagram
 
 ### 6.4 F4: Sharing, role changes, removal and leaving
 
-*Phase 3.* To share, an owner's client looks the recipient up (by exact email address or account ID), checks the recipient's identity against its pin, claims one key package per recipient device, and sends one commit that adds the devices and gives the recipient a role in the roster. The validator checks it (ADR-0016, amendment 2026-10-07, design detail 3) and relays it; the new devices receive a Welcome, fetch the ratchet tree from the server and join in one storage transaction. An editor's client then sends them a snapshot (F8). A role change is an owner's commit with a new roster; a removal is an owner's commit that removes every device of the user and their roster entry. To leave, a user's device sends an authenticated leave request inside the group and tells the server to stop delivering to it, and an owner's client commits the removal (proposed in ADR-0030). Sharing with someone who has no account yet records a pending share inside the document and sends an invitation (F2).
+*Phase 3.* To share, an owner's client looks the recipient up (by exact email address or account ID), checks the recipient's identity against its pin, claims one key package per recipient device, and sends one commit that adds the devices and gives the recipient a role in the roster. The validator checks it (ADR-0016, amendment 2026-10-07, design detail 3) and relays it; the new devices receive a Welcome, fetch the ratchet tree from the server and join in one storage transaction. An editor's client then sends them a snapshot (F8). A role change is an owner's commit with a new roster; a removal is an owner's commit that removes every device of the user and their roster entry. To leave, a user sends an authenticated leave request inside the group from one of their devices, which also tells the server to stop delivering to all of the user's devices, and an owner's client commits the removal; the last owner must first make another member an owner (ADR-0030). Sharing with someone who has no account yet records a pending share inside the document and sends an invitation (F2).
 
 ```mermaid
 sequenceDiagram
@@ -571,10 +571,10 @@ sequenceDiagram
 | F4.8 | D | P5 | Someone claims all of a user's key packages so that nobody can add them (T34) | Only approved devices may claim; limits per claimer and per target; key packages expire; devices top up | A determined member can delay additions |
 | F4.9 | I | P5 | The lookup is used to find out which email addresses have accounts (T38) | Exact-match lookups only, by approved devices, with rate limits; optionally limited to the organization; no listing or prefix search | Someone who already knows an address can test it |
 | F4.10 | E | P2 | A removed member keeps reading | MLS removal moves the group to keys the removed devices do not have; the server stops delivering to them; later snapshots use new keys (tested in SRV-002) | What they already held stays with them (v0 residual) |
-| F4.11 | D | P7 | A user cannot leave without an owner, because a member cannot commit its own removal (RFC 9420 §12.2) and standalone proposals are refused | Authenticated leave request, server stops delivery at once, an owner's client commits the removal; the standard self-removal proposal is evaluated once its specification is final (ADR-0030, proposed) | Until an owner acts, the leaving device's leaf stays in the tree |
+| F4.11 | D | P7 | A user cannot leave without an owner, because a member cannot commit its own removal (RFC 9420 §12.2) and standalone proposals are refused | Authenticated leave request, server stops delivery at once, an owner's client commits the removal; the standard self-removal proposal is evaluated once its specification is final (ADR-0030) | Until an owner acts, the leaving device's leaf stays in the tree |
 | F4.12 | R | E2 | An owner denies having shared or removed someone | Commits are signed and visible to every member; the log keeps them for its retention period | — |
 | F4.13 | E | P7 | The last owner is removed or demoted | Refused: every commit must leave at least one owner (design detail 3) | — |
-| F4.14 | D | P7 | The only owner disappears for good, so membership can never change again (T29) | Recovery joins give a returning owner their access back (F9, proposed); clients suggest a second owner | If the owner and their recovery kit are both gone, membership stays frozen; content is not lost |
+| F4.14 | D | P7 | The only owner disappears for good, so membership can never change again (T29) | Recovery joins give a returning owner their access back (F9); clients suggest a second owner | If the owner and their recovery kit are both gone, membership stays frozen; content is not lost |
 | F4.15 | I | E7 | A pending share's invitation email tells the email provider who shares with whom | Content-free invitations; no document names (F14) | Residual |
 
 ### 6.5 F5: End-to-end encrypted link sharing
@@ -698,7 +698,7 @@ sequenceDiagram
   S-->>E: commits with their outcomes, and messages since then
   E->>E: process the commits in order, decrypt each message in its own epoch
   alt the log no longer reaches back far enough
-    E->>S: resync with its own device key (F9, proposed) and fetch the latest snapshot (F8)
+    E->>S: resync with its own device key (F9) and fetch the latest snapshot (F8)
   end
   E->>E: encrypt the queued updates in the current epoch
   E->>S: send them
@@ -715,7 +715,7 @@ sequenceDiagram
 | F7.2 | D | P2 | Updates encrypted long ago can no longer be read by anyone | The queue holds CRDT updates; MLS encryption happens when they are sent | — |
 | F7.3 | E | P7, P2 | Edits made offline by a user who was demoted or removed in the meantime | The server and clients refuse them; the user is told and keeps a local copy (COL-03: nobody else's work is overwritten) | The user's offline edits do not reach the shared document |
 | F7.4 | T | P6 | The server withholds part of the log | Sequence numbers reveal gaps; CRDT version vectors reveal missing updates; the client asks again | Availability |
-| F7.5 | D | D3 | The log was pruned before the device came back (§9.1 retention) | Resync with the device's own key and the latest snapshot (proposed in ADR-0029) | Without resyncs, owners must re-add the device |
+| F7.5 | D | D3 | The log was pruned before the device came back (§9.1 retention) | Resync with the device's own key and the latest snapshot (ADR-0029) | Without resyncs, owners must re-add the device |
 | F7.6 | I | D1 | A device that stays offline keeps old epoch secrets until it catches up | At most one past epoch is kept; secrets are encrypted at rest; they are deleted as the device processes commits | — |
 | F7.7 | S | P6 | A device revoked while it was offline reconnects | The server refuses the connection; its queued edits are not accepted; the user's other devices have removed it from the groups (F11) | — |
 | F7.8 | T | P6 | The server presents an older state of a group to a returning device | The device knows its own last epoch and never goes back | Availability |
@@ -769,7 +769,7 @@ sequenceDiagram
 
 ### 6.9 F9: Recovery with the recovery kit
 
-*Phase 3. Proposed in ADR-0029.* When an account is created, its first device makes the recovery secret, shows it as the recovery kit (words and a QR code to print or save), checks that the user saved it, seals the identity key, the device-signing key and the key-backup key into the secret store on the server, and erases the secret. After losing every device, the user signs in on a new device, enters the recovery kit, and gets their identity back.
+*Phase 3; ADR-0029.* When an account is created, its first device makes the recovery secret, shows it as the recovery kit (words and a QR code to print or save), checks that the user saved it, seals the identity key, the device-signing key and the key-backup key into the secret store on the server, and erases the secret. After losing every device, the user signs in on a new device, enters the recovery kit, and gets their identity back.
 
 The new device then rejoins each group where the user still has a role, without anyone's help:
 
@@ -829,7 +829,7 @@ sequenceDiagram
 
 ### 6.10 F10: Passkey unlock (PRF)
 
-*Phase 3, opt-in. Proposed in ADR-0029; ADR-0016 Decision 7.* The WebAuthn PRF extension lets an authenticator compute a secret from a passkey and a fixed input. With passkey unlock switched on, the client uses that secret to wrap a copy of the recovery secret and stores the wrapped copy on the server. On a new device, signing in with the passkey then also unlocks the account, instead of typing the recovery kit. Switching it on needs the recovery kit once, because no device keeps the recovery secret.
+*Phase 3, opt-in; ADR-0029 and ADR-0016 Decision 7.* The WebAuthn PRF extension lets an authenticator compute a secret from a passkey and a fixed input. With passkey unlock switched on, the client uses that secret to wrap a copy of the recovery secret and stores the wrapped copy on the server. On a new device, signing in with the passkey then also unlocks the account, instead of typing the recovery kit. Switching it on needs the recovery kit once, because no device keeps the recovery secret.
 
 ```mermaid
 sequenceDiagram
@@ -869,7 +869,7 @@ sequenceDiagram
 
 ### 6.11 F11: Losing a device, and revocation
 
-*Phase 3. Proposed in ADR-0029.* From any of their remaining devices, the user marks a device as lost. The server ends the lost device's sessions at once; the user's devices then remove it from every group with MLS commits, which is what takes its keys away for good. If the lost device was a native device, it held the device-signing key, so the user rotates that key with the recovery kit or passkey unlock, and the lost device can no longer certify devices. Existing places of the remaining devices in groups stay valid, because a chain is checked against the latest device list (§5.2).
+*Phase 3; ADR-0029.* From any of their remaining devices, the user marks a device as lost. The server ends the lost device's sessions at once; the user's devices then remove it from every group with MLS commits, which is what takes its keys away for good. If the lost device was a native device, it held the device-signing key, so the user rotates that key with the recovery kit or passkey unlock, and the lost device can no longer certify devices. Existing places of the remaining devices in groups stay valid, because a chain is checked against the latest device list (§5.2).
 
 ```mermaid
 sequenceDiagram
@@ -915,7 +915,7 @@ sequenceDiagram
 
 ### 6.12 F12: Accepting a commit that only members can check
 
-*Phase 3 (SRV-103 and `bayan-mls`). Direction chosen by the owner (ADR-0016, amendment 2026-10-07, requirement 6); details proposed in ADR-0030 and in §7.2.* The server's validator cannot check the parts of a commit that are keyed with the epoch's secrets: its membership and confirmation tags, and the path secrets it encrypts to the other members (SRV-002 report §5). Each member decrypts only the path secret meant for its own part of the group. A committer can therefore send a commit that the server accepts and that every other member refuses. It can also make a commit work for some members, for example the owners or whoever is online, and fail for the rest. With two-phase acceptance, a commit from a member who is not an owner takes effect only once a device of another account confirms that it can process it and no such device refuses it; nobody merges it before.
+*Phase 3 (SRV-103 and `bayan-mls`). Direction chosen by the owner (ADR-0016, amendment 2026-10-07, requirement 6); details in ADR-0030 and §7.2.* The server's validator cannot check the parts of a commit that are keyed with the epoch's secrets: its membership and confirmation tags, and the path secrets it encrypts to the other members (SRV-002 report §5). Each member decrypts only the path secret meant for its own part of the group. A committer can therefore send a commit that the server accepts and that every other member refuses. It can also make a commit work for some members, for example the owners or whoever is online, and fail for the rest. With two-phase acceptance, a commit from a member who is not an owner takes effect only once a device of another account confirms that it can process it and no such device refuses it; nobody merges it before.
 
 ```mermaid
 sequenceDiagram
@@ -953,7 +953,7 @@ sequenceDiagram
 
 | # | STRIDE | Element | Threat | Mitigation | Remaining risk |
 |---|---|---|---|---|---|
-| F12.1 | D | P7 | A member stalls the group with a commit only members can check (T25) | Two-phase acceptance: the commit is dropped as soon as one witness refuses it, and the committer's account is quarantined in the group (proposed) | — |
+| F12.1 | D | P7 | A member stalls the group with a commit only members can check (T25) | Two-phase acceptance: the commit is dropped as soon as one witness refuses it, and the committer's account is quarantined in the group (ADR-0030) | — |
 | F12.2 | D | E2 | Selective encryption: the commit works for some members (owners, or whoever is online) and fails for others | Any refusal drops the commit, and an owner's OK carries no special weight; if only members who were offline got bad secrets, they report the confirmed commit as stuck, the committer's account is quarantined afterwards, and they resync (§7.2) | Members who were offline must resync once |
 | F12.3 | D | E2 | A lying witness refuses honest commits, or reports confirmed ones as stuck | The honest committer's account is quarantined until an owner, who sees every report, lifts it and can remove the liar; owners' commits are not affected by reports | A liar can delay the commits of members who are not owners until an owner acts (FM12) |
 | F12.4 | D | P7 | No witness is online | Background witnessing by any member device that connects; after 72 hours without any report the commit is dropped without quarantine and the committer retries | Members who are not owners cannot change keys or devices in a group nobody else visits |
@@ -1136,7 +1136,7 @@ sequenceDiagram
   OP->>BK: backup: a consistent copy of the database and the blob store
   OP->>S: restore from a backup
   S->>S: after a restore: end every session, mark key packages and pending states stale, enter catch-up for every group
-  Note over S,BK: Members then upload the commits and signed device lists the backup lacks, under the catch-up rules of §7.5 (ADR-0030, proposed)
+  Note over S,BK: Members then upload the commits and signed device lists the backup lacks, under the catch-up rules of §7.5 (ADR-0030)
 ```
 
 | # | STRIDE | Element | Threat | Mitigation | Remaining risk |
@@ -1146,7 +1146,7 @@ sequenceDiagram
 | F17.3 | E | P10 | An administrator adds a device to a user or a member to a group | Impossible: certificates come only from the user's devices, membership only from owners' commits | The administrator approval gate (COL-13) can only block |
 | F17.4 | D | P10 | An administrator deletes data or disables accounts | Audit log; backups; users notified | Residual: operators control availability |
 | F17.5 | I | D7 | Backups are stolen | They hold the metadata of §9 and ciphertext; secret stores and backup entries stay sealed; encrypted backups and restricted access recommended | Metadata exposure |
-| F17.6 | T | D7 | A restore rolls group state back, brings back sessions revoked after the backup, and offers key packages already used (T33) | After a restore the server ends every session, asks devices for new key packages, and lets members catch it up under the rules of §7.5 (proposed in ADR-0030) | Until members reconnect, groups changed since the backup wait |
+| F17.6 | T | D7 | A restore rolls group state back, brings back sessions revoked after the backup, and offers key packages already used (T33) | After a restore the server ends every session, asks devices for new key packages, and lets members catch it up under the rules of §7.5 (ADR-0030) | Until members reconnect, groups changed since the backup wait |
 | F17.7 | R | D5 | An administrator denies an action | Audit log, which the server only appends to; operators export it regularly | An operator with database access can edit it |
 | F17.8 | I | P10 | The console shows more metadata than needed, for example who shares with whom | Console views show counts and sizes; anything more is a deliberate, audited support action | — |
 | F17.9 | I | D6 | The first administrator's bootstrap token appears in the log stream | The command line prints it to the operator's terminal only, never to the logs; the server keeps only its hash, until it is used | — |
@@ -1163,24 +1163,24 @@ Roles are enforced twice: by the server, so that what it refuses never reaches a
 | Only commits change a group; standalone proposals and unused proposal types are refused | Yes | Yes | ADR-0016, amendment 2026-10-07, design detail 3 (below: "design detail 3") |
 | Only owners add or remove other users' devices, change roles, or change anything in the group context | Yes | Yes | Design detail 3 |
 | A user's devices may add and remove each other | Yes | Yes | Design detail 3 |
-| A resync replaces the joining device's own earlier place, with the same device key | Yes | Yes | ADR-0029 (proposed) |
-| A recovery join adds an approved device of a user who has a role and removes no one; the user's lost devices are removed afterwards by own-device removals | Yes, and it requires a recent sign-in | Yes, except the sign-in, which only the server can see | ADR-0029 (proposed) |
+| A resync replaces the joining device's own earlier place, with the same device key | Yes | Yes | ADR-0029 |
+| A recovery join adds an approved device of a user who has a role and removes no one; the user's lost devices are removed afterwards by own-device removals | Yes, and it requires a recent sign-in | Yes, except the sign-in, which only the server can see | ADR-0029 |
 | After every commit: one role per user with a device, none for anyone else, at least one owner | Yes | Yes | Design detail 3 |
-| The group context holds exactly the roster and its required capabilities (no external senders); the required credential type is the one ADR-0029 chooses instead of basic credentials | Yes | Yes | Design detail 3, changed by ADR-0029 (proposed) |
-| Every credential chains to its account's identity key and names a device that the latest device list lists as current | Yes, against the directory | Yes, against pinned identities | ADR-0029 (proposed) |
+| The group context holds exactly the roster and its required capabilities (no external senders); the required credential type is the one ADR-0029 chooses instead of basic credentials | Yes | Yes | Design detail 3, changed by ADR-0029 |
+| Every credential chains to its account's identity key and names a device that the latest device list lists as current | Yes, against the directory | Yes, against pinned identities | ADR-0029 |
 | A commit is signed by the device whose connection sent it (except when catching up after a restore, §7.5) | Yes | Yes, by its signature | SRV-002 |
 | Updates come only from devices whose user is an owner, editor or commenter | Yes, from the connection | Yes, from the decrypted, signed sender | Design detail 3 |
 | Edits need owner or editor; comments commenter or above; snapshot keys editor or above; group moves owner | No: the kind is encrypted (§7.4) | Yes | Design detail 3 |
 | Late updates are judged by the roles of both epochs | Yes | Yes | Design detail 3 |
-| Commits by users who are not owners take effect only after a witness confirms them and none refuses them | Yes | Yes: nobody merges before | ADR-0030 (proposed) |
+| Commits by users who are not owners take effect only after a witness confirms them and none refuses them | Yes | Yes: nobody merges before | ADR-0030 |
 | Blob uploads need owner or editor; blob downloads need a current member device or a valid link | Yes | Clients check hashes and keys | This document |
 | Only owners create links, and only the creating owner's devices update them | Yes | Link readers check the link's signature | This document (F5) |
 | Organization groups keep their escrow member (Phase 4) | Yes | Yes, and show it | §8 |
-| Server and clients use the same version of the policy | Yes, refuses unknown versions | Yes, refuses unknown versions | ADR-0030 (proposed) |
+| Server and clients use the same version of the policy | Yes, refuses unknown versions | Yes, refuses unknown versions | ADR-0030 |
 
 ### 7.2 Two-phase acceptance
 
-The owner chose this direction on 2026-10-09 (ADR-0016, amendment 2026-10-07, requirement 6): the server keeps the previous epoch's public state until a device of another user confirms the new epoch, and otherwise drops the commit and quarantines its sender. The rules below are the details SRV-003 was asked for, proposed in [ADR-0030](../adr/0030-commit-acceptance-and-group-repair.md). They depart from the chosen direction in three points, which the owner decides explicitly:
+The owner chose this direction on 2026-10-09 (ADR-0016, amendment 2026-10-07, requirement 6): the server keeps the previous epoch's public state until a device of another user confirms the new epoch, and otherwise drops the commit and quarantines its sender. The rules below are the details SRV-003 was asked for, decided in [ADR-0030](../adr/0030-commit-acceptance-and-group-repair.md). They depart from the chosen direction in three points, which the owner accepted explicitly on 2026-10-17:
 
 1. **Owners' commits take effect at once.** The direction covers every commit; ADR-0030 applies two phases only to commits by members who are not owners. Owners can already remove anyone. Two phases for owners would let one lying member drop every owner's commit except its own removal, which it cannot witness, stopping shares and role changes until an owner removed it; every share would wait until another member's device comes online; and nobody could witness the first share of a document that only its owner belongs to.
 2. **A commit that nobody checks within 72 hours is dropped without quarantine.** The direction says "otherwise drops the commit and quarantines its sender"; a time-out is not evidence of misbehavior, so ADR-0030 drops such a commit but does not punish its sender, who retries.
@@ -1258,7 +1258,7 @@ One distinction stays visible, because the server must know what to store: wheth
 
 ### 7.5 Catching up after a restore
 
-A server restored from a backup is behind every group that changed since the backup (FM8). Members still hold those commits, so they bring the server up to date (proposed in ADR-0030):
+A server restored from a backup is behind every group that changed since the backup (FM8). Members still hold those commits, so they bring the server up to date (ADR-0030):
 
 1. After a restore the server ends every session, marks stored key packages and pending commits as stale, and puts every group in *catch-up*.
 2. Member devices upload the commits they merged after the server's restored epoch, oldest first. Each is checked against the public state and the policy as usual, with two differences: its signature, not the uploading connection, shows who made it, and it is not witnessed again, because its members already merged it.
@@ -1516,7 +1516,7 @@ The register keeps the numbers of v0. Rows T1–T22 are v0's, with their status 
 | T3 | 1 | D | Decompression bombs, entity expansion, deep nesting, giant tables | DTDs rejected; limits on sizes, ratios, depth, counts; cancellable layout | In place for bayan-opc; planned for the rest | v0 |
 | T4 | 2 | E, D | Malformed messages from a compromised shell component or web page script | Schema validation at the boundary; no panics across it; strict CSP and Trusted Types on the web | In place in the engine skeleton (CORE-007) | §4.6 |
 | T5 | 4 | I | The server reads document content | MLS with the hybrid post-quantum suite; zero-knowledge invariant (ADR-0015, ADR-0016); validated by SRV-002; the exceptions are T11 and T23 | Planned | §6, G1 |
-| T6 | 4 | S, E | The server adds a device or member to read documents ("ghost member") | Membership changes are commits every member checks; devices are cross-signed and checked against pinned identities (§5.2); for identities seen for the first time, see T23 | Planned (ADR-0016 Decision 6); details proposed (ADR-0029) | F3, F4 |
+| T6 | 4 | S, E | The server adds a device or member to read documents ("ghost member") | Membership changes are commits every member checks; devices are cross-signed and checked against pinned identities (§5.2); for identities seen for the first time, see T23 | Planned (ADR-0016 Decision 6, details in ADR-0029) | F3, F4 |
 | T7 | 4 | T, E | A collaborator without write role, or the server, injects edits | Roster in the group context; the server refuses viewers; clients check every update's sender and kind | Planned (tested in SRV-002) | F6, §7 |
 | T8 | 4 | D, E | Crafted CRDT updates or snapshots crash or exhaust a client | Authenticated before import; limits; fuzzed import; isolation with time and memory budgets and restart (ADR-0008, amendment 2026-10-08) | Planned | F6, F8, F5 |
 | T9 | 4 | I | Metadata leakage: membership, roles, readable commits, timing, sizes, senders of updates, typing rhythm | Titles and structure encrypted; the inventory of §9; senders and addresses not stored; retention limits; batching and padding options | Partly mitigated; residual | §9 |
@@ -1534,22 +1534,22 @@ The register keeps the numbers of v0. Rows T1–T22 are v0's, with their status 
 | T21 | 4 | S, T, D, E | Third-party or modified clients, buggy or malicious, connect with a user's valid credentials | The server treats every client as untrusted; new devices need approval from a trusted device and optionally an administrator; clients check every update; device lists with revocation; a public conformance suite (SEC-13, COL-13, COL-14) | Planned | F3, §7, §10 |
 | T22 | 4, 5 | I | Harvest now, decrypt later | Hybrid post-quantum key exchange in TLS (ADR-0028) and in MLS (ADR-0016, amendment 2026-10-04); key backups and device approvals sealed with the hybrid KEM; the account's root secrets under 256-bit symmetric keys | Planned | F3, F8, F9 |
 | T23 | 4 | S, I | Ghost user: at first contact, or by intercepting an invitation, the server hands out an identity it controls, and then reads what is shared with it | Pinned identities with blocking warnings on change; safety numbers and QR codes; verified marks; pins carried to new devices; key transparency to evaluate at the Phase-3 gate | Residual | F2, F4, §5.2 |
-| T24 | 4, 11 | S, E | During an approval, the server slips in its own device, or hands the new device its own identity key and key-backup key | Approval authenticated out of band in both directions; no bare approval button; pending devices powerless | Proposed (ADR-0029) | F3 |
-| T25 | 4 | D | A member stalls a group with a commit that only members can check, or that works only for some members | Two-phase acceptance: any refusal drops it, the sender's account is quarantined, members it failed for resync | Proposed (ADR-0030) | F12, §7.2 |
+| T24 | 4, 11 | S, E | During an approval, the server slips in its own device, or hands the new device its own identity key and key-backup key | Approval authenticated out of band in both directions; no bare approval button; pending devices powerless | Planned (ADR-0029) | F3 |
+| T25 | 4 | D | A member stalls a group with a commit that only members can check, or that works only for some members | Two-phase acceptance: any refusal drops it, the sender's account is quarantined, members it failed for resync | Planned (ADR-0030) | F12, §7.2 |
 | T26 | 4 | T, D | The server forks a group, giving different commits to different members | Members stop at different epochs; optional group codes to compare; an owner's move, after which CRDT merges both sides | Residual | F6, §7.3 |
 | T27 | 4, 10, 11, 14 | S, E, D | A sign-in taken over (identity provider, passkey, administrator) is used for more than signing in | Sign-in never gives keys; pending devices powerless; destructive and security actions need an approved device; notices to the user's devices; audit | Planned | F1, F2, F11, F17 |
 | T28 | 11 | S, I, E | The recovery kit, or a passkey with passkey unlock, is compromised: the account follows, and with the server's stored data the latest snapshot of every document can be read, now and later, until the user responds | The kit is generated, kept offline and never sent; recovery joins need a sign-in and are visible; passkey unlock is opt-in and can be switched off by administrators; a new kit and new key-backup and device-signing keys after every recovery and any suspected exposure (§5.1) | Residual by design | F9, F10 |
-| T29 | 4 | D | Access cannot be recovered, or a document's membership is frozen for good | Recovery joins; key backup; encouraging a second owner | Proposed (ADR-0029); residual if the kit is also lost | F4, F9, F11 |
+| T29 | 4 | D | Access cannot be recovered, or a document's membership is frozen for good | Recovery joins; key backup; encouraging a second owner | Planned (ADR-0029); residual if the kit is also lost | F4, F9, F11 |
 | T30 | 4 | S, E | Device lists or revocations withheld, or old ones served again | Versioned, signed device lists that only move forward; removal from groups by MLS commits, independent of the lists; the user's own devices refuse revoked devices' joins | Planned | F3, F9, F11 |
 | T31 | 4, 9 | I | A link's key is exposed: shared too widely, kept in history, or read by served web code | Fragment never sent and removed on open; expiry; revocation; read-only; the desktop app opens links | Residual | F5 |
 | T32 | 4 | S | A session token or sign-in code is stolen | Cookie attributes; tokens in keychains; device-key proof of possession; PKCE; single-use codes | Planned | F1, F6 |
-| T33 | 5, 14 | T, D, E | Restoring a backup rolls state back: groups stall, revoked sessions return, used key packages are offered again | After a restore: all sessions end, key packages are replaced, members catch the server up (§7.5) | Proposed (ADR-0030) | F17, §7.5 |
+| T33 | 5, 14 | T, D, E | Restoring a backup rolls state back: groups stall, revoked sessions return, used key packages are offered again | After a restore: all sessions end, key packages are replaced, members catch the server up (§7.5) | Planned (ADR-0030) | F17, §7.5 |
 | T34 | 4 | D, I | Key packages claimed to block additions, or to learn who is about to share with whom | Claims only by approved devices; limits per claimer and target; expiry; claims not stored | Planned | F4 |
 | T35 | 4 | I, E | The compliance escrow is abused: silent addition, scope creep, key theft, surveillance | Visible member; managed configuration; passive offline key under a hardware quorum; audit; retention policy | Planned (Phase 4) | §8, F15 |
 | T36 | 2, 3 | I | Engine recordings or diagnostics capture keys or decrypted content of collaborative documents | Recordings of collaborative sessions contain no MLS state or key material and are never uploaded (§13.3); keys never cross to the shell except wrapped | Planned | §4.6, §13.3 |
 | T37 | 12 | I, S | Notifications leak metadata or carry phishing | Content-free notices; email opt-in over TLS; no push services; plain-text emails with escaped names | Planned | F14 |
 | T38 | 4 | I | The directory is used to find out who has an account | Exact-match look-ups by approved devices only, rate limited, the same answer for no match | Planned | F4 |
-| T39 | 4 | S, E | A stolen device or a stolen device-signing or identity key is used for resyncs, recovery joins, to certify devices or to sign device lists | Device must be in the latest signed list; the user's own devices refuse revoked devices and alarm on list changes attributed to them; joins are shown to all; the device-signing key is rotated after a loss and never held by browser devices | Proposed (ADR-0029) | F3, F9, F11 |
+| T39 | 4 | S, E | A stolen device or a stolen device-signing or identity key is used for resyncs, recovery joins, to certify devices or to sign device lists | Device must be in the latest signed list; the user's own devices refuse revoked devices and alarm on list changes attributed to them; joins are shown to all; the device-signing key is rotated after a loss and never held by browser devices | Planned (ADR-0029) | F3, F9, F11 |
 
 ## 12. Accepted residual risks (v1)
 
@@ -1578,15 +1578,15 @@ This change updates the drafts in [workpackages/phase-1/server.md](../workpackag
 |---|---|
 | SRV-101 | Sessions bound to devices with proof of possession of the device key; the desktop app signs in through the system browser with a loopback redirect and PKCE; the OIDC checks of F1, including the `SameSite=Lax` pre-sign-in cookie, and the passkey checks of F2; pending devices without powers; invitations as hashed, single-use tokens carried in fragments; re-authentication for sensitive actions; the security audit log of §9.1 with its retention; no IP addresses or user agents stored by default; forwarded addresses trusted only from the proxy; the first administrator's bootstrap token printed only to the operator's terminal; evidence for every requirement of §10 that its endpoints touch |
 | SRV-102 | The metadata schema of §9.1, with nothing that the inventory does not list and its retention jobs; random identifiers; no uploader per blob and no deduplication across groups; quotas per account and group; object keys made only of random IDs |
-| SRV-103 | The server side of two-phase acceptance (§7.2, ADR-0030, proposed), with its state persisted; key-package checks and claim limits; group information kept for resyncs and recovery joins; device authentication and `Origin` checks on the WebSocket; size limits per message kind, rate limits per device and group, backpressure; the sender of updates never stored and ephemeral messages never stored; the retention of §9.1; the failure modes of §7.3 in the hostile-client suite |
+| SRV-103 | The server side of two-phase acceptance (§7.2, ADR-0030), with its state persisted; key-package checks and claim limits; group information kept for resyncs and recovery joins; device authentication and `Origin` checks on the WebSocket; size limits per message kind, rate limits per device and group, backpressure; the sender of updates never stored and ephemeral messages never stored; the retention of §9.1; the failure modes of §7.3 in the hostile-client suite |
 | SRV-104 | In the sync protocol: sequence numbers and catch-up, outcome, report and stuck messages for two-phase acceptance, queuing CRDT updates rather than ciphertext while offline, version vectors to find missing updates, authenticated leave requests, catch-up after a server restore (§7.5), options for batching and padding, and group IDs in frames rather than paths |
 | SRV-105 | Metrics without identifiers on a private listener; the audit log's storage and export; backups with the restore procedure of §7.5 and a test of it; deployment guidance on HSTS at the proxy, on forwarded headers, on the proxy reaching the server only over loopback or a closed network, and on switching the proxy's access logs off or logging without paths and addresses; this document's §10 as the checklist for `server-api.md` |
 
-### 13.2 Proposed decisions
+### 13.2 Decisions
 
-- **[ADR-0029](../adr/0029-identity-devices-and-recovery.md) (Proposed): identity keys, device approval and account recovery.** It makes ADR-0016 Decisions 6 and 7 concrete (§5) and fixes three of the problems found: recovery joins and resyncs so that a user who lost every device can rejoin their documents (T29); a key backup so that documents only the user held survive (T29); and device approval authenticated in both directions, with no device-signing key on browser devices (T24, T11). It also states plainly what holds at first contact (T23) and what the recovery kit and passkey unlock expose (T28). It changes design detail 3 of ADR-0016's amendment of 2026-10-07 in two points: groups accept resyncs and recovery joins, which are external commits; and the required credential type is the one ADR-0029 chooses instead of basic credentials.
-- **[ADR-0030](../adr/0030-commit-acceptance-and-group-repair.md) (Proposed): commit acceptance, departures and group repair.** It gives the details of two-phase acceptance (§7.2), with its three departures from the owner's chosen direction stated for the owner to decide. It also lets users leave without waiting for an owner's goodwill (F4.11), adds a policy version, and defines how groups catch up after a server restore (§7.5, T33). It confirms the owner's decision that the kind of an update stays encrypted (§7.4).
-- Both need the owner's decision (ADR-0001 Decision 5: they change security design), and the external audit before collaboration leaves beta (SEC-08) must cover them. ADR-0029 combines signatures, key derivation and encryption into constructions of its own: device certificates and device lists, the secret store, the key backup, passkey wrapping, the authenticated approval exchange (QR code or short code), link signing and the device's proof of possession. ADR-0029 therefore makes an expert review of these constructions a condition before the Phase-3 work package that builds them starts (risks R-06 and R-11).
+- **[ADR-0029](../adr/0029-identity-devices-and-recovery.md) (accepted on 2026-10-17): identity keys, device approval and account recovery.** It makes ADR-0016 Decisions 6 and 7 concrete (§5) and fixes three of the problems found: recovery joins and resyncs so that a user who lost every device can rejoin their documents (T29); a key backup so that documents only the user held survive (T29); and device approval authenticated in both directions, with no device-signing key on browser devices (T24, T11). It also states plainly what holds at first contact (T23) and what the recovery kit and passkey unlock expose (T28). It changes design detail 3 of ADR-0016's amendment of 2026-10-07 in two points: groups accept resyncs and recovery joins, which are external commits; and the required credential type is the one ADR-0029 chooses instead of basic credentials.
+- **[ADR-0030](../adr/0030-commit-acceptance-and-group-repair.md) (accepted on 2026-10-17): commit acceptance, departures and group repair.** It gives the details of two-phase acceptance (§7.2), with three departures from the owner's earlier direction, which the owner accepted. It also lets users leave without waiting for an owner's goodwill (F4.11), adds a policy version, and defines how groups catch up after a server restore (§7.5, T33). It confirms the owner's decision that the kind of an update stays encrypted (§7.4).
+- Both needed the owner's decision (ADR-0001 Decision 5: they change security design). The owner accepted both on 2026-10-17, and decided against the expert review of ADR-0029's constructions before Phase 3 that the proposal made a condition. ADR-0029 combines signatures, key derivation and encryption into constructions of its own: device certificates and device lists, the secret store, the key backup, passkey wrapping, the authenticated approval exchange (QR code or short code), link signing and the device's proof of possession. Their first review from outside the project is therefore the external audit before collaboration leaves beta (SEC-08), which must cover both ADRs (risks R-06 and R-11).
 
 ### 13.3 Later phases and other repositories
 
@@ -1608,8 +1608,8 @@ This change updates the drafts in [workpackages/phase-1/server.md](../workpackag
 |---|---|
 | 1. Full data-flow diagrams for login, device enrollment, sharing, link sharing, sync, snapshotting and recovery | Context and component diagrams §4.2–§4.4; flows F1 (OIDC), F2 (passkeys), F3 (device enrollment and cross-signing), F4 (sharing and roles), F5 (links), F6 and F7 (sync online and offline), F8 (snapshots and new members), F9 and F10 (recovery), F11 (device loss), plus F12–F17 |
 | 2. Exact metadata stored by the server, field by field, with justification | §9 |
-| 3. Role enforcement design details and failure modes (server and client disagree) | §7, F12, ADR-0030 (proposed) |
-| 4. Recovery kit and passkey PRF flows; lost-device and revocation scenarios | §5.1, F9, F10, F11, ADR-0029 (proposed) |
+| 3. Role enforcement design details and failure modes (server and client disagree) | §7, F12, ADR-0030 |
+| 4. Recovery kit and passkey PRF flows; lost-device and revocation scenarios | §5.1, F9, F10, F11, ADR-0029 |
 | 5. Compliance escrow member design and its abuse cases | §8, F15 |
 | 6. Security requirements checklist per server endpoint | §10 |
 
@@ -1628,4 +1628,4 @@ This change updates the drafts in [workpackages/phase-1/server.md](../workpackag
 - **When it changes.** At every phase gate, and in any work package that changes a trust boundary or adds an endpoint. Phase-1 server work packages record, for each endpoint they build, the evidence for §10's requirements, and update §9 when they store a new field.
 - **Numbers.** Threat numbers (T1–T39), flow numbers (F1–F17), infrastructure rows (IE1–IE11), failure-mode numbers (FM1–FM13) and escrow abuse cases (EA1–EA10) are never reused or renumbered; new ones are added at the end.
 - **Review.** A separate reviewer session reviews each version (SRV-003 AC-4); the external audit before collaboration leaves beta reviews §5–§8 (SEC-08).
-- **History.** v0, 2026-10-03, planning session. v1, 2026-10-14, SRV-003: system and flow diagrams, STRIDE per element and per flow, metadata inventory, role enforcement, escrow, endpoint requirements, T23–T39, ADR-0029 and ADR-0030 proposed.
+- **History.** v0, 2026-10-03, planning session. v1, 2026-10-14, SRV-003: system and flow diagrams, STRIDE per element and per flow, metadata inventory, role enforcement, escrow, endpoint requirements, T23–T39, ADR-0029 and ADR-0030 proposed, and accepted by the owner on 2026-10-17.

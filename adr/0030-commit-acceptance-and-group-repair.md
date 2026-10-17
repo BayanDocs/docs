@@ -1,15 +1,15 @@
 # ADR-0030: Commit acceptance, departures and group repair
 
-- **Status:** Proposed (SRV-003, 2026-10-14). Not binding until the owner accepts it, including the three departures from the owner's chosen direction listed under Context; the external audit before collaboration leaves beta covers it (SEC-08).
-- **Date:** 2026-10-14
-- **Deciders:** proposed by the SRV-003 implementer session; the owner decides (ADR-0001 Decision 5: it changes a security design)
+- **Status:** Accepted (owner, 2026-10-17), including the three departures from the owner's earlier direction listed under Context — validation gate (SRV-103 and the Phase-3 work package that builds `bayan-mls` and `bayan-sync`, below); the external audit before collaboration leaves beta covers it (SEC-08).
+- **Date:** 2026-10-14 (proposed); 2026-10-17 (accepted)
+- **Deciders:** Owner, on 2026-10-17, answering the open questions of SRV-003's [pull request](https://github.com/BayanDocs/docs/pull/42), on the recommendation of the SRV-003 implementer session (ADR-0001 Decision 5: it changes a security design)
 - **Related:** COL-01, COL-05, SEC-08, SEC-13, OPS-04, [ADR-0015](0015-server-architecture.md), [ADR-0016](0016-e2ee-and-identity.md), [ADR-0029](0029-identity-devices-and-recovery.md), [threat model v1](../specs/threat-model.md) (§7, flows F4, F9, F12, F13, F17; threats T25, T26, T33; failure modes FM1–FM13), SRV-002, SRV-003, SRV-103, SRV-104, SRV-105
 
 ## Context
 
 The server's validator cannot check the parts of an MLS commit that are keyed with the epoch's secrets: its membership and confirmation tags and the path secrets it encrypts to the other members. Any member, a viewer included, can therefore send a commit that the server accepts and other members refuse; the server then follows the group into an epoch those members never reach and refuses all their later commits (SRV-002 report §5). The committer can also encrypt correctly to some members and wrongly to others ("selective encryption"), so a commit can work for the owners' devices and fail for everyone else, or work for the members who are online and fail for those who are offline.
 
-On 2026-10-09 the owner chose a direction against this: the server keeps the previous epoch's public state until a device of another user confirms the new epoch, and otherwise drops the commit and quarantines its sender; an owner's move to a new group that may leave users out stays the manual last resort. The owner asked SRV-003 to design the details (ADR-0016, amendment 2026-10-07, requirement 6). The threat model v1 (§7.2) does so, and departs from the chosen direction in three points, which the owner decides explicitly:
+On 2026-10-09 the owner chose a direction against this: the server keeps the previous epoch's public state until a device of another user confirms the new epoch, and otherwise drops the commit and quarantines its sender; an owner's move to a new group that may leave users out stays the manual last resort. The owner asked SRV-003 to design the details (ADR-0016, amendment 2026-10-07, requirement 6). The threat model v1 (§7.2) does so, and departs from the chosen direction in three points, which the owner accepted explicitly on 2026-10-17:
 
 1. **Owners' commits take effect at once.** The direction covers every commit; this ADR applies two phases only to commits by members who are not owners (Decision 1 says why).
 2. **A commit that nobody checks within 72 hours is dropped without quarantine.** The direction drops and quarantines "otherwise"; a time-out is not evidence of misbehavior, so its sender is not punished and may retry.
