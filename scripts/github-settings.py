@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2026 BayanDocs contributors
 # SPDX-License-Identifier: MIT-0
 #
-# Checks and applies the GitHub settings baseline of the BayanDocs organization: the organization's member privileges and GitHub Actions policy, the security configuration that new repositories start with, the teams that give people access, and each repository's merge settings, security features, immutable releases and rulesets. These are items 3–6 of the owner checklist (plan/09-owner-checklist.md); developer/github-settings.md explains every choice, the token the script needs and how to run it.
+# Checks and applies the GitHub settings baseline of the BayanDocs organization: the organization's member privileges and GitHub Actions policy, the security configuration that new repositories start with, the teams that give people access, and each repository's merge settings, security features, immutable releases and rulesets, with its merge queue. These are items 3–6 of the owner checklist (plan/09-owner-checklist.md); developer/github-settings.md explains every choice, the token the script needs and how to run it.
 #
 # Why a script: settings changed by clicking drift apart and leave no record. Written down here, every change is reviewed in a pull request, the same rules reach every repository, and `audit` shows at any time where GitHub differs from them.
 #
@@ -182,11 +182,38 @@ SECRET_SCANNING: List[Tuple[str, str, Any]] = [
 # The app ID of GitHub Actions. Required checks must come from it, so that nobody can satisfy a check by posting a passing commit status with the same name from somewhere else. GitHub's documentation does not state the number, so every audit looks it up (GET /apps/github-actions), and no rule naming it is applied unless the two agree: a wrong ID would make every pull request wait forever.
 GITHUB_ACTIONS_APP_ID = 15368
 
+# The merge queue of each managed repository, a rule of "Protect main" (the owner's decision of 2026-10-17: every repository). "Merge when ready" puts a pull request in the queue instead of merging it: the queue squashes it onto the newest main in a branch of its own (gh-readonly-queue/main/pr-<number>-<commit>), runs the required checks there, and moves main to that commit only when they pass. So two pull requests that each pass on their own can no longer break main together, and nobody has to bring a branch up to date and wait for its checks again before merging. Every workflow with a required job therefore also runs on merge_group (the workflow conventions in AGENTS.md), and the DCO check reads the queued pull request from GitHub there.
+# The value is the status check timeout (check_response_timeout_minutes): how long the queue waits for a required check to report before it counts as failed, which takes the pull request out of the queue. It is the longest chain of required jobs, by their timeout-minutes, plus 10 minutes to get a runner; recompute it when a required job's limit changes. A repository missing here has no merge queue, and its branches must be up to date with main before they merge instead.
+MERGE_QUEUE_TIMEOUT_MINUTES: Dict[str, int] = {
+    "docs": 30,  # the CodeQL jobs: 20 minutes
+    "bayan-core": 70,  # CodeQL (rust): 60 minutes
+    "bayan-web": 85,  # the engine package (30 minutes), then pnpm verify (45)
+    "bayan-desktop": 55,  # each CI job and CodeQL (c-cpp): 45 minutes
+    "bayan-server": 55,  # the supply-chain checks (15 minutes), then the PostgreSQL integration or the container image (30); CodeQL (rust): 45
+}
 
-def main_branch_ruleset(required_checks: List[str]) -> Dict[str, Any]:
+
+def merge_queue_rule(timeout_minutes: int) -> Dict[str, Any]:
+    """The rule that sends every pull request into main through the merge queue. GitHub requires all seven parameters."""
+    return {
+        "type": "merge_queue",
+        "parameters": {
+            "merge_method": "SQUASH",  # the only merge method that the pull_request rule allows
+            # Every pull request of a group must pass the required checks on its own queue branch, not only the last one of the group: the DCO check on a queue branch checks only the pull request that the branch names.
+            "grouping_strategy": "ALLGREEN",
+            "max_entries_to_build": 5,  # pull requests whose checks run at the same time
+            "min_entries_to_merge": 1,  # a pull request never waits for others to form a group
+            "max_entries_to_merge": 5,
+            "min_entries_to_merge_wait_minutes": 0,
+            "check_response_timeout_minutes": timeout_minutes,
+        },
+    }
+
+
+def main_branch_ruleset(required_checks: List[str], merge_queue_timeout_minutes: Optional[int] = None) -> Dict[str, Any]:
     """The ruleset that protects main (owner checklist item 3).
 
-    Every change reaches main through a pull request that is squash-merged by GitHub (so every commit on main is one that GitHub created and signed), after all review conversations are resolved and the required checks have passed on a branch that is up to date with main. Nobody can push directly, force-push or delete main, and nobody can bypass the rules: changing them means changing this baseline, in a pull request. No approving review is required while the owner is the only maintainer, because GitHub does not let anyone approve their own pull request and agents open pull requests as the owner; raise required_approving_review_count when a second maintainer joins. Signed commits are not required: GitHub can refuse to squash-merge a pull request whose own commits lack a verified signature, which would shut out contributors who do not sign, and main already holds only commits signed by GitHub.
+    Every change reaches main through a pull request that is squash-merged by GitHub (so every commit on main is one that GitHub created and signed), after all review conversations are resolved and the required checks have passed: with a merge queue (merge_queue_timeout_minutes given), on the pull request squashed onto the newest main by the queue, which is why its branch need not be up to date with main itself (GitHub recommends switching that requirement off with a queue); without one, on a branch that is up to date with main. Nobody can push directly, force-push or delete main, and nobody can bypass the rules: changing them means changing this baseline, in a pull request. No approving review is required while the owner is the only maintainer, because GitHub does not let anyone approve their own pull request and agents open pull requests as the owner; raise required_approving_review_count when a second maintainer joins. Signed commits are not required: GitHub can refuse to squash-merge a pull request whose own commits lack a verified signature, which would shut out contributors who do not sign, and main already holds only commits signed by GitHub.
     """
     rules: List[Dict[str, Any]] = [
         {"type": "deletion"},
@@ -213,10 +240,12 @@ def main_branch_ruleset(required_checks: List[str]) -> Dict[str, Any]:
                     "required_status_checks": [
                         {"context": check, "integration_id": GITHUB_ACTIONS_APP_ID} for check in required_checks
                     ],
-                    "strict_required_status_checks_policy": True,
+                    "strict_required_status_checks_policy": merge_queue_timeout_minutes is None,
                 },
             }
         )
+    if merge_queue_timeout_minutes is not None:
+        rules.append(merge_queue_rule(merge_queue_timeout_minutes))
     return {
         "name": "Protect main",
         "target": "branch",
@@ -828,7 +857,7 @@ class Auditor:
         by_name: Dict[str, List[Dict[str, Any]]] = {}
         for ruleset in self.gh.paginate(base + "?includes_parents=false"):
             by_name.setdefault(ruleset.get("name", ""), []).append(ruleset)
-        for want in (main_branch_ruleset(checks), release_tag_ruleset()):
+        for want in (main_branch_ruleset(checks, MERGE_QUEUE_TIMEOUT_MINUTES.get(name)), release_tag_ruleset()):
             label = f"Ruleset {show(want['name'])}"
             matches = by_name.pop(want["name"], [])
             # A rule that names GitHub Actions by a wrong app ID would block every pull request, so it is applied only once the ID is confirmed.

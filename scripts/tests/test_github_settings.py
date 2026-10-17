@@ -399,10 +399,28 @@ class FakeGitHub:
     def list_rulesets(self, match: Any, query: Any, body: Any) -> Tuple[int, Any]:
         return self.with_repo(match, lambda repo: (200, [{k: r[k] for k in ("id", "name", "target", "enforcement", "source_type", "source")} for r in repo["_rulesets"].values()]))
 
+    @staticmethod
+    def invalid_rule(body: Dict[str, Any]) -> Optional[str]:
+        """Why GitHub would refuse a rule of the ruleset, or None. The merge queue rule exists only for branches and needs all seven of its parameters, within the documented values."""
+        for rule in body["rules"]:
+            if rule["type"] != "merge_queue":
+                continue
+            parameters = rule.get("parameters") or {}
+            limits = {"check_response_timeout_minutes": (1, 360), "max_entries_to_build": (0, 100), "max_entries_to_merge": (0, 100), "min_entries_to_merge": (0, 100), "min_entries_to_merge_wait_minutes": (0, 360)}
+            if body["target"] != "branch" or set(parameters) != set(limits) | {"grouping_strategy", "merge_method"}:
+                return "Invalid rule 'merge_queue'"
+            if parameters["grouping_strategy"] not in ("ALLGREEN", "HEADGREEN") or parameters["merge_method"] not in ("MERGE", "SQUASH", "REBASE"):
+                return "Invalid rule 'merge_queue'"
+            if not all(isinstance(parameters[key], int) and low <= parameters[key] <= high for key, (low, high) in limits.items()):
+                return "Invalid rule 'merge_queue'"
+        return None
+
     def create_ruleset(self, match: Any, query: Any, body: Dict[str, Any]) -> Tuple[int, Any]:
         def act(repo: Dict[str, Any]) -> Tuple[int, Any]:
             if any(r["name"] == body["name"] for r in repo["_rulesets"].values()):
                 return 422, {"message": "Name must be unique"}
+            if self.invalid_rule(body):
+                return 422, {"message": self.invalid_rule(body)}
             identifier = self.new_id()
             repo["_rulesets"][identifier] = self.stored_ruleset(repo, body, identifier)
             return 201, repo["_rulesets"][identifier]
@@ -417,6 +435,8 @@ class FakeGitHub:
             identifier = int(match["id"])
             if identifier not in repo["_rulesets"]:
                 return 404, {"message": "Not Found"}
+            if self.invalid_rule(body):
+                return 422, {"message": self.invalid_rule(body)}
             repo["_rulesets"][identifier] = self.stored_ruleset(repo, body, identifier)
             return 200, repo["_rulesets"][identifier]
 
@@ -529,6 +549,79 @@ class GitHubSettingsTest(unittest.TestCase):
         reach_baseline(fake)
         self.assertTrue(all(repo["web_commit_signoff_required"] for repo in fake.repos.values()))
         self.assertIn(("PATCH", "/repos/BayanDocs/docs"), fake.writes())
+
+    def test_every_repository_merges_through_the_queue(self) -> None:
+        # The owner's decision of 2026-10-17: a merge queue in every repository, with the settings in developer/github-settings.md.
+        self.assertEqual(sorted(gs.MERGE_QUEUE_TIMEOUT_MINUTES), sorted(gs.REPOSITORIES))
+        fake = FakeGitHub()
+        reach_baseline(fake)
+        for name, repo in fake.repos.items():
+            main = next(r for r in repo["_rulesets"].values() if r["name"] == "Protect main")
+            rules = {rule["type"]: rule.get("parameters") for rule in main["rules"]}
+            queue = {"merge_method": "SQUASH", "grouping_strategy": "ALLGREEN", "max_entries_to_build": 5, "min_entries_to_merge": 1, "max_entries_to_merge": 5, "min_entries_to_merge_wait_minutes": 0, "check_response_timeout_minutes": gs.MERGE_QUEUE_TIMEOUT_MINUTES[name]}
+            self.assertEqual(rules["merge_queue"], queue, name)
+            # The queue runs the checks on the pull request squashed onto the newest main, so the pull request's own branch need not be up to date.
+            self.assertFalse(rules["required_status_checks"]["strict_required_status_checks_policy"], name)
+            self.assertEqual(rules["pull_request"]["allowed_merge_methods"], ["squash"], name)
+
+    def test_turning_the_queue_on_changes_only_the_main_rulesets(self) -> None:
+        # GitHub before the queue: the baseline without it. Every repository reports the same two differences, and apply replaces "Protect main" and nothing else.
+        fake = FakeGitHub()
+        with mock.patch.dict(gs.MERGE_QUEUE_TIMEOUT_MINUTES, clear=True):
+            reach_baseline(fake)
+            self.assertEqual(Run(fake, "audit").status, 0)
+        audit = Run(fake, "audit")
+        self.assertEqual(audit.status, 1, audit.output)
+        self.assertEqual(audit.output.count('DRIFT  Ruleset "Protect main": lacks the rule merge_queue'), len(gs.REPOSITORIES), audit.output)
+        self.assertEqual(audit.output.count('DRIFT  Ruleset "Protect main": rule required_status_checks: strict_required_status_checks_policy is true, baseline false'), len(gs.REPOSITORIES), audit.output)
+        self.assertEqual(audit.output.count("DRIFT  "), 2 * len(gs.REPOSITORIES), audit.output)
+        before = len(fake.writes())
+        Run(fake, "apply", "--yes")
+        main_rulesets = sorted(("PUT", f"/repos/BayanDocs/{name}/rulesets/{identifier}") for name, repo in fake.repos.items() for identifier, ruleset in repo["_rulesets"].items() if ruleset["name"] == "Protect main")
+        self.assertEqual(sorted(fake.writes()[before:]), main_rulesets)
+        after = Run(fake, "audit")
+        self.assertEqual(after.status, 0, after.output)
+        self.assertEqual(after.output.count('ok     Ruleset "Protect main": matches the baseline (6 rules)'), len(gs.REPOSITORIES), after.output)
+
+    def test_turning_the_queue_off_again_brings_back_up_to_date_branches(self) -> None:
+        # The way back (developer/github-settings.md): take the repository out of MERGE_QUEUE_TIMEOUT_MINUTES, then apply.
+        fake = FakeGitHub()
+        reach_baseline(fake)
+        with mock.patch.dict(gs.MERGE_QUEUE_TIMEOUT_MINUTES):
+            del gs.MERGE_QUEUE_TIMEOUT_MINUTES["bayan-web"]
+            audit = Run(fake, "audit")
+            self.assertEqual(audit.status, 1, audit.output)
+            self.assertIn('DRIFT  Ruleset "Protect main": has the extra rule merge_queue', audit.output)
+            self.assertIn('DRIFT  Ruleset "Protect main": rule required_status_checks: strict_required_status_checks_policy is false, baseline true', audit.output)
+            self.assertEqual(audit.output.count("DRIFT  "), 2, audit.output)
+            Run(fake, "apply", "--yes")
+            main = next(r for r in fake.repos["bayan-web"]["_rulesets"].values() if r["name"] == "Protect main")
+            rules = {rule["type"]: rule.get("parameters") for rule in main["rules"]}
+            self.assertNotIn("merge_queue", rules)
+            self.assertTrue(rules["required_status_checks"]["strict_required_status_checks_policy"])
+            self.assertEqual(Run(fake, "audit").status, 0)
+
+    def test_the_queue_waits_longer_than_this_repository_s_checks_may_run(self) -> None:
+        # Each status check timeout is the longest chain of required jobs plus 10 minutes (MERGE_QUEUE_TIMEOUT_MINUTES). Only this repository's workflows are here to check it against; none of their jobs waits for another.
+        limits: List[int] = []
+        for workflow in sorted((SCRIPT.parent.parent / ".github" / "workflows").glob("*.yml")):
+            text = workflow.read_text(encoding="utf-8")
+            if re.search(r"^  merge_group:$", text, re.MULTILINE):
+                self.assertNotIn("    needs:", text, workflow.name)
+                limits += [int(minutes) for minutes in re.findall(r"^    timeout-minutes: (\d+)$", text, re.MULTILINE)]
+        self.assertTrue(limits, "no workflow of this repository runs in the merge queue")
+        self.assertGreaterEqual(gs.MERGE_QUEUE_TIMEOUT_MINUTES["docs"], max(limits) + 10)
+        for name, minutes in gs.MERGE_QUEUE_TIMEOUT_MINUTES.items():
+            self.assertTrue(1 <= minutes <= 360, name)  # GitHub's limits
+
+    def test_a_merge_queue_rule_without_all_its_parameters_is_refused(self) -> None:
+        # The fake refuses what GitHub refuses, so the tests above would notice a parameter the script forgets.
+        rule = gs.merge_queue_rule(30)
+        for missing in rule["parameters"]:
+            body = gs.main_branch_ruleset(["a"])
+            body["rules"].append({"type": "merge_queue", "parameters": {key: value for key, value in rule["parameters"].items() if key != missing}})
+            self.assertIsNotNone(FakeGitHub.invalid_rule(body), missing)
+        self.assertIsNone(FakeGitHub.invalid_rule(gs.main_branch_ruleset(["a"], 30)))
 
     def test_a_repository_without_ci_gets_no_required_checks_rule(self) -> None:
         with mock.patch.dict(gs.REPOSITORIES, {"no-ci": []}):
@@ -799,6 +892,9 @@ class GitHubSettingsTest(unittest.TestCase):
         self.assertEqual(rule["parameters"]["required_status_checks"], [{"context": "a", "integration_id": 15368}, {"context": "b", "integration_id": 15368}])
         self.assertTrue(rule["parameters"]["strict_required_status_checks_policy"])
         self.assertEqual([r["type"] for r in gs.main_branch_ruleset([])["rules"]], ["deletion", "non_fast_forward", "required_linear_history", "pull_request"])
+        with_queue = gs.main_branch_ruleset(["a"], 30)
+        self.assertEqual([r["type"] for r in with_queue["rules"]], ["deletion", "non_fast_forward", "required_linear_history", "pull_request", "required_status_checks", "merge_queue"])
+        self.assertFalse(with_queue["rules"][4]["parameters"]["strict_required_status_checks_policy"])
 
 
 if __name__ == "__main__":
