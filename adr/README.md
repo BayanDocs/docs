@@ -46,4 +46,4 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 | [0027](0027-documentation-tooling.md) | Documentation tooling | Accepted |
 | [0028](0028-server-tls.md) | Server TLS: rustls with aws-lc-rs, HTTPS through a reverse proxy | Accepted (owner, 2026-10-04) |
 | [0029](0029-identity-devices-and-recovery.md) | Identity keys, device approval and account recovery | Accepted (owner, 2026-10-17) — validation gate (Phase-3 identity and recovery work package) |
-| [0030](0030-commit-acceptance-and-group-repair.md) | Commit acceptance, departures and group repair | Accepted (owner, 2026-10-17), with its three departures — validation gate (SRV-103 and Phase 3) |
+| [0030](0030-commit-acceptance-and-group-repair.md) | Commit acceptance, departures and group repair | Accepted (owner, 2026-10-17), with its three departures — validation gate (SRV-103 and Phase 3); amended 2026-10-26 (revoked devices when the server's device list is stale) |

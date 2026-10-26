@@ -109,3 +109,33 @@ SRV-103 builds the server side and the Phase-3 work package that builds `bayan-m
 ## Revisit when
 
 The MLS extensions draft is published (`SelfRemove`, Decision 7); OpenMLS lets members send application messages while they hold proposals, or implements re-initialization (`ReInit`); the measurements of SRV-103 suggest other limits; the external audit asks for changes; MLS gains a way for a delivery service to check commits without the epoch's secrets.
+
+## Amendment 2026-10-26: revoked devices when the server's device list is stale
+
+Decided by the owner on 2026-10-26, answering open question 5 of SRV-003's [pull request 42](https://github.com/BayanDocs/docs/pull/42): the rules that the threat model proposed in §13.4 are accepted, as an amendment of their own, so that pull request 42 merged as its reviewer had approved it.
+
+**Context.** The AC-4 review of SRV-003 found three gaps that ADR-0029 and this ADR leave together when the server's device list is stale. That happens when a hostile server withholds a newer list (threat T30), or when an honest server was restored from a backup older than a revocation (failure mode FM9):
+
+1. An owner's resync or recovery join takes one phase (Decision 1), so a revoked owner device's join takes effect before the user's own devices, which know the revocation, can refuse it.
+2. For a user who is not an owner, a refusal by the user's own device drops the join, but Decision 5 then quarantines the committer's account, which is the victim's own; the user's remaining devices can then no longer commit in that group, not even to remove the revoked device.
+3. Decision 9 lets the chain that an owner's device uploads decide a conflict in catch-up, but not a conflict between owners' devices, and a revoked owner device that the restored list still names counts as an owner's device.
+
+**Decision.** These rules add to Decisions 1, 5 and 9, and apply where they differ:
+
+1. **Device lists first.** During catch-up, every device uploads the newest signed device lists it holds before any commit, and the server checks every uploaded commit, resync and recovery join against the newest list it then holds, refusing anything signed by a device that a newer list revokes.
+2. **Block the device, not the victim.** A refusal with reason `credential` by a device of the joining account drops a resync or recovery join and blocks only the joining device in that group: the server accepts nothing more from it there, and the account is not quarantined. Owners and the user's devices are told.
+3. **The user's own devices may stop an owner's join.** When the joining account has other devices in the group, an owner's resync or recovery join waits like a two-phase commit, but only those devices' refusals count. It takes effect when the grace period after their first report ends without a refusal, or after a limit, proposed at 10 minutes, if none of them reports; SRV-103 measures the limit and may change it. A recovery after losing every device has no other device in the group and takes effect at once.
+4. **Conflicting owners' chains stop the group.** Once the lists are applied, the server drops uploaded chains that contain commits from revoked devices. If owners' devices still upload conflicting chains, the server accepts neither, keeps the group stopped and tells its owners, who repair it with a move to a new group (threat model F13), as for any fork (FM6).
+
+**Consequences.**
+
+- An owner's resync or recovery join can take up to the limit longer when the user's other devices in the group do not answer.
+- The server keeps, per group, the devices it blocked, until an owner lifts the block or the device is removed (threat model §9.1).
+- What remains: a hostile server can still withhold a newer list from members who have not seen it (T30) and ignore the refusals it receives, so against a hostile server only members who know the newer list protect themselves, by refusing the join and falling behind. Against an honest server that was restored, the rules close the gap once one device that knows the revocation has reconnected; until then, and when the user's other devices stay offline beyond the limit, a revoked owner device can still rejoin.
+
+**Validation gate.** SRV-103 and the Phase-3 work package that builds `bayan-mls` and `bayan-sync` add these tests, with a hostile test client:
+
+- after a restore, the newer device list taken before the commits, and an uploaded commit, resync or recovery join from a device that it revokes refused;
+- a resync or recovery join by a revoked device of a user who is not an owner, refused by that user's own device with reason `credential`: the join dropped, only that device blocked in the group, and the user's remaining devices still able to commit, the device's removal included;
+- an owner's resync by a revoked device, refused by another of the owner's devices before the limit; an owner's resync taking effect after the limit when the owner's other devices do not answer; and an owner's recovery after losing every device taking effect at once;
+- after a restore, owners' devices uploading conflicting chains: neither accepted, the group stopped, its owners told, and the group repaired by a move to a new group.
