@@ -19,7 +19,7 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 |---|---|---|
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
 | [0002](0002-repository-topology-and-contracts.md) | Repository topology, versioning and cross-repository contracts | Accepted |
-| [0003](0003-licensing-and-contribution-model.md) | Licensing and contribution model | Accepted (owner, 2026-10-04); in force since 2026-10-04; amended 2026-10-06 (MIT-0 for the shared contribution tooling) |
+| [0003](0003-licensing-and-contribution-model.md) | Licensing and contribution model | Accepted (owner, 2026-10-04); in force since 2026-10-04; amended 2026-10-06 (MIT-0 for the shared contribution tooling) and 2026-10-27 (the orchestrator signs off for the owner) |
 | [0004](0004-fidelity-contract-and-determinism.md) | Fidelity contract and layout determinism | Accepted |
 | [0005](0005-layout-units-and-deterministic-math.md) | Integer layout units (BLU) and deterministic math | Accepted |
 | [0006](0006-rust-core-and-memory-safety.md) | Rust core and memory-safety policy for untrusted input | Accepted; amended 2026-10-04 (AWS-LC for the server's TLS) |
@@ -46,4 +46,4 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 | [0027](0027-documentation-tooling.md) | Documentation tooling | Accepted |
 | [0028](0028-server-tls.md) | Server TLS: rustls with aws-lc-rs, HTTPS through a reverse proxy | Accepted (owner, 2026-10-04) |
 | [0029](0029-identity-devices-and-recovery.md) | Identity keys, device approval and account recovery | Accepted (owner, 2026-10-17) — validation gate (Phase-3 identity and recovery work package) |
-| [0030](0030-commit-acceptance-and-group-repair.md) | Commit acceptance, departures and group repair | Accepted (owner, 2026-10-17), with its three departures — validation gate (SRV-103 and Phase 3) |
+| [0030](0030-commit-acceptance-and-group-repair.md) | Commit acceptance, departures and group repair | Accepted (owner, 2026-10-17), with its three departures — validation gate (SRV-103 and Phase 3); amended 2026-10-26 (revoked devices when the server's device list is stale) |
