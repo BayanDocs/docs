@@ -75,7 +75,7 @@ Facts that shape the choice:
 ### 5. Contributions
 
 - **Inbound = outbound:** a contribution is licensed under the license of the files or directory it changes, certified by the Developer Certificate of Origin. **No contributor license agreement.** Nobody, including the project itself or a future owner of it, can relicense contributors' work.
-- **AI-assisted contributions:** the DCO is a certification only a person can make. Commits authored by AI agents carry the agent's attribution trailers and are **not** signed off by the agent. The human who submits or merges the work (initially the owner) certifies the DCO for them, by a sign-off line in the pull request description and in the squash-merge commit. Human-authored commits are signed off by their human author as usual. X-001 implements the DCO check accordingly.
+- **AI-assisted contributions:** the DCO is a certification only a person can make. Commits authored by AI agents carry the agent's attribution trailers and are **not** signed off by the agent. The human who submits or merges the work (initially the owner) certifies the DCO for them, by a sign-off line in the pull request description and in the squash-merge commit. Since 2026-10-27 the orchestrator session gives this sign-off on the owner's behalf (see the amendment of that date). Human-authored commits are signed off by their human author as usual. X-001 implements the DCO check accordingly.
 - **REUSE compliance:** every file carries SPDX license and copyright information, either in its own header or through the repository's `REUSE.toml` (a default for the repository plus declarations for the Apache-2.0 and CC0 areas); `reuse lint` passes in every repository and is checked in CI (X-001).
 
 ### 6. Trademark
@@ -115,6 +115,15 @@ Decided by the owner on 2026-10-06, answering open question 5 of X-001 ([BayanDo
 
 **Consequences.** Anyone may copy the DCO check, the workflows and the templates into any project, under any license, and a fix to a shared file can be copied into all five repositories as it is.
 
+## Amendment 2026-10-27: the orchestrator signs off for the owner
+
+The owner handed the running of the agent workflow to an orchestrator session ([plan/12](../plan/12-orchestration.md)) and delegated their sign-off to it. Once a separate reviewer session has approved a pull request's final head commit and every check is green, the orchestrator adds the owner's line, `Signed-off-by: Gabriel Chavez <144497470+Gabrielc1925@users.noreply.github.com>`, to the pull request's description and to the squash-merge commit, and merges.
+
+- The certification remains the owner's. They give it in advance, for work that has passed the project's review and checks, and they remain responsible for it. The orchestrator never signs off in anyone else's name, and never names an agent in a sign-off.
+- It applies only to pull requests whose commits were written by the project's AI agents or by the owner. Other people sign off their own commits, and whether to merge their pull requests stays with the owner.
+- Implementer and reviewer sessions still never sign off (§5).
+- The owner can withdraw the delegation at any time, by stopping the orchestrator or by a later amendment.
+
 ## Revisit when
 
 An optional legal review of §4 recommends changes (ideally before the first outside contribution); the REUSE tool supports SPDX 3.0 `AdditionRef-` identifiers; the first outside contribution is about to be accepted (after which this decision is effectively permanent).
@@ -127,3 +136,4 @@ An optional legal review of §4 recommends changes (ideally before the first out
 - 2026-10-04 (later still): the owner put the licenses and the app-store permission (version 1.0) into force without waiting for a legal review, which stays optional; `LICENSE`, `LICENSES/` and `REUSE.toml` were added to all five repositories.
 - 2026-10-04 (DOCS-001): the owner chose MIT-0, as for `scripts/`, for the docs repository's configuration files and CI workflows (`book.toml`, `lychee.toml`, `typos.toml`, `.gitignore`, `.github/`) and the website's Mermaid loader script (`site/mermaid/mermaid-init.js`), because CC BY 4.0 is meant for prose rather than code; `REUSE.toml` lists the files.
 - 2026-10-06 (X-001 follow-up 7): the owner chose MIT-0 for the shared contribution tooling (`.github/`, `.editorconfig` and `.gitattributes`) in every repository; see the amendment of that date.
+- 2026-10-27: the owner delegated their sign-off for reviewed work of the project's agents to the orchestrator session; see the amendment of that date.

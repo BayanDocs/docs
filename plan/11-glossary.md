@@ -44,6 +44,7 @@
 | **OOXML** | Office Open XML (ECMA-376 / ISO/IEC 29500): the standard behind `.docx`, `.xlsx`, `.pptx`. |
 | **OPC** | Open Packaging Conventions: the ZIP-based container format of OOXML files, with parts, content types and relationships. |
 | **OPFS** | Origin Private File System: private, fast storage for a web application inside the browser. |
+| **Orchestrator** | The one long-running agent session that runs the agent workflow for the owner: it starts and directs the implementer and reviewer sessions, decides their questions in the owner's place, and merges reviewed work with the owner's sign-off ([plan/12](12-orchestration.md)). |
 | **PDF/A, PDF/UA, PDF/X** | PDF standards for archiving, accessibility and print exchange respectively. |
 | **Peritext** | A CRDT algorithm for rich-text formatting that merges concurrent formatting the way users expect. |
 | **Probe document** | A small generated document designed to isolate one Word behavior in the Fidelity Lab. |
