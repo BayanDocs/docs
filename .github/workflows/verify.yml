@@ -1,9 +1,11 @@
-# Runs the knowledge base's verification gate, scripts/verify.sh, on every pull request and every push to main (work package DOCS-001).
+# Runs the knowledge base's verification gate, scripts/verify.sh, on every pull request, in the merge queue and on every push to main (work package DOCS-001).
 # Conventions: actions pinned to full commit SHAs (version in the trailing comment), no permissions by default, read-only checkout without stored credentials, and tools installed by scripts/dev-setup.sh at pinned versions with checked SHA-256 hashes.
 name: Verify
 
 on:
   pull_request:
+  merge_group:
+    types: [checks_requested]
   push:
     branches: [main]
 
