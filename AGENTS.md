@@ -25,7 +25,7 @@ In BayanDocs cloud sessions the project's tools are preinstalled at pinned versi
 
 - Work on the branch you were given. Never push to `main` directly, never force-push a branch someone else is using, and never rewrite published history.
 - Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat(layout): …`, `fix(opc): …`, `docs: …`, `chore(deps): …`).
-- Follow the Developer Certificate of Origin rules in each repository's `CONTRIBUTING.md` once work package X-001 has enabled the DCO check. Agents do **not** sign off commits themselves (a DCO sign-off is a legal certification only a person can make); they add their attribution trailers, and the human submitter certifies the work (ADR-0003).
+- Follow the Developer Certificate of Origin rules in each repository's `CONTRIBUTING.md` once work package X-001 has enabled the DCO check. Agents do **not** sign off commits themselves (a DCO sign-off is a legal certification only a person can make); they add their attribution trailers, and the human submitter certifies the work (ADR-0003). The one exception is the orchestrator session, which adds the owner's sign-off on the owner's behalf when it merges reviewed work ([ADR-0003, amendment of 2026-10-27](adr/0003-licensing-and-contribution-model.md#amendment-2026-10-27-the-orchestrator-signs-off-for-the-owner), [plan/12](plan/12-orchestration.md)).
 - Keep commits small and logical. A pull request implements one WP (or one clearly bounded part of one).
 - Your pull request description must follow the **handoff template** in [plan/06-agent-workflow.md](plan/06-agent-workflow.md#hand-off-template): summary, WP link, acceptance-criteria checklist with evidence, verification output, deviations, follow-ups, open questions, and notes for the next agent.
 
@@ -90,6 +90,8 @@ Stop, write down the problem, list the options with your recommendation, and han
 - a dependency you need violates the dependency policy or its license is unclear;
 - the task touches cryptography, authentication, authorization, or key management in a way the brief does not spell out;
 - you need something only the owner can provide (accounts, hardware such as the Word reference machine, paid services, legal judgement).
+
+If the orchestrator started your session ([plan/12](plan/12-orchestration.md)), ask it instead of the owner: it decides in the owner's place, except on the matters plan/12 leaves to the owner.
 
 ## 9. Writing for the owner
 
