@@ -1,6 +1,6 @@
 # 06 — Agent Workflow: How Work Gets Handed Off, Done and Reviewed
 
-BayanDocs is built mostly by AI agents working in separate sessions, steered and reviewed by the owner. This document is the operating procedure that makes that safe: how a work package (WP) moves from idea to merged code, what every hand-off contains, and the ready-to-paste prompts for each kind of session.
+BayanDocs is built mostly by AI agents working in separate sessions, steered and reviewed by the owner. This document is the operating procedure that makes that safe: how a work package (WP) moves from idea to merged code, what every hand-off contains, and the ready-to-paste prompts for each kind of session. The owner can also hand the running of this workflow to an orchestrator session ([plan/12](12-orchestration.md)).
 
 ## Roles
 
@@ -10,6 +10,7 @@ BayanDocs is built mostly by AI agents working in separate sessions, steered and
 | Planner | An agent in a planning session | Writes and refines ADRs, specs and WPs; runs phase-gate reviews. |
 | Implementer | An agent in a WP session | Executes exactly one WP and opens a pull request with a complete hand-off. |
 | Reviewer | An agent in a review session (never the same session as the implementer) | Checks a pull request against its WP, the ADRs and the rules, and explains the verdict to the owner in plain language. |
+| Orchestrator | An agent in one long-running orchestrator session (optional) | Runs this workflow for the owner: chooses the next work, starts implementer, reviewer and specialty sessions, decides their questions in the owner's place, and merges approved pull requests with the owner's sign-off ([plan/12](12-orchestration.md)). |
 
 ## Work package lifecycle
 
@@ -47,6 +48,8 @@ Status lives in the index table of [workpackages/README.md](../workpackages/READ
 - A reviewer session has approved, and the owner has merged.
 
 ## How to hand off a work package (owner's procedure)
+
+While the orchestrator runs ([plan/12](12-orchestration.md)), it follows these steps for you.
 
 1. Pick a Ready WP whose dependencies are Done ([workpackages/README.md](../workpackages/README.md)).
 2. Start a new agent session in the BayanDocs cloud environment (see [Cloud environment](#cloud-environment-for-agent-sessions)). Attach the repositories listed in the brief's header, always including `docs` so the agent can read the brief, the ADRs and the specs. One WP per session.
@@ -105,6 +108,14 @@ A Dependabot security alert fired for <package> in the BayanDocs repository <rep
 You are performing an architecture review of BayanDocs. Read docs/AGENTS.md, docs/plan/03-architecture.md, the ADR index and the specs, then review the current main branches of bayan-core, bayan-desktop, bayan-web and bayan-server for drift from the Accepted ADRs and specs: logic that belongs in the core but was written in a shell, crate layering violations, determinism hazards, unjustified dependencies, security weaknesses, missing tests, and duplicated work. Do not change code. Produce a report in docs/plan/reviews/<date>.md with findings ranked by severity, each with a concrete recommended fix sized as S, M or L, and open it as a pull request to the docs repository with a plain-language summary for the owner.
 ```
 
+### Orchestrator session
+
+Start it as [plan/12](12-orchestration.md#what-the-owner-sets-up-once) describes, after setting the environment variables there.
+
+```text
+You are the orchestrator of BayanDocs, an open-source, Word-compatible word processor whose plan lives in the BayanDocs/docs repository. The owner has handed you the day-to-day running of the project: you choose the next work, start and direct implementer and reviewer sessions, decide their questions and disagreements in the owner's place, add the owner's DCO sign-off and merge pull requests once a separate reviewer session has approved them and CI is green, archive finished sessions, and start dependency-update, security-alert, architecture-review and phase-gate sessions when they are due. Read docs/AGENTS.md, docs/plan/06-agent-workflow.md and docs/plan/12-orchestration.md, then follow the procedure in plan/12 exactly, starting with its startup checks: every session you start runs on Opus 5.5 at max effort and never on another model, you run at most two implementation sessions and two review sessions at a time, and you stop only for the owner-only matters it lists, keeping all other work moving while one of them waits. Work continuously at a steady pace without waiting for the owner, wake yourself with check-ins, and report to the owner in plain language after each merge and once a day.
+```
+
 ## Hand-off template
 
 Every implementer pull request description uses this structure. Reviewers reject pull requests that omit sections.
@@ -151,7 +162,7 @@ Agents stop and hand back instead of guessing in the situations listed in [AGENT
 
 - One WP per implementer session; a fresh session for each review.
 - Attach only the repositories the brief lists, plus `docs`.
-- Agents never merge their own pull requests and never approve their own work.
+- Agents never merge their own pull requests and never approve their own work. The orchestrator merges other sessions' work once a separate reviewer has approved it ([plan/12](12-orchestration.md)).
 - Long WPs (size L) may span several sessions; each session ends with a pushed branch and hand-off notes in the draft pull request so the next session can resume.
 - When an agent produces text for you to copy, it uses flowing paragraphs without hard line breaks.
 
@@ -163,4 +174,4 @@ Agents stop and hand back instead of guessing in the situations listed in [AGENT
 4. Did it add or change dependencies? If so, is each one justified, and is each version at least 24 hours old?
 5. Does it change files outside the brief's scope? If so, is there a good reason in "Deviations"?
 6. Are there open questions for you? Answer them before merging.
-7. Once the DCO check is enabled (X-001), add your own `Signed-off-by: Your Name <email>` line to the pull request description and keep it in the squash-merge commit message (GitHub adds it by itself when you merge in the web interface; when merging any other way, end the message with it). This is your certification, as the person submitting the work, that the project may use the contribution under its license; agents cannot make it for you (ADR-0003).
+7. Once the DCO check is enabled (X-001), add your own `Signed-off-by: Your Name <email>` line to the pull request description and keep it in the squash-merge commit message (GitHub adds it by itself when you merge in the web interface; when merging any other way, end the message with it). This is your certification, as the person submitting the work, that the project may use the contribution under its license; agents cannot make it for you (ADR-0003). While the orchestrator runs, it adds this line on your behalf when it merges reviewed work ([ADR-0003, amendment of 2026-10-27](../adr/0003-licensing-and-contribution-model.md#amendment-2026-10-27-the-orchestrator-signs-off-for-the-owner)).

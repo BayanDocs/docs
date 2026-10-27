@@ -24,6 +24,7 @@
 - [09 — Owner Checklist: Things Only You Can Do](plan/09-owner-checklist.md)
 - [10 — Learning Path for the Owner](plan/10-learning-path.md)
 - [11 — Glossary](plan/11-glossary.md)
+- [12 — Orchestration: One Session Runs the Workflow](plan/12-orchestration.md)
 
 # Decisions
 
