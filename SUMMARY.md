@@ -25,6 +25,7 @@
 - [10 — Learning Path for the Owner](plan/10-learning-path.md)
 - [11 — Glossary](plan/11-glossary.md)
 - [12 — Orchestration: One Session Runs the Workflow](plan/12-orchestration.md)
+- [Architecture Review — 2026-10-27](plan/reviews/2026-10-27.md)
 
 # Decisions
 
