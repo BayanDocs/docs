@@ -35,10 +35,10 @@ In every repository, no job of `codeql.yml` that runs code of the repository, of
 
 ### In scope
 
-- **The split, in all five repositories.** Each analysis job keeps `contents: read` only (each permission with its comment), runs CodeQL's `analyze` step without uploading (its `upload` input, for example `never`, writing the SARIF file to a folder given as `output`), and keeps the SARIF file as a workflow artifact with a short retention, as Scorecard does. An upload job per language checks out the repository without credentials (as Scorecard's does, so that the upload can match results to files), downloads the artifact and uploads it with `upload-sarif`, with the same category as today (`/language:<language>`) and `security-events: write`. Apply it to the build-less languages too, so that the workflow stays the same everywhere.
+- **The split, in all five repositories.** Each analysis job keeps read permissions only (`contents: read`, and a read permission such as `security-events: read` if CodeQL needs one; each with its comment), runs CodeQL's `analyze` step without uploading (its `upload` input, for example `never`, writing the SARIF file to a folder given as `output`), and keeps the SARIF file as a workflow artifact with a short retention, as Scorecard does. An upload job per language checks out the repository without credentials (as Scorecard's does, so that the upload can match results to files), downloads the artifact and uploads it with `upload-sarif`, with the same category as today (`/language:<language>`) and `security-events: write`. Apply it to the build-less languages too, so that the workflow stays the same everywhere.
 - **The required checks keep their names and their meaning.** The job named `CodeQL (<language>)` must succeed only when both the analysis and the upload succeeded, and must never be skipped: for example, name the upload job `CodeQL (<language>)`, run it with `if: ${{ !cancelled() }}`, and make its first step fail unless its analysis job succeeded; name the analysis job `CodeQL analysis (<language>)`. With a matrix, make sure each language's upload job judges its own analysis, not the matrix as a whole. If keeping the names turns out to be impossible, change `scripts/github-settings.py` in the docs pull request and tell the orchestrator that the owner must apply the settings, which only the owner can do.
 - **Pins.** `actions/upload-artifact`, `actions/download-artifact` and `github/codeql-action/upload-sarif` at the commits the repositories already pin (Scorecard's workflow uses all three), so that no new pin is needed; any new pin must be at least 24 hours old.
-- **Documentation.** A workflow convention in docs `AGENTS.md` §6 and in each repository's `AGENTS.md` ("Workflow conventions"): a job that runs code of the repository, its tools or its dependencies never holds a write permission; results it produces go to a separate job that runs only GitHub's own actions. Update the comment at the top of each `codeql.yml` and the "Shared workflows" item of §6 if its wording no longer fits.
+- **Documentation.** A workflow convention in docs `AGENTS.md` §6 and in each repository's `AGENTS.md` ("Workflow conventions"): a job that runs code of the repository, its tools or its dependencies never holds a write permission; results it produces go to a separate job that runs only GitHub's own actions. Update the comment at the top of each `codeql.yml` and the "Shared workflows" item of §6 if its wording no longer fits. In docs, also update the `codeql.yml` row of the [dependency update runbook](../../developer/dependency-update-runbook.md): it tells the monthly session to split these jobs, or to ask the owner to accept the risk, before taking a bundle whose Rust extractor runs `cargo check`, which this work package makes obsolete (AGENTS.md §5: a document about the dependency posture changes in the same pull request as the posture).
 
 ### Out of scope
 
@@ -48,7 +48,7 @@ In every repository, no job of `codeql.yml` that runs code of the repository, of
 
 ## Deliverables
 
-One pull request per repository: the five `codeql.yml` files, the code repositories' `AGENTS.md`, and in docs also `AGENTS.md` §6 (and `scripts/github-settings.py` only if a check's name must change).
+One pull request per repository: the five `codeql.yml` files, the code repositories' `AGENTS.md`, and in docs also `AGENTS.md` §6 and the runbook's `codeql.yml` row (and `scripts/github-settings.py` only if a check's name must change).
 
 ## Acceptance criteria
 
@@ -57,7 +57,7 @@ One pull request per repository: the five `codeql.yml` files, the code repositor
 - [ ] AC-3 On each pull request, the CodeQL runs pass and their results appear in code scanning under the same categories as before (links).
 - [ ] AC-4 The workflow lint passes in every repository (`zizmor` with no findings, `pinact run --check --verify-min-age --min-age 1`).
 - [ ] AC-5 The parts of `codeql.yml` that AGENTS.md §6 says are shared are identical in all five repositories (a diff in the pull request).
-- [ ] AC-6 All five pull requests are merged before the first monthly dependency session moves the CodeQL bundle.
+- [ ] AC-6 The runbook's `codeql.yml` row no longer asks the monthly session to split the jobs or to ask the owner, and says what the split guarantees instead.
 
 ## Verification
 
@@ -65,6 +65,8 @@ In each repository its verification gate (`cargo xtask verify`, `cmake --workflo
 
 ## Notes and pitfalls
 
+- **Scheduling.** The five pull requests should be merged before the first monthly dependency session moves the CodeQL bundle, which is due once Rust 1.100 is 24 hours old (from 2026-11-13).
+- **Check early what CodeQL needs.** What `codeql init` and `analyze` do without `security-events: write` was left open by docs#30's follow-up 3; find out first, in CI, on a test branch. A read permission such as `security-events: read` fits the objective; a write permission does not.
 - **The artifact is public.** Anyone signed in to GitHub can download a public repository's artifacts, and a SARIF file holds every result of the analysis, not only new ones. Every input of the analysis is public too: the code, the queries and the bundle's pinned version, so anyone can compute the same results with CodeQL, which GitHub offers for free for open-source code. Keep the retention short (one day is enough for a run), and do not put anything else into the artifact.
 - **Pull requests from forks** get a read-only token, so their upload fails as it does today; nothing changes for them.
 - **`merge_group`.** The rulesets' merge queue waits for the required checks on its own commit, so the upload job must run there too, with the same name.

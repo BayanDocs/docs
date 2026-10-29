@@ -32,7 +32,7 @@ A work package (WP) is a self-contained brief that one agent session can execute
 | [LAB-004](phase-0/LAB-004-metrics-and-report.md) | Comparison metrics and fidelity report | core | M | LAB-003 | 3 | Ready |
 | [DESK-002](phase-0/DESK-002-spike-qt-canvas.md) | Spike: Qt Quick canvas, input, accessibility | desktop | L | DESK-001, CORE-007 | 3 | Done |
 | [WEB-002](phase-0/WEB-002-spike-worker-canvas.md) | Spike: worker canvas, input bridge, accessibility mirror | web | L | WEB-001, CORE-007 | 3 | Done |
-| [CORE-010](phase-0/CORE-010-fuzz-targets-engine-and-crdt.md) | Fuzz targets for the engine boundary and CRDT updates, and private crash reports | core | M | CORE-004, CORE-005, CORE-006, CORE-007 | 3 | Ready |
+| [CORE-010](phase-0/CORE-010-fuzz-targets-engine-and-crdt.md) | Fuzz targets for the engine boundary and CRDT updates | core | M | CORE-004, CORE-005, CORE-006, CORE-007; the follow-up that keeps fuzzing failures private | 3 | Ready |
 | [CORE-011](phase-0/CORE-011-retire-interim-parsers.md) | Retire the interim parsers: bayan-opc's metadata on bayan-xml, the lab's scanner on bayan-opc and bayan-xml | core | M | CORE-005, CORE-006, LAB-001 | 3 | Ready |
 | [CORE-012](phase-0/CORE-012-outside-world-part-2.md) | The outside world, part 2: the rest of std, the build environment, exemptions per item | core | M | CORE-009 | 3 | Ready |
 | [X-004](phase-0/X-004-codeql-without-write-access.md) | CodeQL without write access: analysis and upload in separate jobs | all | S | X-002 | 3 | Ready |

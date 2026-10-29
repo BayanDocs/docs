@@ -89,7 +89,7 @@
     - [CORE-007: Engine skeleton — protocol v0, C ABI and WebAssembly worker host](workpackages/phase-0/CORE-007-engine-skeleton.md)
     - [CORE-008: Font audit and bundled-library proposal](workpackages/phase-0/CORE-008-font-audit.md)
     - [CORE-009: Lint exceptions that nobody wrote — check what the compiler silenced](workpackages/phase-0/CORE-009-lint-attributes-from-macros.md)
-    - [CORE-010: Fuzz targets for the engine boundary and CRDT updates, and private crash reports](workpackages/phase-0/CORE-010-fuzz-targets-engine-and-crdt.md)
+    - [CORE-010: Fuzz targets for the engine boundary and CRDT updates](workpackages/phase-0/CORE-010-fuzz-targets-engine-and-crdt.md)
     - [CORE-011: Retire the interim parsers — bayan-opc's metadata on bayan-xml, the lab's scanner on bayan-opc and bayan-xml](workpackages/phase-0/CORE-011-retire-interim-parsers.md)
     - [CORE-012: The outside world, part 2 — the rest of the standard library, the build environment and exemptions per item](workpackages/phase-0/CORE-012-outside-world-part-2.md)
     - [DESK-001: Desktop scaffold and CI](workpackages/phase-0/DESK-001-desktop-scaffold.md)
