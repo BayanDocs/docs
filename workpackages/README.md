@@ -26,15 +26,22 @@ A work package (WP) is a self-contained brief that one agent session can execute
 | [LAB-001](phase-0/LAB-001-corpus-infrastructure.md) | Corpus infrastructure and public corpus v1 | core | M | CORE-001 | 2 | Done |
 | [LAB-003](phase-0/LAB-003-layout-json-and-pdf-extraction.md) | Layout JSON schema and PDF glyph extraction | core | M | CORE-001 | 2 | Ready |
 | [SRV-002](phase-0/SRV-002-spike-mls.md) | Spike: MLS for CRDT updates | server | L | SRV-001 | 2 | Done |
+| [CORE-009](phase-0/CORE-009-lint-attributes-from-macros.md) | Lint exceptions that nobody wrote: check what the compiler silenced | core | M | CORE-001 | 2 | Ready |
 | [CORE-003](phase-0/CORE-003-spike-deterministic-text.md) | Spike: deterministic text pipeline | core | L | CORE-002 | 3 | Done |
 | [LAB-002](phase-0/LAB-002-word-ground-truth-harness.md) | Word ground-truth harness | core | M | LAB-001; reference machine | 3 | Ready (needs owner hardware) |
 | [LAB-004](phase-0/LAB-004-metrics-and-report.md) | Comparison metrics and fidelity report | core | M | LAB-003 | 3 | Ready |
 | [DESK-002](phase-0/DESK-002-spike-qt-canvas.md) | Spike: Qt Quick canvas, input, accessibility | desktop | L | DESK-001, CORE-007 | 3 | Done |
 | [WEB-002](phase-0/WEB-002-spike-worker-canvas.md) | Spike: worker canvas, input bridge, accessibility mirror | web | L | WEB-001, CORE-007 | 3 | Done |
+| [CORE-010](phase-0/CORE-010-fuzz-targets-engine-and-crdt.md) | Fuzz targets for the engine boundary and CRDT updates, and private crash reports | core | M | CORE-004, CORE-005, CORE-006, CORE-007 | 3 | Ready |
+| [CORE-011](phase-0/CORE-011-retire-interim-parsers.md) | Retire the interim parsers: bayan-opc's metadata on bayan-xml, the lab's scanner on bayan-opc and bayan-xml | core | M | CORE-005, CORE-006, LAB-001 | 3 | Ready |
+| [CORE-012](phase-0/CORE-012-outside-world-part-2.md) | The outside world, part 2: the rest of std, the build environment, exemptions per item | core | M | CORE-009 | 3 | Ready |
+| [X-004](phase-0/X-004-codeql-without-write-access.md) | CodeQL without write access: analysis and upload in separate jobs | all | S | X-002 | 3 | Ready |
 | [CORE-008](phase-0/CORE-008-font-audit.md) | Font audit and bundled-library proposal | core + docs | M | CORE-003, LAB-002 | 4 | Ready |
 | [LAB-005](phase-0/LAB-005-probes-and-first-study.md) | Probe generator and first Word study | core + docs | L | LAB-002, LAB-003, CORE-003 | 4 | Ready |
 | [SRV-003](phase-0/SRV-003-threat-model.md) | Threat model v1 | docs | M | SRV-002, CORE-007 | 4 | Done |
 | [DOCS-002](phase-0/DOCS-002-contributor-onboarding.md) | Contributor onboarding guides | docs | S | Wave-1 scaffolds | 4 | Ready |
+| [DESK-003](phase-0/DESK-003-real-engine-boundary-tests.md) | The desktop's tests and sanitizers against the real engine boundary | desktop | M | DESK-002, CORE-007 | 4 | Ready |
+| [WEB-003](phase-0/WEB-003-automated-accessibility-rules.md) | Automated accessibility rules (axe) in the end-to-end tests | web | S | WEB-002 | 4 | Ready |
 
 ## Phase 1 — Faithful Viewer (drafts)
 

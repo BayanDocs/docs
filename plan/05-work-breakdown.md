@@ -55,15 +55,22 @@ Briefs are in [workpackages/phase-0/](../workpackages/README.md#phase-0--bedrock
 | [LAB-001](../workpackages/phase-0/LAB-001-corpus-infrastructure.md) | Corpus infrastructure and public corpus v1 | core | M | CORE-001 | 2 |
 | [LAB-003](../workpackages/phase-0/LAB-003-layout-json-and-pdf-extraction.md) | Layout JSON schema and PDF glyph extraction | core | M | CORE-001 | 2 |
 | [SRV-002](../workpackages/phase-0/SRV-002-spike-mls.md) | Spike: MLS encryption of CRDT updates, native and WebAssembly | server | L | SRV-001 | 2 |
+| [CORE-009](../workpackages/phase-0/CORE-009-lint-attributes-from-macros.md) | Lint exceptions that nobody wrote: check what the compiler silenced | core | M | CORE-001 | 2 |
 | [CORE-003](../workpackages/phase-0/CORE-003-spike-deterministic-text.md) | Spike: deterministic text pipeline across platforms | core | L | CORE-002 | 3 |
 | [LAB-002](../workpackages/phase-0/LAB-002-word-ground-truth-harness.md) | Word ground-truth harness on the reference machine | core | M | LAB-001; owner provides reference machine | 3 |
 | [LAB-004](../workpackages/phase-0/LAB-004-metrics-and-report.md) | Comparison metrics and fidelity report | core | M | LAB-003 | 3 |
 | [DESK-002](../workpackages/phase-0/DESK-002-spike-qt-canvas.md) | Spike: Qt Quick document canvas, input and accessibility | desktop | L | DESK-001, CORE-007 | 3 |
 | [WEB-002](../workpackages/phase-0/WEB-002-spike-worker-canvas.md) | Spike: worker canvas, input bridge and accessibility mirror | web | L | WEB-001, CORE-007 | 3 |
+| [CORE-010](../workpackages/phase-0/CORE-010-fuzz-targets-engine-and-crdt.md) | Fuzz targets for the engine boundary and CRDT updates, and private crash reports | core | M | CORE-004, CORE-005, CORE-006, CORE-007 | 3 |
+| [CORE-011](../workpackages/phase-0/CORE-011-retire-interim-parsers.md) | Retire the interim parsers: bayan-opc's metadata on bayan-xml, the lab's scanner on bayan-opc and bayan-xml | core | M | CORE-005, CORE-006, LAB-001 | 3 |
+| [CORE-012](../workpackages/phase-0/CORE-012-outside-world-part-2.md) | The outside world, part 2: the rest of std, the build environment, exemptions per item | core | M | CORE-009 | 3 |
+| [X-004](../workpackages/phase-0/X-004-codeql-without-write-access.md) | CodeQL without write access: analysis and upload in separate jobs | all | S | X-002 | 3 |
 | [CORE-008](../workpackages/phase-0/CORE-008-font-audit.md) | Font audit and bundled-library proposal | core + docs | M | CORE-003; LAB-002 for Microsoft font metrics | 4 |
 | [LAB-005](../workpackages/phase-0/LAB-005-probes-and-first-study.md) | Probe generator and first Word measurement study | core + docs | L | LAB-002, LAB-003, CORE-003 | 4 |
 | [SRV-003](../workpackages/phase-0/SRV-003-threat-model.md) | Threat model v1: server, sync and encryption | docs | M | SRV-002, CORE-007 | 4 |
 | [DOCS-002](../workpackages/phase-0/DOCS-002-contributor-onboarding.md) | Contributor onboarding and development-environment guides | docs | S | All Wave-1 scaffolds | 4 |
+| [DESK-003](../workpackages/phase-0/DESK-003-real-engine-boundary-tests.md) | The desktop's tests and sanitizers against the real engine boundary | desktop | M | DESK-002, CORE-007 | 4 |
+| [WEB-003](../workpackages/phase-0/WEB-003-automated-accessibility-rules.md) | Automated accessibility rules (axe) in the end-to-end tests | web | S | WEB-002 | 4 |
 
 ```mermaid
 flowchart LR
@@ -71,13 +78,13 @@ flowchart LR
     X001[X-001]; DOCS001[DOCS-001]; CORE001[CORE-001]; DESK001[DESK-001]; WEB001[WEB-001]; SRV001[SRV-001]
   end
   subgraph W2["Wave 2"]
-    X002[X-002]; X003[X-003]; CORE002[CORE-002]; CORE004[CORE-004]; CORE005[CORE-005]; CORE006[CORE-006]; CORE007[CORE-007]; LAB001[LAB-001]; LAB003[LAB-003]; SRV002[SRV-002]
+    X002[X-002]; X003[X-003]; CORE002[CORE-002]; CORE004[CORE-004]; CORE005[CORE-005]; CORE006[CORE-006]; CORE007[CORE-007]; LAB001[LAB-001]; LAB003[LAB-003]; SRV002[SRV-002]; CORE009[CORE-009]
   end
   subgraph W3["Wave 3"]
-    CORE003[CORE-003]; LAB002[LAB-002]; LAB004[LAB-004]; DESK002[DESK-002]; WEB002[WEB-002]
+    CORE003[CORE-003]; LAB002[LAB-002]; LAB004[LAB-004]; DESK002[DESK-002]; WEB002[WEB-002]; CORE010[CORE-010]; CORE011[CORE-011]; CORE012[CORE-012]; X004[X-004]
   end
   subgraph W4["Wave 4"]
-    CORE008[CORE-008]; LAB005[LAB-005]; SRV003[SRV-003]; DOCS002[DOCS-002]
+    CORE008[CORE-008]; LAB005[LAB-005]; SRV003[SRV-003]; DOCS002[DOCS-002]; DESK003[DESK-003]; WEB003[WEB-003]
   end
   CORE001 --> CORE002 --> CORE003
   CORE001 --> CORE004
@@ -101,6 +108,18 @@ flowchart LR
   SRV001 --> X003
   WEB001 --> X003
   DESK001 --> X003
+  CORE001 --> CORE009 --> CORE012
+  CORE004 --> CORE010
+  CORE005 --> CORE010
+  CORE006 --> CORE010
+  CORE007 --> CORE010
+  CORE005 --> CORE011
+  CORE006 --> CORE011
+  LAB001 --> CORE011
+  X002 --> X004
+  DESK002 --> DESK003
+  CORE007 --> DESK003
+  WEB002 --> WEB003
   GATE{{"Phase-0 gate review"}}
   CORE008 --> GATE
   LAB005 --> GATE
@@ -110,6 +129,12 @@ flowchart LR
   DESK002 --> GATE
   WEB002 --> GATE
   LAB004 --> GATE
+  CORE010 --> GATE
+  CORE011 --> GATE
+  CORE012 --> GATE
+  X004 --> GATE
+  DESK003 --> GATE
+  WEB003 --> GATE
 ```
 
 **Suggested pace:** run three to five work packages at a time, so that you can review every pull request properly. Wave 1 alone is six independent packages; start with CORE-001, SRV-001 and WEB-001 if you want the fewest moving parts.
