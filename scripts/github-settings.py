@@ -45,6 +45,9 @@ REPOSITORIES: Dict[str, List[str]] = {
         "verify (ubuntu-24.04)",
         "verify (windows-latest)",
         "verify (macos-latest)",
+        # Two jobs of .github/workflows/artifacts.yml, which runs on every pull request and in the merge queue (bayan-core#39): "Same tile everywhere" also fails unless every C SDK job and every Node.js driver job passed (the drivers wait for the WebAssembly package), so those jobs need no entry of their own; "Miri (bayan-ffi)" is the only run of bayan-ffi's tests under Miri (ADR-0006).
+        "Same tile everywhere",
+        "Miri (bayan-ffi)",
         "CodeQL (javascript-typescript)",
         "CodeQL (c-cpp)",
         "CodeQL (rust)",
