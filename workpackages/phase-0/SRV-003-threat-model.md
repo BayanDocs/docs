@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | SRV-002, CORE-007 |
 | Unblocks | SRV-101…SRV-105 refinement at the Phase-0 gate |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | SEC-12, COL-04…COL-06, COL-10 |
 | Decisions | ADR-0015, ADR-0016, ADR-0023 |
 | Specs | [threat-model.md](../../specs/threat-model.md) |

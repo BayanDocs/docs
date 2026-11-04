@@ -9,7 +9,7 @@
 | Size | L |
 | Depends on | LAB-002, LAB-003, CORE-003 |
 | Unblocks | CORE-111, CORE-112 (Word measurement model and line breaking) |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-04, TYP-02 |
 | Decisions | ADR-0009 (§5 Word measurement model), ADR-0005, ADR-0004 |
 | Specs | [fidelity-lab.md §8](../../specs/fidelity-lab.md#8-reverse-engineering-method-word-behavior-notes), [word-behavior/](../../specs/word-behavior/README.md) |

@@ -86,7 +86,7 @@ The required checks are the CI jobs that run on every pull request. Seven of the
 | Repository | Required checks |
 |---|---|
 | docs | `scripts/verify.sh`, `CodeQL (javascript-typescript)`, and the seven shared checks: `DCO`, `REUSE lint`, `No update bots`, `pip-audit`, `Workflow lint`, `CodeQL (actions)`, `CodeQL (python)` |
-| bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)`, `CodeQL (javascript-typescript)`, `CodeQL (c-cpp)`, `CodeQL (rust)`, and the seven shared checks |
+| bayan-core | `verify (ubuntu-24.04)`, `verify (windows-latest)`, `verify (macos-latest)`, `Same tile everywhere`, `Miri (bayan-ffi)`, `CodeQL (javascript-typescript)`, `CodeQL (c-cpp)`, `CodeQL (rust)`, and the seven shared checks |
 | bayan-web | `pnpm verify (ubuntu-24.04)`, `pnpm verify (macos-15)`, `pnpm verify (macos-26-intel)`, `CodeQL (javascript-typescript)`, and the seven shared checks |
 | bayan-desktop | `Linux · verification gate`, `Linux · AddressSanitizer and UndefinedBehaviorSanitizer`, `macOS (arm64) · build and test`, `Windows (MSVC) · build and test`, `CodeQL (c-cpp)`, and the seven shared checks |
 | bayan-server | `Supply-chain checks`, `Verification gate`, `PostgreSQL integration`, `Container image`, `CodeQL (rust)`, and the seven shared checks |

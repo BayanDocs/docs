@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | LAB-003 |
 | Unblocks | LAB-106 (fidelity gate), every fidelity claim |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-04 |
 | Decisions | ADR-0004, ADR-0025 |
 | Specs | [fidelity-lab.md §6, §9](../../specs/fidelity-lab.md#6-comparison-and-metrics) |

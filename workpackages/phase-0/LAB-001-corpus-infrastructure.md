@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | CORE-001 (uses CORE-005/006 if merged; otherwise a minimal scanner) |
 | Unblocks | LAB-002, CORE-008, coverage prioritization |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-04 |
 | Decisions | ADR-0004, ADR-0025, ADR-0003 (license compatibility of test data) |
 | Specs | [fidelity-lab.md §3](../../specs/fidelity-lab.md#3-corpus-tiers), [coverage-matrix.md](../../specs/coverage-matrix.md) |

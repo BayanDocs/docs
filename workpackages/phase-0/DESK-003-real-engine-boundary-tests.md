@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | DESK-002, CORE-007 |
 | Unblocks | DESK-101 and DESK-103, which build on the engine boundary |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | SEC-01, ARC-07 |
 | Decisions | ADR-0006, ADR-0012, ADR-0013, ADR-0017 (amendment of 2026-10-12), ADR-0025 |
 | Specs | [engine-protocol.md §3, §8, §12](../../specs/engine-protocol.md#3-transport) |

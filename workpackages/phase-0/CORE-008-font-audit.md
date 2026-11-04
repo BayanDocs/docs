@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | CORE-003; LAB-002 (reference machine with Microsoft fonts); LAB-001 feature tags for font frequencies |
 | Unblocks | CORE-110 (font system), font gap programme |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-02, FID-05, FID-07 |
 | Decisions | ADR-0010, ADR-0009, ADR-0017 (licenses) |
 | Specs | [font-compatibility.md](../../specs/font-compatibility.md) |

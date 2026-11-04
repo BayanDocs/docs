@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | CORE-009 (both change the Clippy step of `xtask`: `verify.rs` and `dep_info.rs`) |
 | Unblocks | — |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | ARC-08, FID-02 |
 | Decisions | ADR-0005 (decision 5), ADR-0012 (decision 5), ADR-0017, ADR-0025 |
 | Specs | — |

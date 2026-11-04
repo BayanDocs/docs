@@ -42,6 +42,8 @@ Decided by the owner on 2026-10-08 during CORE-004 ([BayanDocs/bayan-core pull r
 
 **Consequences.** The work package that first links bayan-crdt into bayan-engine and bayan-wasm checks that the engine's WebAssembly imports contain these two calls and nothing more (CORE-004 report §8.4). The dependency session adopts the Loro release that lets the host supply randomness and time, and the exception then ends.
 
+**Note of 2026-11-04.** The check exists since FU-4 ([BayanDocs/bayan-core pull request 39](https://github.com/BayanDocs/bayan-core/pull/39)): `cargo xtask wasm-package`, which bayan-core's artifacts workflow runs for every pull request and in the merge queue, fails on any import of the engine's WebAssembly module that `WASM_IMPORTS` in bayan-core's `xtask/src/artifacts.rs` does not list with what it does and why the engine needs it, and on any listed import that the module no longer has. Today the module imports three functions of wasm-bindgen's glue, none of which reaches the outside world. The work package that first links bayan-crdt into bayan-engine and bayan-wasm therefore only adds the imports of Loro's two accepted calls, its randomness and its clock, to `WASM_IMPORTS`, each with its reason; any other import still fails the check.
+
 ## Revisit when
 
 Profiling shows JSON encoding or decoding above 1 ms per frame on a hot path; then switch the encoding to CBOR (supported natively by Qt and by Rust's serde ecosystem) without changing message shapes.

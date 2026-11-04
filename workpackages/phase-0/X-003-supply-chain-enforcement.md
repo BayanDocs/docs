@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | CORE-001, SRV-001, WEB-001, DESK-001 |
 | Unblocks | Every later dependency change; monthly update sessions |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | SEC-05 |
 | Decisions | ADR-0017 (implement it exactly), ADR-0006 |
 | Specs | — |

@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | CORE-005, CORE-006, LAB-001 |
 | Unblocks | LAB-101 (its corpus growth must not start collecting documents from the open web before this is merged) |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | SEC-01, SEC-07, FID-04 |
 | Decisions | ADR-0002 (decision 6), ADR-0006, ADR-0025 |
 | Specs | [fidelity-lab.md](../../specs/fidelity-lab.md) |

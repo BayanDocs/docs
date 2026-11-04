@@ -21,7 +21,7 @@ Facts about third-party projects (versions, licenses, feature support) were veri
 | [0002](0002-repository-topology-and-contracts.md) | Repository topology, versioning and cross-repository contracts | Accepted |
 | [0003](0003-licensing-and-contribution-model.md) | Licensing and contribution model | Accepted (owner, 2026-10-04); in force since 2026-10-04; amended 2026-10-06 (MIT-0 for the shared contribution tooling) and 2026-10-27 (the orchestrator signs off for the owner) |
 | [0004](0004-fidelity-contract-and-determinism.md) | Fidelity contract and layout determinism | Accepted |
-| [0005](0005-layout-units-and-deterministic-math.md) | Integer layout units (BLU) and deterministic math | Accepted |
+| [0005](0005-layout-units-and-deterministic-math.md) | Integer layout units (BLU) and deterministic math | Accepted; erratum 2026-11-04 (the range of an `i64` of BLU) |
 | [0006](0006-rust-core-and-memory-safety.md) | Rust core and memory-safety policy for untrusted input | Accepted; amended 2026-10-04 (AWS-LC for the server's TLS) |
 | [0007](0007-document-model.md) | Document model: a Word-shaped stream of stories and atoms | Accepted — validated by CORE-004 (2026-10-09), except preserved atoms (not modelled; CORE-101); performance on the conditions of ADR-0008 |
 | [0008](0008-crdt-engine-and-local-first.md) | CRDT engine (Loro) and local-first architecture | Accepted — confirmed after the CORE-004 validation gate; amended 2026-10-08 (Loro on three conditions; the native load target; the advisory exceptions for Loro's dependencies) |

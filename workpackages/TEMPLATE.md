@@ -9,7 +9,7 @@
 | Size | S / M / L |
 | Depends on | WP IDs (must be Done), or "—" |
 | Unblocks | WP IDs |
-| Status | Draft / Ready / In progress / In review / Done / Blocked |
+| Status | Kept in the [work package index](README.md) |
 | Requirements | requirement IDs |
 | Decisions | ADR IDs (binding) |
 | Specs | spec files |

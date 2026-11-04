@@ -9,7 +9,7 @@
 | Size | S |
 | Depends on | CORE-001 |
 | Unblocks | CORE-003, CORE-004, all layout work |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-02 |
 | Decisions | ADR-0005 (implement it exactly) |
 | Specs | — |

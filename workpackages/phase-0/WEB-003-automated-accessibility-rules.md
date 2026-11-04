@@ -9,7 +9,7 @@
 | Size | S |
 | Depends on | WEB-002 |
 | Unblocks | WEB-102 (accessibility work builds on a checked baseline) |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | A11Y-01 |
 | Decisions | ADR-0014 (decision 3, and its amendment of 2026-10-12), ADR-0017, ADR-0020 (decision 6) |
 | Specs | — |

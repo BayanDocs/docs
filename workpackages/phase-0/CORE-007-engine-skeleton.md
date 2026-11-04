@@ -9,7 +9,7 @@
 | Size | L |
 | Depends on | CORE-001 (uses CORE-003's pipeline for text if merged; otherwise draws vector placeholders) |
 | Unblocks | DESK-002, WEB-002, SRV-003, CORE-125 |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | ARC-02, ARC-07, ARC-08 |
 | Decisions | ADR-0012 (implement it), ADR-0006 (`unsafe` only in binding crates), ADR-0002 (artifacts) |
 | Specs | [engine-protocol.md](../../specs/engine-protocol.md) |

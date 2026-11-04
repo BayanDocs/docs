@@ -9,7 +9,7 @@
 | Size | L |
 | Depends on | CORE-002 |
 | Unblocks | CORE-008, LAB-005, Phase-1 text and rendering work |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-02, I18N-01, I18N-02, PERF-02, PERF-06 |
 | Decisions | ADR-0004, ADR-0005, ADR-0009 and ADR-0011 (this spike is their validation gate) |
 | Specs | [fidelity-lab.md §10](../../specs/fidelity-lab.md#10-determinism-suite) |

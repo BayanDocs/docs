@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | — |
 | Unblocks | X-002, all later contribution flows |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | SEC-09 |
 | Decisions | ADR-0003, ADR-0017, ADR-0001 |
 | Specs | — |

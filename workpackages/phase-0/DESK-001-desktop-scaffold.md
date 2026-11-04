@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | — (uses a stub engine until CORE-007's C SDK exists) |
 | Unblocks | DESK-002, X-003 |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | ARC-03, ARC-04, PLT-01 |
 | Decisions | ADR-0013 (implement it), ADR-0012, ADR-0017, ADR-0003 (LGPL compliance) |
 | Specs | [engine-protocol.md §3](../../specs/engine-protocol.md#3-transport) |

@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | LAB-001; **owner provides the reference machine** (owner checklist item 9) |
 | Unblocks | LAB-005, CORE-008, all Tier C measurement |
-| Status | Ready (needs owner hardware) |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-04, FID-06 |
 | Decisions | ADR-0004 (§5 reference definition), ADR-0025 |
 | Specs | [fidelity-lab.md §4](../../specs/fidelity-lab.md#4-ground-truth-reference-machine), [§12](../../specs/fidelity-lab.md#12-legal-and-ethical-notes) |

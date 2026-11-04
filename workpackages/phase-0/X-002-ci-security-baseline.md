@@ -9,7 +9,7 @@
 | Size | S |
 | Depends on | Each repository has its scaffold workflow (CORE-001, DESK-001, WEB-001, SRV-001, DOCS-001) or can be done alongside them |
 | Unblocks | Safe growth of CI in every later WP |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | SEC-05, SEC-12 |
 | Decisions | ADR-0017, ADR-0025 |
 | Specs | [threat-model.md](../../specs/threat-model.md) (T16) |
