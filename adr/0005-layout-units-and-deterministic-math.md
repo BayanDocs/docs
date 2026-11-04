@@ -44,3 +44,13 @@ Layout must produce identical results on x86-64, arm64 and wasm32, and must be a
 ## Revisit when
 
 The lab proves Word computes some quantity in a unit that BLU cannot represent exactly (none known).
+
+## Erratum 2026-11-04: the range of an `i64` of BLU
+
+Found by the [architecture review of 2026-10-27](../plan/reviews/2026-10-27.md#l11-documentation-drift) (finding L11). The Consequences say that an `i64` of BLU "covers about five million kilometres". It covers about 128 million kilometres on either side of zero:
+
+- one millimetre is 72,000 BLU (Decision 1), so one metre is 72,000,000 BLU and one kilometre 72,000,000,000 BLU;
+- the largest `i64` is 2⁶³ − 1 = 9,223,372,036,854,775,807, and the smallest is −2⁶³;
+- 9,223,372,036,854,775,807 ÷ 72,000,000,000 ≈ 128,102,389, so an `i64` of BLU reaches about 128.1 million kilometres in each direction.
+
+bayan-units documents the same range ([`crates/bayan-units/src/lib.rs`](https://github.com/BayanDocs/bayan-core/blob/a2b421bccd772d8094aeeddc59fab72042fbd866/crates/bayan-units/src/lib.rs#L19)). The decision does not change: the range is still ample.
