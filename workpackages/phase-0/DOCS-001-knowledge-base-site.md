@@ -9,7 +9,7 @@
 | Size | S |
 | Depends on | — |
 | Unblocks | DOCS-002, published documentation |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | — |
 | Decisions | ADR-0027, ADR-0017 |
 | Specs | — |

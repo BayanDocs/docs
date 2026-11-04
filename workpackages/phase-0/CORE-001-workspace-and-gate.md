@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | — |
 | Unblocks | CORE-002…CORE-008, LAB-001, LAB-003, X-003 |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | ARC-01, ARC-02, SEC-01, FID-02 |
 | Decisions | ADR-0005, ADR-0006, ADR-0017, ADR-0025 |
 | Specs | [plan/03-architecture.md §4](../../plan/03-architecture.md#4-inside-bayan-core) |

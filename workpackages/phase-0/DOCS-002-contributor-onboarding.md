@@ -9,7 +9,7 @@
 | Size | S |
 | Depends on | CORE-001, DESK-001, WEB-001, SRV-001 (merged), DOCS-001 |
 | Unblocks | Human contributors; faster agent onboarding |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | — |
 | Decisions | ADR-0002, ADR-0027 |
 | Specs | — |

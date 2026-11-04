@@ -9,7 +9,7 @@
 | Size | L |
 | Depends on | SRV-001 |
 | Unblocks | SRV-003, SRV-103, Phase-3 encryption work |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | COL-04, COL-05, COL-06, SEC-08 |
 | Decisions | ADR-0016 (this spike is its validation gate), ADR-0006, ADR-0015 |
 | Specs | [threat-model.md](../../specs/threat-model.md) (T5–T8) |

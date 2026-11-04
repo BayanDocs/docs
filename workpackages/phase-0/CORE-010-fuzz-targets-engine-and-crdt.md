@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | CORE-004, CORE-005, CORE-006, CORE-007; the written task that keeps fuzzing failures private (the follow-ups of [docs#55](https://github.com/BayanDocs/docs/pull/55)) |
 | Unblocks | ADR-0008 decision 4 ("the import path is fuzzed"); CORE-101 and CORE-125, which extend these targets |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | SEC-07, SEC-13, REL-05, ARC-07 |
 | Decisions | ADR-0006, ADR-0008, ADR-0012, ADR-0017, ADR-0025 |
 | Specs | [engine-protocol.md §10, §12, §13](../../specs/engine-protocol.md#10-record-and-replay), [threat-model.md §11](../../specs/threat-model.md#11-principal-threats) (T1, T3, T4, T7) |

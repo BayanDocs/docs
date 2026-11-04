@@ -9,7 +9,7 @@
 | Size | L |
 | Depends on | WEB-001, CORE-007 |
 | Unblocks | WEB-101, WEB-102 |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | A11Y-02, I18N-07, PERF-04, PERF-06 |
 | Decisions | ADR-0014 (this spike is its validation gate), ADR-0012, ADR-0020 |
 | Specs | [engine-protocol.md](../../specs/engine-protocol.md) |

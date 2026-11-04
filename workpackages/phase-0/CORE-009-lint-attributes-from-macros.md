@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | CORE-001 |
 | Unblocks | CORE-012 (both change the Clippy step of `xtask`); reviews no longer need to check every macro that takes a `#` or a bracket group as a `tt` for lint exceptions |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-02, SEC-01 |
 | Decisions | ADR-0005, ADR-0006, ADR-0017, ADR-0025 |
 | Specs | — |

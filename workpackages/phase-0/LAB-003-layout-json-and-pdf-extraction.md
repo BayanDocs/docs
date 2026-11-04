@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | CORE-001 |
 | Unblocks | LAB-004, LAB-005, CORE-003 output format alignment |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-04 |
 | Decisions | ADR-0004, ADR-0005, ADR-0006 (PDFs are untrusted input) |
 | Specs | [fidelity-lab.md §5](../../specs/fidelity-lab.md#5-layout-json) |

@@ -9,7 +9,7 @@
 | Size | S |
 | Depends on | X-002 |
 | Unblocks | The first monthly dependency session's move of the CodeQL bundle ([plan/12 §7](../../plan/12-orchestration.md#7-specialty-sessions)) |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | SEC-05, SEC-12 |
 | Decisions | ADR-0017 (amendment of 2026-10-10, CodeQL), ADR-0025 |
 | Specs | [threat-model.md §11](../../specs/threat-model.md#11-principal-threats) (T16) |

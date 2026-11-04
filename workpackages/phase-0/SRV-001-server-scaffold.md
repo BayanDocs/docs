@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | — |
 | Unblocks | SRV-002, X-003, Phase-1 server work |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | ARC-06, OPS-01, OPS-02, OPS-03, SEC-04 |
 | Decisions | ADR-0015 (implement it), ADR-0006, ADR-0017, ADR-0025 |
 | Specs | [threat-model.md](../../specs/threat-model.md) |

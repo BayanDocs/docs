@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | — |
 | Unblocks | WEB-002, X-003 |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | ARC-03, SEC-10, PERF-06, PLT-02 |
 | Decisions | ADR-0014 (implement it), ADR-0017, ADR-0012 |
 | Specs | — |

@@ -9,7 +9,7 @@
 | Size | M |
 | Depends on | CORE-001 |
 | Unblocks | CORE-102…CORE-107 |
-| Status | Ready |
+| Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-01, FID-03, SEC-01 |
 | Decisions | ADR-0006, ADR-0007 (§2–3 preservation and source spans), ADR-0018 |
 | Specs | [document-model.md §13](../../specs/document-model.md#13-preservation-and-source-spans) |
