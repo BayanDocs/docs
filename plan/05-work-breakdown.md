@@ -71,6 +71,7 @@ Briefs are in [workpackages/phase-0/](../workpackages/README.md#phase-0--bedrock
 | [DOCS-002](../workpackages/phase-0/DOCS-002-contributor-onboarding.md) | Contributor onboarding and development-environment guides | docs | S | All Wave-1 scaffolds | 4 |
 | [DESK-003](../workpackages/phase-0/DESK-003-real-engine-boundary-tests.md) | The desktop's tests and sanitizers against the real engine boundary | desktop | M | DESK-002, CORE-007 | 4 |
 | [WEB-003](../workpackages/phase-0/WEB-003-automated-accessibility-rules.md) | Automated accessibility rules (axe) in the end-to-end tests | web | S | WEB-002 | 4 |
+| [X-005](../workpackages/phase-0/X-005-ubuntu-packages-in-ci.md) | Ubuntu packages in CI: exact files on a pinned base, from more than one source | desktop + web + docs | L | X-003, X-004; ADR-0017's amendment of 2026-11-05, confirmed by the owner | 4 |
 
 ```mermaid
 flowchart LR
@@ -84,7 +85,7 @@ flowchart LR
     CORE003[CORE-003]; LAB002[LAB-002]; LAB004[LAB-004]; DESK002[DESK-002]; WEB002[WEB-002]; CORE010[CORE-010]; CORE011[CORE-011]; CORE012[CORE-012]; X004[X-004]
   end
   subgraph W4["Wave 4"]
-    CORE008[CORE-008]; LAB005[LAB-005]; SRV003[SRV-003]; DOCS002[DOCS-002]; DESK003[DESK-003]; WEB003[WEB-003]
+    CORE008[CORE-008]; LAB005[LAB-005]; SRV003[SRV-003]; DOCS002[DOCS-002]; DESK003[DESK-003]; WEB003[WEB-003]; X005[X-005]
   end
   CORE001 --> CORE002 --> CORE003
   CORE001 --> CORE004
@@ -117,6 +118,8 @@ flowchart LR
   CORE006 --> CORE011
   LAB001 --> CORE011
   X002 --> X004
+  X003 --> X005
+  X004 --> X005
   DESK002 --> DESK003
   CORE007 --> DESK003
   WEB002 --> WEB003
@@ -135,6 +138,7 @@ flowchart LR
   X004 --> GATE
   DESK003 --> GATE
   WEB003 --> GATE
+  X005 --> GATE
 ```
 
 **Suggested pace:** run three to five work packages at a time, so that you can review every pull request properly. Wave 1 alone is six independent packages; start with CORE-001, SRV-001 and WEB-001 if you want the fewest moving parts.
