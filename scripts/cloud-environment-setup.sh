@@ -222,9 +222,14 @@ fetch_sha512() {
 # ---------------------------------------------------------------------------------------------------------------------
 step_apt() {
   # Development headers that Qt 6 needs to build and run headless, plus ShellCheck for scripts.
-  local package missing=""
+  local package status missing=""
   for package in $APT_PACKAGES; do
-    dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -q 'install ok installed' || missing="$missing $package"
+    # Not "dpkg-query … | grep -q": grep -q stops reading at the first match, and under pipefail the pipeline could then fail and report an installed package as missing.
+    status=$(dpkg-query -W -f='${Status}' "$package" 2>/dev/null) || status=""
+    case $status in
+      *"install ok installed"*) ;;
+      *) missing="$missing $package" ;;
+    esac
   done
   if [ -n "$missing" ]; then
     timeout 200 apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=3 update --snapshot "$APT_SNAPSHOT"
