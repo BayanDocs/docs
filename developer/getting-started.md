@@ -125,6 +125,7 @@ Every tool and package is pinned to an exact version that was at least 24 hours 
 ## When something goes wrong
 
 - **A tool is missing or at another version.** Run the repository's setup script again and check that the `PATH` line it printed is in your shell's profile, ahead of other copies of the same tool. The gates name the version they expect.
+- **A tool offers to update itself or suggests a newer version.** Ignore it, as with rustup's hint in [step 2](#step-2-rust) or pnpm's update notice: every version moves only in the monthly dependency session, and the gates check several of them.
 - **A check complains about missing history.** The clone is shallow: `git fetch --unshallow`, or clone again without `--depth`.
 - **A download fails its checksum.** Stop and report it in an issue; never work around a checksum. The scripts install nothing that fails one.
 - **The gate fails on a fresh clone of `main`.** That should not happen: CI runs the same gate on every change. Check the [supported platforms](#supported-development-platforms) and your tools, then ask in an issue, with the step that failed and its output.
