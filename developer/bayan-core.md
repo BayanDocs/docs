@@ -38,7 +38,13 @@ cd bayan-core
 rustup toolchain install
 ```
 
-`rustup toolchain install`, run without a name inside the repository, installs the toolchain that `rust-toolchain.toml` pins, as the Windows job of `verify.yml` does. The setup script has no Windows build of Node.js, so download it as CI does: the `win-x64/node.exe` of the release that `NODE_VERSION` in `xtask/src/verify.rs` names, from `https://nodejs.org/dist/v<version>/win-x64/node.exe`. Before you use it, check it against the SHA-256 that `.github/workflows/verify.yml` pins for Windows in its step "Install Node.js for the WebAssembly tests" (in PowerShell, `(Get-FileHash node.exe -Algorithm SHA256).Hash` prints the file's), then put its folder first on your `PATH`. Install cargo-deny with the same `cargo install` command as above.
+`rustup toolchain install`, run without a name inside the repository, installs the toolchain that `rust-toolchain.toml` pins, as the Windows job of `verify.yml` does. The setup script has no Windows build of Node.js, so download it as CI does: the `win-x64/node.exe` of the release that `NODE_VERSION` in `xtask/src/verify.rs` names, from `https://nodejs.org/dist/v<version>/win-x64/node.exe`. Before you use it, check it against the SHA-256 that `.github/workflows/verify.yml` pins for Windows in its step "Install Node.js for the WebAssembly tests": in PowerShell, in the folder that holds `node.exe`, run this with that SHA-256 in place of the placeholder:
+
+```powershell
+(Get-FileHash node.exe -Algorithm SHA256).Hash -eq '<the SHA-256 from verify.yml>'
+```
+
+Go on only if it printed `True`; otherwise delete the file and report it in an issue, as for rustup's installer in [step 2 of Getting started](getting-started.md#step-2-rust). Then put the folder that holds `node.exe` first on your `PATH`. Install cargo-deny with the same `cargo install` command as above.
 
 ## Run the gate
 
