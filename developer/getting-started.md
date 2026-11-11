@@ -67,29 +67,64 @@ sudo apt install git curl build-essential unzip
 xcode-select --install
 ```
 
-macOS includes curl, and the Xcode command line tools add Git and the C compiler and linker. bayan-desktop also needs Python 3.11 or newer ([its page](bayan-desktop.md)).
+macOS includes curl, and the Xcode command line tools add Git and the C compiler and linker. bayan-desktop also needs Python 3.11 or newer, from [python.org](https://www.python.org/downloads/macos/): Apple's own `python3` is older.
 
 ### Windows
 
 Only bayan-core and bayan-desktop support Windows. Install:
 
 - [Git for Windows](https://git-scm.com/download/win). Its **Git Bash** runs the repositories' shell scripts, as CI does on Windows.
-- **Visual Studio 2022** with the "Desktop development with C++" workload. bayan-desktop is built with its compiler (MSVC), and Rust uses its linker on Windows.
-- For bayan-desktop, **Python 3.11 or newer**; for bayan-core, **Node.js**, at the version its page names. bayan-core's setup script installs Node.js on Linux and macOS only.
+- **Visual Studio 2022**, the version that bayan-desktop names, with the "Desktop development with C++" workload: Microsoft offers it on its [older downloads page](https://visualstudio.microsoft.com/vs/older-downloads/), under "Visual Studio 2022 family". bayan-desktop is built with its compiler (MSVC), and Rust uses its linker on Windows.
+- For bayan-desktop, **Python 3.11 or newer**, from [python.org](https://www.python.org/downloads/windows/).
+- For bayan-core, **Node.js**: its `node.exe`, downloaded and checked as CI does, which [bayan-core's page](bayan-core.md#windows) describes. bayan-core's setup script installs Node.js on Linux and macOS only.
 
 ## Step 2: Rust
 
-bayan-core and bayan-server are written in Rust, and bayan-web and bayan-desktop build the engine with it. Install **rustup**, Rust's installer and version manager, from [rustup.rs](https://rustup.rs), without a default toolchain, and stop it from updating itself:
+bayan-core and bayan-server are written in Rust, and bayan-web and bayan-desktop build the engine with it. Install **rustup**, Rust's installer and version manager, at the version this guide pins, after checking the installer against its SHA-256, and without a default toolchain.
+
+The pinned installer is **rustup 1.29.3**, released on 2026-11-03. Each command below downloads it from the Rust project's archive of rustup versions, `https://static.rust-lang.org/rustup/archive/1.29.3/<platform>/`, and checks it against the SHA-256 that the project publishes next to it (the `.sha256` file) before anything runs it.
+
+**Linux (x86-64):**
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain none
+curl --proto '=https' --tlsv1.2 -fsSO https://static.rust-lang.org/rustup/archive/1.29.3/x86_64-unknown-linux-gnu/rustup-init
+echo "b1c8cb14e30889e7e2999e6b69e62d9e9b9ffc0f4df8180564d306d9680e6c55  rustup-init" | sha256sum --check
+```
+
+**macOS on Apple Silicon:**
+
+```sh
+curl --proto '=https' --tlsv1.2 -fsSO https://static.rust-lang.org/rustup/archive/1.29.3/aarch64-apple-darwin/rustup-init
+echo "63752a1919a3a4793173ec70f8f212621a7ce38ba6a246095984482f4de20f9f  rustup-init" | shasum -a 256 --check
+```
+
+**macOS on Intel** (which bayan-web supports):
+
+```sh
+curl --proto '=https' --tlsv1.2 -fsSO https://static.rust-lang.org/rustup/archive/1.29.3/x86_64-apple-darwin/rustup-init
+echo "bc107f1fb0228de7fa32413c89c1b305cea9cd256e94b01150cd054128145429  rustup-init" | shasum -a 256 --check
+```
+
+Go on only if the check printed `rustup-init: OK`; otherwise delete the file and report it in an issue. Then, on Linux and macOS, run the installer without a default toolchain, load Cargo's programs into the terminal you are in (new terminals find them by themselves), and stop rustup from updating itself:
+
+```sh
+chmod +x rustup-init
+./rustup-init --default-toolchain none
+rm rustup-init
 . "$HOME/.cargo/env"
 rustup set auto-self-update disable
 ```
 
-On Windows, download `rustup-init.exe` from rustup.rs and run `rustup-init.exe --default-toolchain none` in a terminal, then `rustup set auto-self-update disable` in a new one. The second line above makes Cargo's programs available in the terminal you are in; new terminals find them by themselves.
+**Windows (x64)**, in PowerShell:
 
-Why this way: each Rust repository pins its exact Rust version, with the components and targets it needs, in `rust-toolchain.toml`, and rustup installs exactly that version the first time you run `cargo` in the repository, checking every download against the release's checksums. Without a default toolchain, rustup installs no other version (a brand-new release could be younger than the 24 hours that [ADR-0017](../adr/0017-supply-chain-and-dependency-policy.md) requires), and with self-update disabled it never replaces itself silently, as in CI (`rustup set auto-self-update disable` in bayan-core's `verify.yml` and bayan-web's `ci.yml`). So ignore rustup's hint to run `rustup default stable`.
+```powershell
+Invoke-WebRequest https://static.rust-lang.org/rustup/archive/1.29.3/x86_64-pc-windows-msvc/rustup-init.exe -OutFile rustup-init.exe -UseBasicParsing
+(Get-FileHash rustup-init.exe -Algorithm SHA256).Hash -eq '38027d51d69a5d05493627a0634dbea52d6cd793c8f072d2373d3f4163eec7db'
+```
+
+Go on only if the second line printed `True`; otherwise delete the file and report it in an issue. Then run `.\rustup-init.exe --default-toolchain none`, delete `rustup-init.exe`, and in a new terminal run `rustup set auto-self-update disable`.
+
+Why this way: each Rust repository pins its exact Rust version, with the components and targets it needs, in `rust-toolchain.toml`, and rustup installs exactly that version the first time you run `cargo` in the repository, checking every download against the release's checksums. The installer itself is pinned here and checked before it runs, like every other download ([ADR-0017](../adr/0017-supply-chain-and-dependency-policy.md)). Without a default toolchain, rustup installs no other Rust version (a brand-new release could be younger than the 24 hours that ADR-0017 requires), and with self-update disabled it never replaces itself with a newer, unchecked version, as in CI (`rustup set auto-self-update disable` in bayan-core's `verify.yml` and bayan-web's `ci.yml`). So ignore rustup's hint to run `rustup default stable`. The pinned installer moves in the monthly dependency session ([dependency update runbook](dependency-update-runbook.md#docs)).
 
 ## Step 3: each repository
 
@@ -100,8 +135,10 @@ Follow the developer page of each repository you want; this is the outline, in a
 | 1 | [bayan-core](bayan-core.md) | Linux, macOS, Windows | `scripts/dev-setup.sh` (Linux and macOS), then cargo-deny | `cargo xtask verify` |
 | 2 | [bayan-server](bayan-server.md) | Linux | `scripts/dev-setup.sh` | `cargo xtask verify` |
 | 3 | [bayan-web](bayan-web.md) | Linux, macOS | `scripts/dev-setup.sh`, then `scripts/engine-package.sh` | `pnpm verify` |
-| 4 | [bayan-desktop](bayan-desktop.md) | Linux, macOS, Windows | the system packages, `scripts/dev-setup.sh`, then the tools' environment in every new terminal | `cmake --workflow --preset verify` on Linux; CI runs the preset `ci` on macOS and `msvc` on Windows |
+| 4 | [bayan-desktop](bayan-desktop.md) | Linux, macOS, Windows | the system packages, `scripts/dev-setup.sh`, then the tools' environment in every new terminal | `cmake --workflow --preset verify` (see the note below) |
 | 5 | [docs](docs.md) | Linux | `scripts/dev-setup.sh` | `scripts/verify.sh` |
+
+For bayan-desktop, `.github/workflows/ci.yml` runs `cmake --workflow --preset verify` on Linux, `cmake --workflow --preset ci` (the same build and tests, without the lint) on macOS, and `cmake --workflow --preset msvc` on Windows, which is also the command that bayan-desktop's README gives for Windows, because the preset `verify` exists only on Linux and macOS.
 
 Run the gate before every push. CI runs it again on every pull request, together with checks that every repository shares (the DCO sign-off, `reuse lint`, the supply-chain checks, the workflow lint and CodeQL); [GitHub Settings Baseline](github-settings.md#rulesets) lists the checks that must pass before a pull request can merge.
 
@@ -111,9 +148,10 @@ Every tool and package is pinned to an exact version that was at least 24 hours 
 
 | What | Where it is pinned |
 |---|---|
+| rustup, the installer | [step 2](#step-2-rust) of this page |
 | Rust toolchain | `rust-toolchain.toml` (bayan-core, bayan-server; the shells use the one of the bayan-core commit they pin) |
 | Rust crates | `[workspace.dependencies]` in `Cargo.toml`, and `Cargo.lock` |
-| Node.js | bayan-web's `.nvmrc`; `NODE_VERSION` in bayan-core's `xtask/src/verify.rs` and in bayan-server's `scripts/dev-setup.sh` |
+| Node.js | bayan-web's `.nvmrc`; `NODE_VERSION` in bayan-core's `xtask/src/verify.rs`; the `node` entry of the `tools` list in bayan-server's `scripts/dev-setup.sh` |
 | pnpm and npm packages | the `packageManager` field of bayan-web's `package.json`, and `pnpm-lock.yaml` |
 | Qt | bayan-desktop's `deps/qt.json` |
 | CMake, Ninja, clang-format, clang-tidy | bayan-desktop's `deps/requirements-tools.txt` |
@@ -128,7 +166,7 @@ Every tool and package is pinned to an exact version that was at least 24 hours 
 - **A tool offers to update itself or suggests a newer version.** Ignore it, as with rustup's hint in [step 2](#step-2-rust) or pnpm's update notice: every version moves only in the monthly dependency session, and the gates check several of them.
 - **A check complains about missing history.** The clone is shallow: `git fetch --unshallow`, or clone again without `--depth`.
 - **A download fails its checksum.** Stop and report it in an issue; never work around a checksum. The scripts install nothing that fails one.
-- **The gate fails on a fresh clone of `main`.** That should not happen: CI runs the same gate on every change. Check the [supported platforms](#supported-development-platforms) and your tools, then ask in an issue, with the step that failed and its output.
+- **The gate fails on a fresh clone of `main`.** First look at the latest CI run on `main` (the repository's Actions tab): a newly published security advisory can turn a gate red on `main` without any change to the repository, as happened to bayan-server's cargo-deny step from 2026-11-09. If `main` is green, check the [supported platforms](#supported-development-platforms) and your tools, then ask in an issue, with the step that failed and its output.
 
 ## BayanDocs cloud sessions
 

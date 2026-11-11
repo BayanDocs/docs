@@ -11,8 +11,8 @@ Linux (Ubuntu 24.04), macOS on Apple Silicon, and Windows with Visual Studio 202
 What each system needs before the setup script runs, as the README lists it:
 
 - **Linux (Ubuntu 24.04):** a C++20 compiler (GCC 13 or Clang 18), Python 3.11 or newer with `venv`, and the development packages that Qt needs: `sudo apt install build-essential python3-venv libgl-dev libegl-dev libvulkan-dev libxkbcommon-dev libfontconfig-dev libdbus-1-dev`.
-- **macOS (Apple Silicon):** the Xcode command line tools (`xcode-select --install`) and Python 3.11 or newer.
-- **Windows:** Visual Studio 2022 with the "Desktop development with C++" workload, Git for Windows (run the setup script in Git Bash) and Python 3.11 or newer.
+- **macOS (Apple Silicon):** the Xcode command line tools (`xcode-select --install`) and Python 3.11 or newer, from [python.org](https://www.python.org/downloads/macos/).
+- **Windows:** Visual Studio 2022 with the "Desktop development with C++" workload (Microsoft offers it on its [older downloads page](https://visualstudio.microsoft.com/vs/older-downloads/), under "Visual Studio 2022 family"), Git for Windows (run the setup script in Git Bash) and Python 3.11 or newer, from [python.org](https://www.python.org/downloads/windows/).
 - **rustup** ([step 2 of Getting started](getting-started.md#step-2-rust)), only to build and test the real engine (below); the everyday build and the gate use a stand-in engine and need no Rust.
 
 ## Set up
@@ -41,7 +41,9 @@ The gate is one command, from the repository's root, before every push:
 cmake --workflow --preset verify
 ```
 
-It configures an optimized build with warnings as errors and the Qt licensing check, builds the app and its tests, runs clang-format, clang-tidy and qmllint, and runs every test, including a headless smoke test of the app and the check that the Qt release is at least 24 hours old (which reads the Git history). This is what CI's Linux job runs. On the other systems CI runs the same build and tests without the lint, which the Linux job has already done: `cmake --workflow --preset ci` on macOS, and `cmake --workflow --preset msvc` on Windows, from the developer environment above.
+It configures an optimized build with warnings as errors and the Qt licensing check, builds the app and its tests, runs clang-format, clang-tidy and qmllint, and runs every test, including a headless smoke test of the app and the check that the Qt release is at least 24 hours old (which reads the Git history).
+
+What CI runs on each system: `.github/workflows/ci.yml` runs `cmake --workflow --preset verify` on Linux, `cmake --workflow --preset ci` on macOS (the same build and tests, without the lint), and `cmake --workflow --preset msvc` on Windows, from the developer environment above. On Windows, `msvc` is also the command that the README gives, because the preset `verify` exists only on Linux and macOS.
 
 `cmake --workflow --preset dev` is the quick Debug build and test for everyday work on Linux and macOS, and `cmake --build --preset verify --target format` fixes the formatting.
 
@@ -49,7 +51,7 @@ CI also runs, on Linux, the tests under AddressSanitizer and UndefinedBehaviorSa
 
 ## Deeper notes
 
-- **The stub and the real engine.** The default build links a stub engine (`src/engine/stub/`), which shows a single test page. The real engine is bayan-core's C SDK: `scripts/build-engine-sdk.sh` builds it, with rustup, from the bayan-core commit pinned in `deps/bayan-core.json` into `build/bayan-core-sdk` (on Windows, run it outside the Visual Studio developer environment), and `scripts/test-engine-sdk.sh --sdk build/bayan-core-sdk` builds the app against it and runs the tests that use the engine. `src/engine/README.md` in the repository describes the SDK's layout and how to build against it.
+- **The stub and the real engine.** The default build links a stub engine (`src/engine/stub/`), which shows a single test page. The real engine is bayan-core's C SDK: `scripts/build-engine-sdk.sh` builds it, with rustup, from the bayan-core commit pinned in `deps/bayan-core.json` into `build/bayan-core-sdk`, and `scripts/test-engine-sdk.sh --sdk build/bayan-core-sdk` builds the app against it and runs the tests that use the engine. On Windows, run both from Git Bash: `build-engine-sdk.sh` outside the Visual Studio developer environment, and `test-engine-sdk.sh` inside the x64 one, as the scripts' headers and the Windows job of `ci.yml` do. `src/engine/README.md` in the repository describes the SDK's layout and how to build against it.
 - **Running the app.** After `cmake --workflow --preset dev`, run `./build/dev/src/bayan-desktop` (on macOS, `open build/dev/src/bayan-desktop.app`). `bayan-desktop --smoke-test` checks that the engine's page is displayed and exits, and `bayan-desktop --benchmark <file>` measures scrolling, zooming and typing (the README explains both).
 - **Qt modules.** Only LGPL-licensed Qt modules may be used. Find Qt with the project's `bayan_find_qt()` rather than `find_package(Qt6 …)`, and have a new module reviewed and added to the allowlist in `cmake/BayanQtPolicy.cmake`, which the build's licensing check enforces.
 - **Pins.** Qt in `deps/qt.json`, the build and lint tools in `deps/requirements-tools.txt`, the engine in `deps/bayan-core.json`, and the Ubuntu packages of CI in `.github/workflows/ci.yml`. Every pin and how it moves is in the [dependency update runbook](dependency-update-runbook.md#bayan-desktop).
