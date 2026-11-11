@@ -64,31 +64,35 @@ The reference machine is a dedicated Windows 11 computer or virtual machine with
 
 Ground truth is generated once per document per Word build and stored as artifacts; CI never runs Word.
 
+The skeleton's positions count the document's characters in Word's own way, and the engine counts them in its own, so the comparisons (§6) do not use them yet: they compare page and line starts by aligning the text of Word's PDF layout with BayanDocs'. The skeleton's page count can stand for Word's in M1, and the skeleton can cross-check positions once the engine counts them as Word does.
+
 ## 5. Layout JSON
 
-Both the ground-truth extractor and `bayan-cli` emit the same **layout JSON** schema (defined by LAB-003), so comparisons are symmetric:
+Both the ground-truth extractor and `bayan-cli` emit the same **layout JSON** schema (defined by LAB-003 in bayan-core's [`lab/schema/layout-json.md`](https://github.com/BayanDocs/bayan-core/blob/HEAD/lab/schema/layout-json.md)), so comparisons are symmetric:
 
 - document: page count, page sizes;
 - per page: ordered lines, each with baseline position, start and end text offsets, and glyphs (character offset, glyph position, advance, font family and size);
 - per page: other positioned elements (images, shapes, table cell boxes) where available;
 - text normalization rules (how field results, numbering labels, and special characters appear) so both sides produce comparable text streams.
 
-From Word's side, glyph positions come from the exported PDF (text-showing operators give exact glyph origins); page and line starts come from the object model skeleton.
+From Word's side, glyph positions come from the exported PDF (text-showing operators give exact glyph origins), and so do the page and line starts that the comparisons use (§4).
 
 ## 6. Comparison and metrics
 
-1. **Alignment:** the two text streams are aligned per document with a diff algorithm tolerant of small text differences (numbering labels, field results), then lines and glyphs are matched.
+LAB-004 built the comparisons; bayan-core's [`lab/compare.md`](https://github.com/BayanDocs/bayan-core/blob/HEAD/lab/compare.md) explains how they work and how to read the report.
+
+1. **Alignment:** the text of Word's PDF layout and the text of BayanDocs' layout are aligned per document with a diff algorithm tolerant of small text differences (numbering labels, field results); page and line starts are compared through this alignment, then glyphs are matched.
 2. **Metrics:**
 
 | ID | Metric | Definition |
 |---|---|---|
-| M1 | Page-count match | Same number of pages (and the signed difference) |
+| M1 | Page-count match | Same number of pages in the two layouts (and the signed difference) |
 | M2 | Page-break agreement | Share of Word page starts that begin at the same aligned text position in BayanDocs |
 | M3 | Line-break agreement | Share of Word lines whose start position matches a BayanDocs line start |
 | M4 | Glyph position error | Median, 95th percentile and maximum horizontal and vertical distance (in points) between matched glyphs, computed only on lines whose breaks agree |
 | M5 | Visual difference | Per-page perceptual difference between Word's PDF rasterized by our tools and BayanDocs' reference raster, for elements text metrics cannot capture (shapes, charts, borders) |
 | M6 | Round-trip integrity | Re-saved file opens in Word without repair; content identical (reference machine, periodic) |
-| M7 | Hint agreement | Agreement with `w:lastRenderedPageBreak` positions in Word-saved files (a free, approximate signal usable on the whole private corpus without running Word) |
+| M7 | Hint agreement | Share of the page breaks that `w:lastRenderedPageBreak` hints mark in a Word-saved file at which a BayanDocs page starts too; only documents with at least one hint have M7 (a free, approximate signal usable on the whole private corpus without running Word) |
 
 3. **Aggregation** per tier, per feature tag, per script and per compatibility mode. The report lists the worst documents and the feature tags most correlated with disagreement, which drives prioritization.
 
