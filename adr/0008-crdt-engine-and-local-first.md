@@ -70,3 +70,7 @@ Decided by the owner on 2026-10-08 during CORE-004 ([BayanDocs/bayan-core pull r
 ## Revisit when
 
 The validation gate fails; Loro's maintenance falters (no release for 12 months, or the encoding stability promise is broken); or Automerge gains capabilities that change the comparison.
+
+## Note 2026-11-11: the import path is fuzzed by hand only while `crdt_import` is parked
+
+A note on the validation result above; it changes no decision. Decision 4 says that the import path of untrusted CRDT updates is fuzzed. CORE-010 ([BayanDocs/bayan-core pull request 47](https://github.com/BayanDocs/bayan-core/pull/47)) added the fuzz target `crdt_import`, which imports crafted updates and snapshots through bayan-crdt, and parked it because of a problem reported privately in another project's code: CI builds the target and runs the tests of its harness, but the automatic fuzzing runs, on pull requests and at night, leave it out. The monthly dependency session runs it by hand on each new version of Loro and un-parks it once it passes ([the runbook](../developer/dependency-update-runbook.md#bayan-core)). Until then, this part of decision 4 holds by hand only: the import path is fuzzed when a session runs the target by hand, not by CI. This note goes when the parking ends.

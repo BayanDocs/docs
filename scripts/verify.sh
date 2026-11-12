@@ -110,7 +110,9 @@ check_navigation() {
 }
 
 check_ids() {
-  local id file failed=0 defined=()
+  local id file failed=0
+  # The work package IDs that a brief or a draft defines, as the keys of an associative array.
+  local -A defined=()
   # ADR-NNNN must have a file adr/NNNN-<title>.md.
   while read -r id; do
     if ! compgen -G "adr/${id#ADR-}-*.md" >/dev/null; then
@@ -124,14 +126,15 @@ check_ids() {
       continue
     fi
     if [[ ${file##*/} =~ ^($WP_ID)- ]]; then
-      defined+=("${BASH_REMATCH[1]}")
+      defined["${BASH_REMATCH[1]}"]=1
     fi
     while read -r id; do
-      defined+=("$id")
+      defined[$id]=1
     done < <(grep -oE "^#{2,4} +$WP_ID\b" "$file" | grep -oE "$WP_ID")
   done
+  # Each mentioned ID is looked up in the array: ${defined[$id]+set} is "set" if the ID is a key and empty if it is not. No pipeline such as "printf … | grep -q" here: under pipefail, grep -q stops reading at the first match, printf can then die of SIGPIPE, and the pipeline would report a defined ID as missing (scripts/tests/test_id_check.py).
   while read -r id; do
-    if ! printf '%s\n' "${defined[@]}" | grep -qxF "$id"; then
+    if [[ -z ${defined[$id]+set} ]]; then
       echo "    $id is mentioned, but no work package brief or draft defines it"
       failed=1
     fi

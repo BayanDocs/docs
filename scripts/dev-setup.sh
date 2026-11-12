@@ -66,7 +66,9 @@ typos_pin() {
   local block
   block=$(sed -n '/^req_typos()/,/^}/p' "$pins")
   typos_version=$(sed -n 's/^typos==\([^ ]*\).*/\1/p' <<<"$block")
-  typos_sha256=$(sed -n 's/.*--hash=sha256:\([0-9a-f]\{64\}\).*/\1/p' <<<"$block" | head -n 1)
+  # The first hash: the line up to the first newline (${…%%$'\n'*}). Not "| head -n 1", which stops reading early and, under pipefail, could fail the pipeline.
+  typos_sha256=$(sed -n 's/.*--hash=sha256:\([0-9a-f]\{64\}\).*/\1/p' <<<"$block")
+  typos_sha256=${typos_sha256%%$'\n'*}
   [[ -n $typos_version && -n $typos_sha256 ]] || { echo "error: no typos pin in $pins" >&2; return 1; }
 }
 
@@ -81,7 +83,9 @@ typos_url="https://files.pythonhosted.org/packages/py3/t/typos/typos-${typos_ver
 has_version() {
   local found
   command -v "$1" >/dev/null 2>&1 || return 1
-  found=$("$1" --version 2>/dev/null | head -n 1) || return 1
+  # Only the first line counts, kept as in typos_pin above rather than with "| head -n 1".
+  found=$("$1" --version 2>/dev/null) || return 1
+  found=${found%%$'\n'*}
   found=${found##* }
   [[ ${found#v} == "$2" ]]
 }

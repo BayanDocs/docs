@@ -122,10 +122,17 @@
     - [Documentation work packages (drafts)](workpackages/phase-1/docs.md)
     - [Cross-repository work packages (drafts)](workpackages/phase-1/cross-cutting.md)
 
-# Guides (planned)
+# Guides
 
 - [User Handbook](handbook/README.md)
 - [Developer Guide](developer/README.md)
+  - [Getting started](developer/getting-started.md)
+  - [Developing bayan-core](developer/bayan-core.md)
+  - [Developing bayan-desktop](developer/bayan-desktop.md)
+  - [Developing bayan-web](developer/bayan-web.md)
+  - [Developing bayan-server](developer/bayan-server.md)
+  - [Developing the docs repository](developer/docs.md)
+  - [Your first contribution](developer/first-contribution.md)
   - [GitHub Settings Baseline](developer/github-settings.md)
   - [Dependency update runbook](developer/dependency-update-runbook.md)
 - [Self-Hosting Guide](deploy/README.md)
