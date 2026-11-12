@@ -36,7 +36,7 @@ A work package (WP) is a self-contained brief that one agent session can execute
 | [CORE-011](phase-0/CORE-011-retire-interim-parsers.md) | Retire the interim parsers: bayan-opc's metadata on bayan-xml, the lab's scanner on bayan-opc and bayan-xml | core | M | CORE-005, CORE-006, LAB-001 | 3 | Done |
 | [CORE-012](phase-0/CORE-012-outside-world-part-2.md) | The outside world, part 2: the rest of std, the build environment, exemptions per item | core | M | CORE-009 | 3 | Done |
 | [X-004](phase-0/X-004-codeql-without-write-access.md) | CodeQL without write access: analysis and upload in separate jobs | all | S | X-002 | 3 | Done |
-| [X-005](phase-0/X-005-ubuntu-packages-in-ci.md) | Ubuntu packages in CI: exact files on a pinned base, from more than one source | desktop + web + docs | L | X-003, X-004; ADR-0017's amendment of 2026-11-05, confirmed by the owner | 4 | Ready |
+| [X-005](phase-0/X-005-ubuntu-packages-in-ci.md) | Ubuntu packages in CI: exact files on a pinned base, from more than one source | desktop + web + docs | L | X-003, X-004; ADR-0017's amendment of 2026-11-05 (Accepted 2026-11-12) | 4 | Ready |
 | [CORE-008](phase-0/CORE-008-font-audit.md) | Font audit and bundled-library proposal | core + docs | M | CORE-003, LAB-002 | 4 | Ready |
 | [LAB-005](phase-0/LAB-005-probes-and-first-study.md) | Probe generator and first Word study | core + docs | L | LAB-002, LAB-003, CORE-003 | 4 | Ready |
 | [SRV-003](phase-0/SRV-003-threat-model.md) | Threat model v1 | docs | M | SRV-002, CORE-007 | 4 | Done |

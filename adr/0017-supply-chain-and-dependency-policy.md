@@ -172,7 +172,7 @@ The exemption covers nothing else: not other first-party pins, and not bayan-ser
 
 ## Amendment 2026-11-05: Ubuntu packages in CI
 
-**Status: Proposed** by the planning session of PLAN-FU-2 on 2026-11-05, together with work package [X-005](../workpackages/phase-0/X-005-ubuntu-packages-in-ci.md), which gives the measurements. It keeps every rule of this ADR at least as strict. As a change to the supply-chain policy it needs the owner's explicit confirmation ([ADR-0001](0001-record-architecture-decisions.md), rule 5), which the orchestrator has asked for; it is binding once the owner confirms it.
+**Status: Accepted** on 2026-11-12. Proposed by the planning session of PLAN-FU-2 on 2026-11-05, together with work package [X-005](../workpackages/phase-0/X-005-ubuntu-packages-in-ci.md), which gives the measurements. It keeps every rule of this ADR at least as strict. As a change to the supply-chain policy it needed the owner's explicit confirmation ([ADR-0001](0001-record-architecture-decisions.md), rule 5), which the owner gave on 2026-11-12.
 
 **Context.** Neither the mechanisms table nor the amendments above say how CI installs Ubuntu packages. bayan-desktop's Linux jobs and the C++ job of its CodeQL workflow, and bayan-web's Ubuntu job, install them with `apt-get --snapshot <date>` onto GitHub's `ubuntu-24.04` runner image. Between 2026-10-04 and 2026-11-05 this failed in 21 of 198 attempts: 8 times because GitHub had rebuilt the runner image with Ubuntu's security updates after the frozen date, so that a -dev package required an older version of its library than the runner had and apt would have had to downgrade it, and about 9 times because snapshot.ubuntu.com was unavailable.
 

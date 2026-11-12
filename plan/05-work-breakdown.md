@@ -71,7 +71,7 @@ Briefs are in [workpackages/phase-0/](../workpackages/README.md#phase-0--bedrock
 | [DOCS-002](../workpackages/phase-0/DOCS-002-contributor-onboarding.md) | Contributor onboarding and development-environment guides | docs | S | All Wave-1 scaffolds | 4 |
 | [DESK-003](../workpackages/phase-0/DESK-003-real-engine-boundary-tests.md) | The desktop's tests and sanitizers against the real engine boundary | desktop | M | DESK-002, CORE-007 | 4 |
 | [WEB-003](../workpackages/phase-0/WEB-003-automated-accessibility-rules.md) | Automated accessibility rules (axe) in the end-to-end tests | web | S | WEB-002 | 4 |
-| [X-005](../workpackages/phase-0/X-005-ubuntu-packages-in-ci.md) | Ubuntu packages in CI: exact files on a pinned base, from more than one source | desktop + web + docs | L | X-003, X-004; ADR-0017's amendment of 2026-11-05, confirmed by the owner | 4 |
+| [X-005](../workpackages/phase-0/X-005-ubuntu-packages-in-ci.md) | Ubuntu packages in CI: exact files on a pinned base, from more than one source | desktop + web + docs | L | X-003, X-004; ADR-0017's amendment of 2026-11-05 (Accepted 2026-11-12) | 4 |
 
 ```mermaid
 flowchart LR
