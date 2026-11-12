@@ -116,7 +116,8 @@ In bayan-desktop and bayan-web, no Linux CI job depends on the runner image's li
 - **The first lock** of each repository uses the newest base image and a snapshot date chosen by the new rules, both older than the cutoff, and the same in both repositories. This moves bayan-desktop's and bayan-web's pins outside the monthly session, which the orchestrator allows when every rule of ADR-0017 holds (as for bayan-desktop#9); the pull requests state both dates.
 - **Documentation**, in the same pull requests (AGENTS.md §5: a change of the dependency posture updates its documents in the same pull request):
   - the [dependency update runbook](../../developer/dependency-update-runbook.md), as described in [The runbook after this work package](#the-runbook-after-this-work-package);
-  - the mechanism in bayan-desktop's `AGENTS.md` (its CI bullet describes `UBUNTU_SNAPSHOT` today) and in bayan-web's `AGENTS.md` dependency section, and the header comments of the changed workflows. The "Tools" bullet of AGENTS.md §6 stays as it is: it is identical in all five repositories, and its rule (exact versions, checked against a SHA-256 written in the repository) already covers the locked files.
+  - the mechanism in bayan-desktop's `AGENTS.md` (its CI bullet describes `UBUNTU_SNAPSHOT` today) and in bayan-web's `AGENTS.md` dependency section, and the header comments of the changed workflows. The "Tools" bullet of AGENTS.md §6 stays as it is: it is identical in all five repositories, and its rule (exact versions, checked against a SHA-256 written in the repository) already covers the locked files;
+  - in docs, the "Pins" lines of [developer/bayan-desktop.md](../../developer/bayan-desktop.md) and [developer/bayan-web.md](../../developer/bayan-web.md), which name where the Ubuntu pins are today (`.github/workflows/ci.yml`, and the snapshot in `scripts/dev-setup.sh`).
 - **The agent environment:** an entry in [issue #7](https://github.com/BayanDocs/docs/issues/7), in that issue's format, for `scripts/cloud-environment-setup.sh`: (1) `APT_SNAPSHOT` is the locks' snapshot date, and on or after the newest Ubuntu package of the environment's image. In a session, `/var/log/dpkg.log` also holds the setup script's own installs, so the image's newest package is the newest entry before the setup script's apt step. (2) When the apt step fails, its note says whether the snapshot could not be reached or the image has newer libraries than the date (apt's "unmet dependencies" on a newer installed version), and what to do in each case. (3) One retry after a short pause when the snapshot could not be reached, within the script's time limit.
 
 ### Out of scope
@@ -146,7 +147,7 @@ The rows of the [dependency update runbook](../../developer/dependency-update-ru
 
 - **bayan-desktop:** `ci.yml` and `codeql.yml` with container jobs, the lock, the script and its tests (without `tests/workflows/test_ubuntu_packages.py`), CI's check of the lock, and `AGENTS.md`.
 - **bayan-web:** `ci.yml` with the container entry, the lock, the same script and its tests, the test of `APT_PACKAGES` and `APT_SNAPSHOT`, CI's check of the lock, `scripts/dev-setup.sh` (`APT_SNAPSHOT`) and `AGENTS.md`.
-- **docs:** the runbook rows; the issue #7 entry.
+- **docs:** the runbook rows; the "Pins" lines of `developer/bayan-desktop.md` and `developer/bayan-web.md`; the issue #7 entry.
 
 ## Acceptance criteria
 
@@ -160,7 +161,7 @@ The rows of the [dependency update runbook](../../developer/dependency-update-ru
 - [ ] AC-8 On the pull requests every check passes, the required checks under unchanged names: bayan-desktop's verification gate, sanitizers and engine SDK steps in the container, and its C++ analysis with its results in code scanning under `/language:c-cpp`; bayan-web's `pnpm verify (ubuntu-24.04)` in the container; the macOS and Windows jobs as before (links).
 - [ ] AC-9 The workflow lint passes: zizmor reports nothing, and `pinact run --check --verify-min-age --min-age 1` passes (links).
 - [ ] AC-10 The pull requests give the install's time in the containers, with and without the cache, next to today's medians (59 s, 92 s and 158 s above), and compare WEB-002's measurements before and after the move into the container.
-- [ ] AC-11 The runbook rows, the two repositories' `AGENTS.md` sections and the issue #7 entry of the scope are written (the docs pull request and a link to the entry).
+- [ ] AC-11 The runbook rows, the two repositories' `AGENTS.md` sections, the two developer guides' "Pins" lines and the issue #7 entry of the scope are written (the docs pull request and a link to the entry).
 
 ## Verification
 
