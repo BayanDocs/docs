@@ -112,6 +112,7 @@
     - [X-002: CI security baseline — hardened workflows, workflow linting, Scorecard](workpackages/phase-0/X-002-ci-security-baseline.md)
     - [X-003: Supply-chain enforcement and the monthly update runbook](workpackages/phase-0/X-003-supply-chain-enforcement.md)
     - [X-004: CodeQL without write access — analysis and upload in separate jobs](workpackages/phase-0/X-004-codeql-without-write-access.md)
+    - [X-005: Ubuntu packages in CI — exact files on a pinned base, from more than one source](workpackages/phase-0/X-005-ubuntu-packages-in-ci.md)
   - [Phase 1 — Faithful Viewer (drafts)]()
     - [Core work packages (drafts)](workpackages/phase-1/core.md)
     - [Fidelity Lab work packages (drafts)](workpackages/phase-1/lab.md)
