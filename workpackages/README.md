@@ -28,7 +28,7 @@ A work package (WP) is a self-contained brief that one agent session can execute
 | [SRV-002](phase-0/SRV-002-spike-mls.md) | Spike: MLS for CRDT updates | server | L | SRV-001 | 2 | Done |
 | [CORE-009](phase-0/CORE-009-lint-attributes-from-macros.md) | Lint exceptions that nobody wrote: check what the compiler silenced | core | M | CORE-001 | 2 | Done |
 | [CORE-003](phase-0/CORE-003-spike-deterministic-text.md) | Spike: deterministic text pipeline | core | L | CORE-002 | 3 | Done |
-| [LAB-002](phase-0/LAB-002-word-ground-truth-harness.md) | Word ground-truth harness | core | M | LAB-001; reference machine | 3 | Ready (needs owner hardware) |
+| [LAB-002](phase-0/LAB-002-word-ground-truth-harness.md) | Word ground-truth harness | core | L | LAB-001; the owner's one-time setup of the reference machine (owner checklist item 9) | 3 | Ready (its work on the machine waits for that setup) |
 | [LAB-004](phase-0/LAB-004-metrics-and-report.md) | Comparison metrics and fidelity report | core | M | LAB-003 | 3 | Done |
 | [DESK-002](phase-0/DESK-002-spike-qt-canvas.md) | Spike: Qt Quick canvas, input, accessibility | desktop | L | DESK-001, CORE-007 | 3 | Done |
 | [WEB-002](phase-0/WEB-002-spike-worker-canvas.md) | Spike: worker canvas, input bridge, accessibility mirror | web | L | WEB-001, CORE-007 | 3 | Done |

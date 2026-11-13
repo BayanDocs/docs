@@ -60,6 +60,7 @@
   - [ADR-0028: Server TLS — rustls with aws-lc-rs, HTTPS through a reverse proxy](adr/0028-server-tls.md)
   - [ADR-0029: Identity keys, device approval and account recovery](adr/0029-identity-devices-and-recovery.md)
   - [ADR-0030: Commit acceptance, departures and group repair](adr/0030-commit-acceptance-and-group-repair.md)
+  - [ADR-0031: An agent-operated Word reference machine that opens only vetted documents](adr/0031-agent-operated-reference-machine.md)
   - [ADR template](adr/0000-template.md)
 
 # Specifications
