@@ -40,10 +40,16 @@ Items 3–6a are applied by [scripts/github-settings.py](../scripts/github-setti
   - **Word activated there.** Install Microsoft 365's desktop apps, and sign in to Word in the lab account to activate it. If your subscription lets you, use a Microsoft account that is used for nothing else, so that no personal mail or files can be reached from the machine.
   - **Internet access for that account**, which the Claude app, Word's activation and the downloads of public documents need.
   - **The Claude desktop app, signed in**, installed in the lab account.
-  - **One folder shared through Remote Control:** in the app, under Settings, Claude Code, Remote Control, share a folder of the lab account, for example `BayanLab` in its user folder (not the user folder itself).
+  - **One folder shared through Remote Control:** in the app, under Settings, Claude Code, Remote Control, share a folder of the lab account, for example `BayanLab` in its user folder (not the user folder itself). On Windows not every version of the app can do this; if the setting is missing, tell the orchestrator.
   - **Kept on, with the app running.** Leave the machine on and the app open. After Windows restarts, for example for updates, sign in to the lab account again so that the app starts.
 
-  Afterwards, the orchestrator asks you only to approve each agent session's request to use the computer when it appears, to wake the machine when it does not answer, and now and then to run a script that a reviewer approved, with "Run as administrator" (for example the ones that pin the Office build and keep the machine awake). Optional later: a Mac with Word for spot checks of Word for Mac differences.
+  Afterwards, the orchestrator asks you only for the following, and tells you each time what to do:
+  - **Approve its sessions' requests** to use the computer: only the requests it announced, and on your own device rather than on the lab machine.
+  - **Until your Claude account can use the folder from a cloud session** (it cannot yet), start one Claude Code session on the machine instead, in the lab account and the shared folder, with the prompt the orchestrator gives you, and allow the orchestrator to send it messages when your own device asks you to.
+  - **Wake the machine** when it does not answer.
+  - **Now and then, run a reviewed script as administrator**, for example the ones that pin the Office build and keep the machine awake, in the way the orchestrator describes: your elevated session fetches the script and its reviewed fingerprint from GitHub itself, so you never copy a script from the lab folder or type a hash.
+
+  Optional later: a Mac with Word for spot checks of Word for Mac differences.
 - [ ] **10. Decide where the private corpus lives.** Not needed until T2 returns: ADR-0031 postpones the private corpus, the real-world documents found on the open web, so nothing has to be stored yet. If a later decision brings T2 back, these documents cannot be redistributed and need private storage (for example a private S3-compatible bucket or a private repository with Git LFS); LAB-001 proposed options, and you would choose and create the account then.
 
 ## Before the first public release (Phase 1)
