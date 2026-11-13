@@ -27,7 +27,7 @@
 
 v1 analyses the collaboration system end to end: signing in, accounts, devices and identity keys, sharing and roles, link sharing, synchronization online and offline, snapshots for new members, recovery, lost devices, notifications, administration and backups, the delivery of the web app's code, and the compliance escrow member planned for Phase 4. It covers bayan-server, the collaboration code of bayan-core (`bayan-sync`, `bayan-mls`, `bayan-crdt`), the shells' transport and key storage, and the services around them: the reverse proxy, the organization's identity provider, the database, object storage and email.
 
-Parsing documents, rendering, automation, local AI and the release pipeline keep the threats of v0 (T1–T4 and T14–T20 in §11) until their own work packages extend them.
+Parsing documents, rendering, automation, local AI and the release pipeline keep the threats of v0 (T1–T4 and T14–T20 in §11) until their own work packages extend them. Agent sessions operating the Fidelity Lab's Word reference machine ([ADR-0031](../adr/0031-agent-operated-reference-machine.md), Proposed) add T40 (§13.5).
 
 Most of what v1 analyses is built in Phase 1 (SRV-101…SRV-105: identity, storage and relay foundations) and Phase 3 (collaboration); each flow in §6 names its phase. The server endpoints that exist today are only those of SRV-001 (`/healthz`, `/readyz`, `/version` and static files).
 
@@ -36,7 +36,7 @@ Most of what v1 analyses is built in Phase 1 (SRV-101…SRV-105: identity, stora
 1. **Diagrams.** A context diagram of the whole system (§4.2), diagrams of the inside of the server (§4.3) and of a client (§4.4), and a sequence diagram for every flow (§6). In the sequence diagrams each box is a trust zone, so every arrow that leaves a box crosses a trust boundary (§4.1).
 2. **STRIDE per element.** §4.5 lists every element with the STRIDE categories that apply to its type (external entities: S and R; processes: all six; data stores: T, R, I and D; data flows: T, I and D) and where each is analysed; §4.6 analyses the infrastructure elements that no flow covers in full.
 3. **STRIDE per flow.** Every flow in §6 has a table with one row per threat: an ID such as F4.2, the category, the element attacked, the threat, its mitigations and what remains. Rows name the principal threat (T-number) they belong to.
-4. **Principal threats.** §11 keeps the numbers T1–T22 of v0, which other documents cite, and adds T23–T39. Numbers are never reused or renumbered.
+4. **Principal threats.** §11 keeps the numbers T1–T22 of v0, which other documents cite, and adds T23–T39 (and, since 2026-11-13, T40). Numbers are never reused or renumbered.
 5. **Status values.** *In place* (built and tested), *Planned* (designed here or in an Accepted ADR, not built), *Proposed* (depends on a Proposed ADR), *Residual* (accepted in §12).
 
 ### 1.3 Assumptions
@@ -87,7 +87,8 @@ Most of what v1 analyses is built in Phase 1 (SRV-101…SRV-105: identity, stora
 | Security audit log | Evidence after an incident; personal data | Server |
 | Software integrity: binaries, the web app's code, container images | A compromised build defeats every other control (T11, T16, T17) | Release pipeline, the server that serves the web app |
 | Service availability | Teams depend on it; an operator can always take it away | Server |
-| Fidelity Lab private corpus | Third-party documents (T19, unchanged) | Lab storage |
+| Fidelity Lab private corpus (postponed with T2, ADR-0031) | Third-party documents (T19) | Private storage, once T2 returns |
+| Word reference machine | The lab's measuring instrument; its lab account holds the Claude desktop app's sign-in, which reaches what the project's Claude account reaches (T40) | The owner's computer, operated by agent sessions (ADR-0031) |
 
 ## 3. Adversaries and security goals
 
@@ -1510,7 +1511,7 @@ v0 §6 item 6 asked for a checklist per planned endpoint. §10.1 applies to ever
 
 ## 11. Principal threats
 
-The register keeps the numbers of v0. Rows T1–T22 are v0's, with their status and mitigations brought up to date; T23–T39 are new in v1. "Where" points to the analysis.
+The register keeps the numbers of v0. Rows T1–T22 are v0's, with their status and mitigations brought up to date; T23–T39 are new in v1; T40 was added on 2026-11-13 with ADR-0031. "Where" points to the analysis.
 
 | # | Boundary | STRIDE | Threat | Mitigations | Status | Where |
 |---|---|---|---|---|---|---|
@@ -1532,7 +1533,7 @@ The register keeps the numbers of v0. Rows T1–T22 are v0's, with their status 
 | T16 | 8 | T | Malicious dependency or CI compromise | ADR-0017: 24-hour minimum age, exact pins, audits, SHA-pinned actions, minimal permissions, provenance, signing; the workflow conventions of [AGENTS.md](../AGENTS.md#workflow-conventions) | In place (X-002, X-003) | v0 |
 | T17 | 8 | T | Malicious update delivered to users | Signed releases; signed update metadata with rollback protection; immutable releases (ADR-0026) | Planned | v0 |
 | T18 | 3 | I | Clipboard or URL handling leaks content to other apps or sites | Explicit user actions only; confirmation before opening URLs; no automatic fetching | Planned | v0 |
-| T19 | lab | I | The private corpus leaks | Private storage; aggregate-only reports; isolated reference machine | Planned | v0 |
+| T19 | lab | I | The private corpus leaks | Private storage; aggregate-only reports; the private corpus (T2) is never processed on the agent-operated reference machine: if T2 returns, it gets a separate, disposable setup without Claude (ADR-0031) | Proposed (ADR-0031): postponed with T2, so no private corpus is collected until it returns | v0, §13.5 |
 | T20 | 2, logs | I | Content leaks through logs, crash reports or recordings | No content in logs (tested in SRV-001 and CORE-007); opt-in, user-reviewed crash reports; recordings only on explicit request; for collaboration see T36 | In place for the server's logs and the engine skeleton | §9.1 |
 | T21 | 4 | S, T, D, E | Third-party or modified clients, buggy or malicious, connect with a user's valid credentials | The server treats every client as untrusted; new devices need approval from a trusted device and optionally an administrator; clients check every update; device lists with revocation; a public conformance suite (SEC-13, COL-13, COL-14) | Planned | F3, §7, §10 |
 | T22 | 4, 5 | I | Harvest now, decrypt later | Hybrid post-quantum key exchange in TLS (ADR-0028) and in MLS (ADR-0016, amendment 2026-10-04); key backups and device approvals sealed with the hybrid KEM; the account's root secrets under 256-bit symmetric keys | Planned | F3, F8, F9 |
@@ -1553,6 +1554,7 @@ The register keeps the numbers of v0. Rows T1–T22 are v0's, with their status 
 | T37 | 12 | I, S | Notifications leak metadata or carry phishing | Content-free notices; email opt-in over TLS; no push services; plain-text emails with escaped names | Planned | F14 |
 | T38 | 4 | I | The directory is used to find out who has an account | Exact-match look-ups by approved devices only, rate limited, the same answer for no match | Planned | F4 |
 | T39 | 4 | S, E | A stolen device or a stolen device-signing or identity key is used for resyncs, recovery joins, to certify devices or to sign device lists | Device must be in the latest signed list the server holds; the user's own devices refuse revoked devices' joins, owners' within a limit, and their refusal blocks only the joining device (F9.6, §13.4); they alarm on list changes attributed to them; joins are shown to all; the device-signing key is rotated after a loss and never held by browser devices | Planned (ADR-0029; ADR-0030, amendment 2026-10-26) | F3, F9, F11 |
+| T40 | lab | S, T, I, E, D | Agents operating the Word reference machine: a vetted document still exploits Word; text in a document, a Word dialog or the harness's output steers an agent; whoever controls the lab account uses the Claude sign-in there, and with it what the project's Claude account reaches; an administrator script is changed between its review and its run; the machine is offline | A standard lab account without personal data, GitHub credentials or other sign-ins; Word opens only documents on the approved list of a safety check in CI (T0 probes and vetted T1; T2 postponed); Word hardened as defence in depth; the owner approves each session's use of the machine and runs only reviewed administrator scripts, checked against their SHA-256; agents treat document text and harness output as data, and every change is reviewed in a pull request; results leave through cloud sessions, at most with a key that may only write ground truth | Proposed (ADR-0031) | §13.5 |
 
 ## 12. Accepted residual risks (v1)
 
@@ -1621,6 +1623,20 @@ The owner accepted these rules on 2026-10-26, recorded in [ADR-0030's amendment 
 
 What remains: a hostile server can still withhold a newer list from members who have not seen it (T30) and ignore the refusals it receives, so against a hostile server only members who know the newer list protect themselves, by refusing the join and falling behind. Against an honest server that was restored, the rules close the gap once one device that knows the revocation has reconnected; until then, and when the user's other devices stay offline beyond the limit, a revoked owner device can still rejoin.
 
+### 13.5 The Word reference machine (ADR-0031)
+
+[ADR-0031](../adr/0031-agent-operated-reference-machine.md), proposed on 2026-11-13 after the owner decided its direction, lets agent sessions operate the Fidelity Lab's Word reference machine through Remote Control, from one standard Windows account that holds no personal data, no GitHub credentials and no sign-ins other than the Claude desktop app and Word's activation; the owner approves each session's request to use it. Word there opens only T0 probes and T1 documents that pass a document safety check in CI and are on its approved list (LAB-002); T2, the documents crawled from the open web, is postponed (T19). The machine lies outside the collaboration system that the rest of this document analyses, and §11 calls its boundary "lab". It adds the threats of T40:
+
+| Threat | STRIDE | Mitigations | What remains |
+|---|---|---|---|
+| A vetted document still exploits Word, through a flaw in something the check accepts (a picture, a chart, Word's own readers) | E, T, I | The check rejects whatever makes Word fetch or run something and whatever it cannot classify, and leaves out the test suites' exploit and crash samples; Word's hardening; a standard account with nothing of value in it; no GitHub credentials | The pinned Office build gets security fixes only at a re-baseline; an exploit gets the lab account's files, the network and its sign-ins (the third row) |
+| Prompt injection: text in a document, a Word dialog or the harness's output steers an agent | T, E | Agents treat such text as data; the harness names documents by SHA-256 and quotes none of their text; narrow tasks; every change reviewed in a pull request; no credentials on the machine | An agent can still be misled into acting on the machine, or into reporting wrong ground truth, where no review sees it; LAB-002's determinism check (AC-2) catches some wrong results |
+| Whoever controls the lab account (an exploit, a misled agent, someone at the keyboard) uses the Claude desktop app's sign-in | S, I, E | Everything that keeps the lab account safe (above); GitHub's rules for `main` and the review of every pull request; Word activated with a Microsoft account used for nothing else, where the subscription allows | The project's Claude account and what it reaches (its sessions and conversations, its GitHub access, its connectors) are exposed until the owner signs the app out; the owner's approval of each Remote Control request does not protect against a stolen sign-in |
+| An administrator script is changed between its review and its run | E | Scripts committed with their SHA-256 and checked just before the owner runs them; short, reviewed, and run only when the orchestrator asks | The moments between the check and the run |
+| The machine is offline: off, asleep, restarted by updates, signed out, or the app closed | D | No sleep; the owner signs in again after restarts; the orchestrator parks the work, keeps everything else moving and asks the owner to wake the machine ([plan/12](../plan/12-orchestration.md#the-word-reference-machine)) | Tier C measurement waits; nobody stands in for the machine with made-up results |
+
+What remains becomes an accepted residual risk (§12) when the owner accepts ADR-0031; until then, T19 and T40 have the status Proposed.
+
 ## 14. Traceability
 
 ### 14.1 The open items of v0
@@ -1647,6 +1663,6 @@ What remains: a hostile server can still withhold a newer list from members who 
 ## 15. Maintenance and review
 
 - **When it changes.** At every phase gate, and in any work package that changes a trust boundary or adds an endpoint. Phase-1 server work packages record, for each endpoint they build, the evidence for §10's requirements, and update §9 when they store a new field.
-- **Numbers.** Threat numbers (T1–T39), flow numbers (F1–F17), infrastructure rows (IE1–IE11), failure-mode numbers (FM1–FM13) and escrow abuse cases (EA1–EA10) are never reused or renumbered; new ones are added at the end.
+- **Numbers.** Threat numbers (T1–T40), flow numbers (F1–F17), infrastructure rows (IE1–IE11), failure-mode numbers (FM1–FM13) and escrow abuse cases (EA1–EA10) are never reused or renumbered; new ones are added at the end.
 - **Review.** A separate reviewer session reviews each version (SRV-003 AC-4); the external audit before collaboration leaves beta reviews §5–§8 (SEC-08).
-- **History.** v0, 2026-10-03, planning session. v1, 2026-10-14, SRV-003: system and flow diagrams, STRIDE per element and per flow, metadata inventory, role enforcement, escrow, endpoint requirements, T23–T39, ADR-0029 and ADR-0030 proposed, and accepted by the owner on 2026-10-17. 2026-10-26: the owner confirmed the AC-4 review's corrections and accepted the rules of §13.4 (ADR-0030, amendment 2026-10-26).
+- **History.** v0, 2026-10-03, planning session. v1, 2026-10-14, SRV-003: system and flow diagrams, STRIDE per element and per flow, metadata inventory, role enforcement, escrow, endpoint requirements, T23–T39, ADR-0029 and ADR-0030 proposed, and accepted by the owner on 2026-10-17. 2026-10-26: the owner confirmed the AC-4 review's corrections and accepted the rules of §13.4 (ADR-0030, amendment 2026-10-26). 2026-11-13: T19 updated and T40 added, with §13.5, for the agent-operated Word reference machine of ADR-0031 (Proposed; planner session PLAN-REF).

@@ -5,13 +5,13 @@
 | Phase | 0 — Bedrock |
 | Stream | LAB / TEXT |
 | Repository | bayan-core (`lab/`, `spikes/` or `bayan-text`) and docs (Word Behavior Notes) |
-| Attach to session | bayan-core, docs |
+| Attach to session | bayan-core, docs; for the work on the machine, the reference machine's lab folder through Remote Control ([plan/12](../../plan/12-orchestration.md#the-word-reference-machine)) |
 | Size | L |
 | Depends on | LAB-002, LAB-003, CORE-003 |
 | Unblocks | CORE-111, CORE-112 (Word measurement model and line breaking) |
 | Status | Kept in the [work package index](../README.md) |
 | Requirements | FID-04, TYP-02 |
-| Decisions | ADR-0009 (§5 Word measurement model), ADR-0005, ADR-0004 |
+| Decisions | ADR-0009 (§5 Word measurement model), ADR-0005, ADR-0004, [ADR-0031](../../adr/0031-agent-operated-reference-machine.md) (the agent-operated reference machine) |
 | Specs | [fidelity-lab.md §8](../../specs/fidelity-lab.md#8-reverse-engineering-method-word-behavior-notes), [word-behavior/](../../specs/word-behavior/README.md) |
 
 ## Context
@@ -26,12 +26,12 @@ A reusable probe generator, three confirmed Word Behavior Notes, and a prototype
 
 ### In scope
 
-- **Probe generator** (Rust): writes minimal valid `.docx` files from parameters (font, size, text pattern, paragraph width via margins or indents, spacing, kerning flag, ligature settings, compatibility mode), recording parameters in the corpus manifest as T0 documents.
+- **Probe generator** (Rust): writes minimal valid `.docx` files from parameters (font, size, text pattern, paragraph width via margins or indents, spacing, kerning flag, ligature settings, compatibility mode), recording parameters in the corpus manifest as T0 documents. The same parameters always give the same bytes, because Word on the reference machine opens only files on LAB-002's approved list (ADR-0031): CI generates the probes from parameter sets committed in bayan-core, runs LAB-002's document safety check on them and adds them to the list. A new probe set therefore reaches the machine only once its pull request has merged, so plan the studies' probe sets in a few large batches, wide enough to bisect within them.
 - **WBN-0001 (advances and rounding):** probes varying string content and length, font size (for example 8–72 pt including fractional half-points), and width, for the most common fonts; observe where Word breaks lines; infer how advances are scaled, rounded and accumulated.
 - **WBN-0002 (line height):** probes for single, multiple ("auto"), exact and at-least spacing across fonts and sizes; infer which font metrics Word uses and how it rounds.
 - **WBN-0003 (kerning and ligatures defaults):** when Word applies kerning and ligatures by default and how `w:kern` and `w14:ligatures` change it.
 - Notes written with the template, including probes, observations, rules and confidence.
-- **Prototype:** implement the rules in the CORE-003 pipeline (or an early `bayan-text`), run it on the reference machine with Word's own fonts (algorithm fidelity), and measure agreement on the probes.
+- **Prototype:** implement the rules in the CORE-003 pipeline (or an early `bayan-text`), run it on the reference machine with Word's own fonts (algorithm fidelity), and measure agreement on the probes. Your session runs the harness and the prototype there itself, through Remote Control and under ADR-0031's rules for agents on the machine; only agreement statistics leave it.
 - Add the probes to the T0 corpus with their ground truth.
 
 ### Out of scope
