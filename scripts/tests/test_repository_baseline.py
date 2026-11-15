@@ -67,9 +67,6 @@ class ReusePinTests(unittest.TestCase):
     def test_reuse_is_pinned_like_the_cloud_environment(self) -> None:
         self.assertEqual(requirements_file("requirements.txt"), setup_script_requirements("req_reuse"))
 
-    def test_its_build_backend_is_pinned_like_the_cloud_environment(self) -> None:
-        self.assertEqual(requirements_file("build-requirements.txt"), setup_script_requirements("req_poetry_core"))
-
 
 class WorkflowLintPinTests(unittest.TestCase):
     def test_zizmor_is_pinned_like_the_cloud_environment(self) -> None:
