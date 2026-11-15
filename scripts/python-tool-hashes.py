@@ -11,7 +11,7 @@ can install on x86-64 Ubuntu 24.04 (glibc 2.39), so the setup script stays
 short. When wheels do not cover all of those Python versions, the hash of the
 source archive is added and the package must be built from source.
 
-Usage: python3 scripts/python-tool-hashes.py 'reuse==6.2.0' 2026-10-03T00:00:00Z
+Usage: python3 scripts/python-tool-hashes.py 'reuse==6.3.0' 2026-11-14T06:33:00Z
 Needs: uv on PATH and network access to pypi.org. Standard library only.
 """
 
@@ -103,9 +103,9 @@ def main() -> int:
                 covered |= minors
                 hashes.append(f["digests"]["sha256"])
         if not target_minors(marker) <= covered:
-            # Wheels do not cover every target Python (reuse, for example, publishes only a
-            # CPython 3.10 wheel): add the source archive; the setup script builds it with
-            # --no-binary and a hash-pinned build backend.
+            # Wheels do not cover every target Python (as with reuse 6.2.0, which published only
+            # a CPython 3.10 wheel): add the source archive and say so. Neither the setup script
+            # nor the workflows build packages from source, so such a tool needs a decision first.
             sdists = [f["digests"]["sha256"] for f in files if f["packagetype"] == "sdist"]
             if not sdists:
                 print(f"error: no usable file for {name}=={version}", file=sys.stderr)
