@@ -190,6 +190,20 @@ This adds a row to the mechanisms table: **Ubuntu packages (CI)**. Pins and lock
 
 **Consequences.** CI no longer depends on the runner image's libraries or on a single Ubuntu server, and the compilers and other tools that the runner image supplied until now come from the lock, at exact versions; the lock also brings the base image's own packages up to the snapshot date. Every container job downloads the base image (about 89 MB) from Docker Hub, as bayan-server's CI already depends on Docker Hub for its images, and, unless the cache holds the files, about 140 MB of package files in bayan-desktop and 220 MB in bayan-web. Ubuntu packages in CI no longer take security updates from GitHub's weekly image; they move with the monthly session, like every other pin. The monthly session regenerates two lock files, with Docker.
 
+## Amendment 2026-11-15: Python tools from wheels only
+
+**Status: Accepted by the orchestrator in the owner's place** on 2026-11-15, in the joint dependency round of November 2026 (DEP-SHARED-2026-11, [BayanDocs/docs pull request 65](https://github.com/BayanDocs/docs/pull/65)). It removes an exception and keeps every other rule of this ADR as strict as before, so it is the orchestrator's to accept ([plan/12](../plan/12-orchestration.md#what-only-the-owner-decides)).
+
+**Context.** The amendment "tools in agent sessions" above lets a Python tool for which no wheel fits be built from a hash-pinned source archive, with a hash-pinned build backend and no build isolation. REUSE 6.2 was the only such tool: the REUSE workflow of every repository and the cloud environment's setup script built it with the build backend poetry-core, pinned in `.github/reuse/build-requirements.txt` and `req_poetry_core`. Building a package from source runs the build backend's code while the tool is installed. REUSE 6.3.0 publishes a wheel for every Python version.
+
+**Decision.**
+
+- Since REUSE 6.3.0, every Python tool, in CI and in the setup script, is installed from hash-pinned wheels only (`pip --require-hashes --only-binary :all:`).
+- The source-build path is gone: `.github/reuse/build-requirements.txt` with its poetry-core pin is removed from all five repositories, and `req_poetry_core` and the build-from-source branch of `install_python_tool` from the setup script.
+- A tool that later has no fitting wheel (`scripts/python-tool-hashes.py` then prints that it must be built from source) keeps its previous pins until the owner decides, as the REUSE row of the [dependency update runbook](../developer/dependency-update-runbook.md#shared-files-all-five-repositories) says.
+
+**Consequences.** No package code runs while a Python tool is installed. The amendment "tools in agent sessions" keeps its text, but its description of the source build of REUSE 6.2 no longer applies.
+
 ## Revisit when
 
 Ecosystem tools change (for example Cargo re-checking lockfile ages natively, or lockfile-lint supporting pnpm), a supply-chain incident affects us, or the owner changes the policy.

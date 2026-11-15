@@ -48,23 +48,18 @@ BINARIES=(
   "lychee 0.24.2 https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-musl.tar.gz 73657a111819a30c47c08352896796f23d64e4eb2b3ed39b6d32149241566fc5 lychee-x86_64-unknown-linux-musl/lychee crate:lychee"
   # 2026-06-09 (the release publishes no checksum file)
   "cargo-fuzz 0.13.2 https://github.com/rust-fuzz/cargo-fuzz/releases/download/0.13.2/cargo-fuzz-0.13.2-x86_64-unknown-linux-musl.tar.gz b5b704018b63e0f151c17a057ac53b5111e1db545d1b9f72fee79f08a545931c cargo-fuzz crate:cargo-fuzz"
-  # 2026-07-30, published hash
-  "pinact 4.1.1 https://github.com/suzuki-shunsuke/pinact/releases/download/v4.1.1/pinact_linux_amd64.tar.gz d1cffebe5704b74e2e5f8a864efb9f7e54768972dc686188c008033fb1797841 pinact go:github.com/suzuki-shunsuke/pinact/v4/cmd/pinact"
+  # 2026-10-25, published hash
+  "pinact 5.0.2 https://github.com/suzuki-shunsuke/pinact/releases/download/v5.0.2/pinact_linux_amd64.tar.gz 7f003d8f51e984c2264d2009d430e3e0e87ae404a0e2dc2a9a277b0f731bf5b7 pinact go:github.com/suzuki-shunsuke/pinact/v5/cmd/pinact"
 )
 
-# Python tools, one virtual environment each. Generated with scripts/python-tool-hashes.py (cutoff 2026-10-03T00:00:00Z): only wheels that CPython 3.11-3.14 can install on Ubuntu 24.04 are listed, plus a source archive where no wheel fits.
-req_poetry_core() { cat <<'EOF'
-poetry-core==2.5.0 \
-    --hash=sha256:98ee465b66f7e14bb9fbe68fb5e00d0cff184f036993ec94610ae4b5612f3add
-EOF
-}
+# Python tools, one virtual environment each. Generated with scripts/python-tool-hashes.py (cutoff 2026-10-03T00:00:00Z; req_reuse and req_zizmor 2026-11-14T06:33:00Z, in the joint dependency round of November 2026): only wheels that CPython 3.11-3.14 can install on Ubuntu 24.04 are listed, and every tool is installed from wheels only (REUSE publishes one since version 6.3.0).
 req_reuse() { cat <<'EOF'
 attrs==26.1.0 \
     --hash=sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309
 boolean-py==5.0 \
     --hash=sha256:ef28a70bd43115208441b53a045d1549e2f0ec6e3d08a9d142cbc41c1938e8d9
-click==8.5.0 \
-    --hash=sha256:255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360
+click==8.5.1 \
+    --hash=sha256:8bb5376d2006950386f8c6427613334a2acadc5f559cb80e638d00b4df957e37
 jinja2==3.1.6 \
     --hash=sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67
 license-expression==30.4.4 \
@@ -79,15 +74,15 @@ python-debian==1.1.1 \
     --hash=sha256:f98ae013e8e5310e49041cc3860a7105df73af73d4ff1d8afb474770d328a6ad
 python-magic==0.4.27 \
     --hash=sha256:c212960ad306f700aa0d01e5d7a325d20548ff97eb9920dcd29513174f0294d3
-reuse==6.2.0 \
-    --hash=sha256:4feae057a2334c9a513e6933cdb9be819d8b822f3b5b435a36138bd218897d23
-tomlkit==0.15.1 \
-    --hash=sha256:177a05aece5a8ca5266fd3c448abb47b8d352f09d477d3ca8332db4d89b24304
+reuse==6.3.0 \
+    --hash=sha256:be6b598aa6d5cdf44af0da265572a72f0adcd30033857af874fd8607188259c1
+tomlkit==0.15.2 \
+    --hash=sha256:05562412163a3037b94497385fb7f9204c637bc605af7a48199e41cf2272f437
 EOF
 }
 req_zizmor() { cat <<'EOF'
-zizmor==1.30.1 \
-    --hash=sha256:eee12266b793cb87ad4a7e3af2e72404f8a63e3de5eb099b80bf7b1cfd232a8e
+zizmor==1.32.0 \
+    --hash=sha256:84a6acb975accc13408786a2bd274b572537ca19c933ebbc13e78f3988562071
 EOF
 }
 req_typos() { cat <<'EOF'
@@ -324,7 +319,7 @@ step_node() {
 
 # Create a virtual environment for one Python tool from hash-pinned requirements and link its commands. The environment's directory name includes a hash of the requirements, so changing a pin always produces a fresh environment.
 install_python_tool() {
-  local name=$1 commands=$2 requirements=$3 from_source=${4:-} version digest venv command
+  local name=$1 commands=$2 requirements=$3 version digest venv command
   version=$("$requirements" | sed -n "s/^$name==\([^ ]*\).*/\1/p")
   digest=$("$requirements" | sha256sum | cut -c1-12)
   venv="$TOOLS/python/$name-$version-$digest"
@@ -333,14 +328,7 @@ install_python_tool() {
     python3 -m venv "$venv"
     local pip=("$venv/bin/pip" install --no-input --no-cache-dir --timeout 60 --retries 3 --require-hashes)
     "$requirements" >"$venv/requirements.txt"
-    if [ -n "$from_source" ]; then
-      # No wheel fits this platform: build from the hash-pinned source archive with a hash-pinned build backend.
-      req_poetry_core >"$venv/build-requirements.txt"
-      timeout 200 "${pip[@]}" --only-binary :all: -r "$venv/build-requirements.txt"
-      timeout 200 "${pip[@]}" --no-build-isolation --only-binary :all: --no-binary "$from_source" -r "$venv/requirements.txt"
-    else
-      timeout 200 "${pip[@]}" --only-binary :all: -r "$venv/requirements.txt"
-    fi
+    timeout 200 "${pip[@]}" --only-binary :all: -r "$venv/requirements.txt"
   fi
   for command in $commands; do ln -sfn "$venv/bin/$command" "/usr/local/bin/$command"; done
   note ok "$name" "$version"
@@ -394,7 +382,7 @@ for spec in "${BINARIES[@]}"; do
   # shellcheck disable=SC2086
   start "$name" install_binary $spec
 done
-start reuse install_python_tool reuse reuse req_reuse reuse
+start reuse install_python_tool reuse reuse req_reuse
 start zizmor install_python_tool zizmor zizmor req_zizmor
 start typos install_python_tool typos typos req_typos
 start aqtinstall install_python_tool aqtinstall aqt req_aqtinstall
