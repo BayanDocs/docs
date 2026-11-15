@@ -48,11 +48,11 @@ BINARIES=(
   "lychee 0.24.2 https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-musl.tar.gz 73657a111819a30c47c08352896796f23d64e4eb2b3ed39b6d32149241566fc5 lychee-x86_64-unknown-linux-musl/lychee crate:lychee"
   # 2026-06-09 (the release publishes no checksum file)
   "cargo-fuzz 0.13.2 https://github.com/rust-fuzz/cargo-fuzz/releases/download/0.13.2/cargo-fuzz-0.13.2-x86_64-unknown-linux-musl.tar.gz b5b704018b63e0f151c17a057ac53b5111e1db545d1b9f72fee79f08a545931c cargo-fuzz crate:cargo-fuzz"
-  # 2026-07-30, published hash
-  "pinact 4.1.1 https://github.com/suzuki-shunsuke/pinact/releases/download/v4.1.1/pinact_linux_amd64.tar.gz d1cffebe5704b74e2e5f8a864efb9f7e54768972dc686188c008033fb1797841 pinact go:github.com/suzuki-shunsuke/pinact/v4/cmd/pinact"
+  # 2026-10-25, published hash
+  "pinact 5.0.2 https://github.com/suzuki-shunsuke/pinact/releases/download/v5.0.2/pinact_linux_amd64.tar.gz 7f003d8f51e984c2264d2009d430e3e0e87ae404a0e2dc2a9a277b0f731bf5b7 pinact go:github.com/suzuki-shunsuke/pinact/v5/cmd/pinact"
 )
 
-# Python tools, one virtual environment each. Generated with scripts/python-tool-hashes.py (cutoff 2026-10-03T00:00:00Z): only wheels that CPython 3.11-3.14 can install on Ubuntu 24.04 are listed, plus a source archive where no wheel fits.
+# Python tools, one virtual environment each. Generated with scripts/python-tool-hashes.py (cutoff 2026-10-03T00:00:00Z; req_zizmor 2026-11-14T06:33:00Z, in the joint dependency round of November 2026): only wheels that CPython 3.11-3.14 can install on Ubuntu 24.04 are listed, plus a source archive where no wheel fits.
 req_poetry_core() { cat <<'EOF'
 poetry-core==2.5.0 \
     --hash=sha256:98ee465b66f7e14bb9fbe68fb5e00d0cff184f036993ec94610ae4b5612f3add
@@ -86,8 +86,8 @@ tomlkit==0.15.1 \
 EOF
 }
 req_zizmor() { cat <<'EOF'
-zizmor==1.30.1 \
-    --hash=sha256:eee12266b793cb87ad4a7e3af2e72404f8a63e3de5eb099b80bf7b1cfd232a8e
+zizmor==1.32.0 \
+    --hash=sha256:84a6acb975accc13408786a2bd274b572537ca19c933ebbc13e78f3988562071
 EOF
 }
 req_typos() { cat <<'EOF'
