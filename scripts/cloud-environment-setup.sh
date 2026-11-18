@@ -41,8 +41,8 @@ QT_ARCHIVES="qtbase qtdeclarative qtsvg qttranslations icu"
 
 # Release binaries: name, version, URL, SHA-256, path of the binary inside the archive, and the source to build from if the download is refused. Dates are publish dates; "published hash" means the hash matches the checksum file of the release.
 BINARIES=(
-  # 2026-07-09, published hash
-  "cargo-deny 0.20.2 https://github.com/EmbarkStudios/cargo-deny/releases/download/0.20.2/cargo-deny-0.20.2-x86_64-unknown-linux-musl.tar.gz 9f12ed4c49936e09b48bf862b595cde2fe64fcbd9d74dfacac6131ca824c8d5f cargo-deny-0.20.2-x86_64-unknown-linux-musl/cargo-deny crate:cargo-deny"
+  # 2026-11-16, published hash; keep equal to bayan-core's .github/workflows/verify.yml and bayan-server's scripts/dev-setup.sh
+  "cargo-deny 0.21.0 https://github.com/EmbarkStudios/cargo-deny/releases/download/0.21.0/cargo-deny-0.21.0-x86_64-unknown-linux-musl.tar.gz a2170b854ff697e79e39c4c538981c9c1bdd803addbae6719a4cb66b4585a903 cargo-deny-0.21.0-x86_64-unknown-linux-musl/cargo-deny crate:cargo-deny"
   # 2026-07-06 (the release publishes no checksum file)
   "mdbook 0.5.4 https://github.com/rust-lang/mdBook/releases/download/v0.5.4/mdbook-v0.5.4-x86_64-unknown-linux-musl.tar.gz 5222beabd3e37dc5be0d18ff99b79058469354db5c220153a1b92db5ba12be89 mdbook crate:mdbook"
   # 2026-05-01, published hash
