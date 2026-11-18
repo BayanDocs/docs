@@ -26,15 +26,16 @@ export NODE_EXTRA_CA_CERTS="${NODE_EXTRA_CA_CERTS:-$SYSTEM_CA}"
 # Pins. Update only in the monthly dependency session, checking each publish date (at least 24 hours old) and hash.
 # ---------------------------------------------------------------------------------------------------------------------
 SCRIPT_VERSION=2026-10-04.4
-APT_SNAPSHOT=20261003T000000Z    # Ubuntu archive as of 2026-10-03 00:00 UTC (snapshot.ubuntu.com)
+APT_SNAPSHOT=20261116T000000Z    # Ubuntu archive as of 2026-11-16 00:00 UTC (snapshot.ubuntu.com); keep equal to the snapshot of bayan-desktop's deps/ubuntu-packages.lock
 APT_PACKAGES="libgl-dev libegl-dev libvulkan-dev libxkbcommon-dev libfontconfig-dev libdbus-1-dev shellcheck"
-RUST_STABLE=1.99.0               # released 2026-10-01; keep equal to rust-toolchain.toml in bayan-core and bayan-server
-RUST_NIGHTLY=nightly-2026-10-02  # only for fuzzing with cargo-fuzz
-NODE_VERSION=24.21.0             # Active LTS, released 2026-09-07
-NODE_SHA256=fd8e59d5a511510f6a298afb548f18c7d2b1be404d8b4a27d94fbe49f56cb2d6
-PNPM_VERSION=12.8.2              # released 2026-09-30 (12.9.x was younger than 24 hours); inside a repository, pnpm switches itself to that repository's pinned version
-# SHA-512 of pnpm's native Linux binary package, @pnpm/exe.linux-x64 12.8.2 (the npm registry's integrity sha512-2rjP1HbpSMeSyfbP2CcGG0L2+r+9gHKAjYCZZQj/3SdQBywugJ9aa5OWyPp6yz0Z5xd7tKdUtQJh09TnZOUhwA==, in hex)
-PNPM_SHA512=dab8cfd476e948c792c9f6cfd827061b42f6fabfbd8072808d80996508ffdd2750072c2e809f5a6b9396c8fa7acb3d19e7177bb4a754b50261d3d4e764e521c0
+RUST_STABLE=1.100.0              # released 2026-11-12; keep equal to rust-toolchain.toml in bayan-core and bayan-server
+RUST_NIGHTLY=nightly-2026-11-16  # for fuzzing with cargo-fuzz and, with the components that bayan-core's scripts/dev-setup.sh adds, for Miri; keep equal to FUZZ_TOOLCHAIN and MIRI_TOOLCHAIN in bayan-core
+NODE_VERSION=24.22.3             # LTS security release of 2026-11-10 (high-severity fixes in HTTP/2, TLS and the HTTP parser); keep equal to bayan-core, bayan-server and bayan-web
+# SHA-256 of node-v24.22.3-linux-x64.tar.xz, from nodejs.org's SHASUMS256.txt for v24.22.3, whose signature by a Node.js release key was checked
+NODE_SHA256=4f2b175a6d53a5c617a80dba2676238a0688cef28c6da4eba35c7d844e66fcfb
+PNPM_VERSION=12.9.0              # released 2026-10-02; keep equal to bayan-web's packageManager; inside a repository, pnpm switches itself to that repository's pinned version
+# SHA-512 of pnpm's native Linux binary package, @pnpm/exe.linux-x64 12.9.0 (the npm registry's integrity sha512-ElANYUwQuMfWqMJR4m5L5h9zKjvGKcA8hi2put4J1DMx2smVaNGkGnxkgeIYgMjmF7UFxlZDcL4jItkScgsW4A==, in hex)
+PNPM_SHA512=12500d614c10b8c7d6a8c251e26e4be61f732a3bc629c03c862da9bade09d43331dac99568d1a41a7c6481e21880c8e617b505c6564370be2322d912720b16e0
 QT_VERSION=6.12.0                # released 2026-09-30; LGPL modules only (ADR-0013)
 QT_ARCHIVES="qtbase qtdeclarative qtsvg qttranslations icu"
 
@@ -243,7 +244,7 @@ step_rust() {
   rustup default "$RUST_STABLE"
   note ok rust "$RUST_STABLE (default) with clippy, rustfmt, wasm32-unknown-unknown"
   timeout 240 rustup toolchain install "$RUST_NIGHTLY" --profile minimal --no-self-update
-  note ok rust-nightly "$RUST_NIGHTLY (fuzzing only)"
+  note ok rust-nightly "$RUST_NIGHTLY (for fuzzing; bayan-core's scripts/dev-setup.sh adds Miri to it)"
   # Cargo enforces the 24-hour minimum age natively from Rust 1.100 (ADR-0017); older versions only warn about the setting.
   local minor config="${CARGO_HOME:-$HOME/.cargo}/config.toml"
   minor=$(cut -d. -f2 <<<"$RUST_STABLE")
