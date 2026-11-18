@@ -53,6 +53,8 @@ BINARIES=(
   "pinact 5.0.2 https://github.com/suzuki-shunsuke/pinact/releases/download/v5.0.2/pinact_linux_amd64.tar.gz 7f003d8f51e984c2264d2009d430e3e0e87ae404a0e2dc2a9a277b0f731bf5b7 pinact go:github.com/suzuki-shunsuke/pinact/v5/cmd/pinact"
   # 2026-11-16, published hash; keep equal to bayan-server's scripts/dev-setup.sh
   "grype 0.122.0 https://github.com/anchore/grype/releases/download/v0.122.0/grype_0.122.0_linux_amd64.tar.gz e697e6f7224637df87e267e4318cc027feae99a8e1b80280241d32b9ee5d4920 grype go:github.com/anchore/grype/cmd/grype"
+  # 2026-10-30, published hash; keep equal to the wasm-bindgen crate in bayan-core's Cargo.lock and bayan-server's spikes/mls/Cargo.lock
+  "wasm-bindgen 0.2.130 https://github.com/wasm-bindgen/wasm-bindgen/releases/download/0.2.130/wasm-bindgen-0.2.130-x86_64-unknown-linux-musl.tar.gz 9687f3bb551b9f66f37ed32a40d7913a00f7962db653054e56857bc306c3227f wasm-bindgen-0.2.130-x86_64-unknown-linux-musl/wasm-bindgen crate:wasm-bindgen-cli"
 )
 
 # Python tools, one virtual environment each. Generated with scripts/python-tool-hashes.py, in the joint dependency round of November 2026 (cutoff 2026-11-14T06:33:00Z for req_reuse and req_zizmor, in its shared part; 2026-11-17T00:34:00Z for req_typos and req_aqtinstall, in its docs part): only wheels that CPython 3.11-3.14 can install on Ubuntu 24.04 are listed, and every tool is installed from wheels only (REUSE publishes one since version 6.3.0).
