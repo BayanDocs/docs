@@ -47,7 +47,7 @@ Each repository supports the systems its CI checks, as its own `README.md` and `
 
 ## Before you start
 
-- **Git, with your name and email address.** Set them once with `git config --global user.name "<your name>"` and `git config --global user.email "<your email address>"`: every commit you write must be signed off with them ([CONTRIBUTING.md](../CONTRIBUTING.md#developer-certificate-of-origin)).
+- **Your name and email address for Git.** Once Git is installed ([step 1](#step-1-the-base-tools-for-your-system)), set them once with `git config --global user.name "<your name>"` and `git config --global user.email "<your email address>"`: every commit you write must be signed off with them ([CONTRIBUTING.md](../CONTRIBUTING.md#developer-certificate-of-origin)).
 - **The full history.** Clone with a plain `git clone`, never with `--depth`. bayan-core's and bayan-server's lockfile-age check, bayan-web's check of its engine pin and bayan-desktop's Qt release-age check read the Git history, and fail in a shallow clone (`git fetch --unshallow` repairs one).
 - **Disk space.** The Rust builds are large: bayan-core's and bayan-server's gates each write several gigabytes into the repository's `target/` folder. Delete a `target/` folder (or `build/` in bayan-desktop) whenever you need the space back; the next build recreates it.
 
@@ -56,6 +56,7 @@ Each repository supports the systems its CI checks, as its own `README.md` and `
 ### Linux (Ubuntu 24.04)
 
 ```sh
+sudo apt update
 sudo apt install git curl build-essential unzip
 ```
 
@@ -124,7 +125,7 @@ Invoke-WebRequest https://static.rust-lang.org/rustup/archive/1.29.3/x86_64-pc-w
 
 Go on only if the second line printed `True`; otherwise delete the file and report it in an issue. Then run `.\rustup-init.exe --default-toolchain none`, delete `rustup-init.exe`, and in a new terminal run `rustup set auto-self-update disable`.
 
-Why this way: each Rust repository pins its exact Rust version, with the components and targets it needs, in `rust-toolchain.toml`, and rustup installs exactly that version the first time you run `cargo` in the repository, checking every download against the release's checksums. The installer itself is pinned here and checked before it runs, like every other download ([ADR-0017](../adr/0017-supply-chain-and-dependency-policy.md)). Without a default toolchain, rustup installs no other Rust version (a brand-new release could be younger than the 24 hours that ADR-0017 requires), and with self-update disabled it never replaces itself with a newer, unchecked version, as in CI (`rustup set auto-self-update disable` in bayan-core's `verify.yml` and bayan-web's `ci.yml`). So ignore rustup's hint to run `rustup default stable`. The pinned installer moves in the monthly dependency session ([dependency update runbook](dependency-update-runbook.md#docs)).
+Why this way: each Rust repository pins its exact Rust version, with the components and targets it needs, in `rust-toolchain.toml`, and rustup installs exactly that version the first time you run `cargo` in the repository, checking every download against the release's checksums. The installer itself is pinned here and checked before it runs, like every other download ([ADR-0017](../adr/0017-supply-chain-and-dependency-policy.md)). Without a default toolchain, rustup installs no other Rust version (a brand-new release could be younger than the 24 hours that ADR-0017 requires), and with self-update disabled it never replaces itself with a newer, unchecked version, as in CI (`rustup set auto-self-update disable` in bayan-core's `verify.yml` and bayan-web's `ci.yml`). So ignore rustup's hint to run `rustup default stable`, and lines such as `cargo:rerun-if-env-changed=CC` and `CC = None` at the end of the installer's output: they are harmless. The pinned installer moves in the monthly dependency session ([dependency update runbook](dependency-update-runbook.md#docs)).
 
 ## Step 3: each repository
 
