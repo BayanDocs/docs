@@ -8,7 +8,7 @@
 #
 # Supply-chain rules (ADR-0017): every version below is pinned exactly and was at least 24 hours old when it was pinned, and every download is verified: release archives against the SHA-256 hashes in this file, pnpm's native binary against the SHA-512 hash in this file, Python packages with `pip --require-hashes`, Qt by aqtinstall against hashes from download.qt.io, Rust toolchains by rustup against the hashes in the official release manifests, and Ubuntu packages by apt from the signed archive frozen at a snapshot date. Pins change only in the monthly dependency session (docs/plan/06-agent-workflow.md), which then asks the owner to paste the new version here.
 #
-# Network: everything comes from the default "Trusted" list except Qt, which needs download.qt.io and master.qt.io.
+# Network: everything comes from the default "Trusted" list except Qt, which needs download.qt.io and master.qt.io, and grype's vulnerability database, which grype downloads from grype.anchore.io when it scans.
 # The script never blocks a session: a failed step is reported, and the script still exits 0. Run `bayandocs-tools` in a session to see what was installed; full logs are in /var/log/bayandocs-setup/.
 
 # The steps below are called indirectly through start(), which ShellCheck cannot follow.
@@ -51,6 +51,8 @@ BINARIES=(
   "cargo-fuzz 0.13.2 https://github.com/rust-fuzz/cargo-fuzz/releases/download/0.13.2/cargo-fuzz-0.13.2-x86_64-unknown-linux-musl.tar.gz b5b704018b63e0f151c17a057ac53b5111e1db545d1b9f72fee79f08a545931c cargo-fuzz crate:cargo-fuzz"
   # 2026-10-25, published hash
   "pinact 5.0.2 https://github.com/suzuki-shunsuke/pinact/releases/download/v5.0.2/pinact_linux_amd64.tar.gz 7f003d8f51e984c2264d2009d430e3e0e87ae404a0e2dc2a9a277b0f731bf5b7 pinact go:github.com/suzuki-shunsuke/pinact/v5/cmd/pinact"
+  # 2026-11-16, published hash; keep equal to bayan-server's scripts/dev-setup.sh
+  "grype 0.122.0 https://github.com/anchore/grype/releases/download/v0.122.0/grype_0.122.0_linux_amd64.tar.gz e697e6f7224637df87e267e4318cc027feae99a8e1b80280241d32b9ee5d4920 grype go:github.com/anchore/grype/cmd/grype"
 )
 
 # Python tools, one virtual environment each. Generated with scripts/python-tool-hashes.py, in the joint dependency round of November 2026 (cutoff 2026-11-14T06:33:00Z for req_reuse and req_zizmor, in its shared part; 2026-11-17T00:34:00Z for req_typos and req_aqtinstall, in its docs part): only wheels that CPython 3.11-3.14 can install on Ubuntu 24.04 are listed, and every tool is installed from wheels only (REUSE publishes one since version 6.3.0).
@@ -359,6 +361,8 @@ export PATH="$TOOLS/pnpm:$TOOLS/node/bin:\$PATH"
 export QT_ROOT_DIR="/opt/Qt/$QT_VERSION/gcc_64"
 export CMAKE_PREFIX_PATH="/opt/Qt/$QT_VERSION/gcc_64\${CMAKE_PREFIX_PATH:+:\$CMAKE_PREFIX_PATH}"
 export QT_QPA_PLATFORM=offscreen
+# grype never looks for newer versions of itself: pins change only in the monthly dependency session.
+export GRYPE_CHECK_FOR_APP_UPDATE=false
 case "\${LANG:-C}" in C|POSIX) export LANG=C.UTF-8 ;; esac
 EOF
   cat >/usr/local/bin/bayandocs-tools <<'EOF'
