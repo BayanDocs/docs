@@ -57,7 +57,7 @@ BINARIES=(
   "wasm-bindgen 0.2.130 https://github.com/wasm-bindgen/wasm-bindgen/releases/download/0.2.130/wasm-bindgen-0.2.130-x86_64-unknown-linux-musl.tar.gz 9687f3bb551b9f66f37ed32a40d7913a00f7962db653054e56857bc306c3227f wasm-bindgen-0.2.130-x86_64-unknown-linux-musl/wasm-bindgen crate:wasm-bindgen-cli"
 )
 
-# Python tools, one virtual environment each. Generated with scripts/python-tool-hashes.py, in the joint dependency round of November 2026 (cutoff 2026-11-14T06:33:00Z for req_reuse and req_zizmor, in its shared part; 2026-11-17T00:34:00Z for req_typos and req_aqtinstall, in its docs part): only wheels that CPython 3.11-3.14 can install on Ubuntu 24.04 are listed, and every tool is installed from wheels only (REUSE publishes one since version 6.3.0).
+# Python tools, one virtual environment each. Generated with scripts/python-tool-hashes.py, in the joint dependency round of November 2026 (cutoff 2026-11-14T06:33:00Z for req_reuse and req_zizmor, in its shared part; 2026-11-17T00:33:43Z for req_typos and req_aqtinstall, in its docs part): only wheels that CPython 3.11-3.14 can install on Ubuntu 24.04 are listed, and every tool is installed from wheels only (REUSE publishes one since version 6.3.0).
 req_reuse() { cat <<'EOF'
 attrs==26.1.0 \
     --hash=sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309
