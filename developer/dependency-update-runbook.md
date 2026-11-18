@@ -143,7 +143,7 @@ Gate: `pnpm verify` (it re-installs nothing; run `scripts/dev-setup.sh` first, w
 | bayan-core (the real engine, for CI and the tests that use it) | `deps/bayan-core.json`: bayan-core's repository URL, the full commit hash (`commit`) and its date (`committed`) | During Phase 0, CI builds bayan-core's C SDK from this commit (ADR-0002 §4). Move it only to a commit on bayan-core's `main` (`scripts/build-engine-sdk.sh` refuses any other), when a work package needs a newer engine or in this session: update `commit` and `committed`, then run `scripts/build-engine-sdk.sh` and `BAYAN_REQUIRE_MOCK_DOCUMENT=1 scripts/test-engine-sdk.sh --sdk build/bayan-core-sdk`. The Rust version follows that commit's `rust-toolchain.toml`, and the crates its `Cargo.lock`, which bayan-core's own gate checked. The commit itself need not be 24 hours old, but the Rust version and the crates it brings in must be ([ADR-0017](../adr/0017-supply-chain-and-dependency-policy.md), amendment of 2026-10-12). A newer engine can change what the canvas tests expect of the mock document; update them in the same pull request. |
 | Shared files | see above | |
 
-Gate: `cmake --workflow --preset verify`; `scripts/test-engine-sdk.sh` when the change could affect how the engine is linked; and when the bayan-core pin moves, `scripts/build-engine-sdk.sh` and `BAYAN_REQUIRE_MOCK_DOCUMENT=1 scripts/test-engine-sdk.sh --sdk build/bayan-core-sdk`.
+Gate: `cmake --workflow --preset verify`; `scripts/test-engine-sdk.sh` when the change could affect how the engine is linked; and when the bayan-core pin moves, `scripts/build-engine-sdk.sh` and `BAYAN_REQUIRE_MOCK_DOCUMENT=1 scripts/test-engine-sdk.sh --sdk build/bayan-core-sdk`, without and with `--sanitizers`.
 
 ### docs
 
