@@ -47,7 +47,7 @@ What CI runs on each system: `.github/workflows/ci.yml` runs `cmake --workflow -
 
 `cmake --workflow --preset dev` is the quick Debug build and test for everyday work on Linux and macOS, and `cmake --build --preset verify --target format` fixes the formatting.
 
-CI also runs, on Linux, the tests under AddressSanitizer and UndefinedBehaviorSanitizer (`cmake --workflow --preset asan`), and on every system the tests that use the engine against a stand-in SDK and against the real engine; then come the checks shared by every repository. [GitHub Settings Baseline](github-settings.md#rulesets) lists the checks that must pass.
+CI also runs, on Linux, the tests under AddressSanitizer and UndefinedBehaviorSanitizer: every test against the stub engine (`cmake --workflow --preset asan`), then the tests that use the engine against the real engine (`scripts/test-engine-sdk.sh --sdk build/bayan-core-sdk --sanitizers`). On every system, it also runs the tests that use the engine against a stand-in SDK and against the real engine; then come the checks shared by every repository. [GitHub Settings Baseline](github-settings.md#rulesets) lists the checks that must pass.
 
 ## Deeper notes
 
