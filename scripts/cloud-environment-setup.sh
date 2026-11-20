@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2026 BayanDocs contributors
 # SPDX-License-Identifier: MIT-0
 #
-# BayanDocs cloud environment setup script, version 2026-11-18.1.
+# BayanDocs cloud environment setup script, version 2026-11-20.1.
 #
 # Installs the tools that BayanDocs agent sessions need in a Claude Code cloud environment (Ubuntu 24.04, x86-64, run as root before Claude Code starts). Paste this whole file into the environment's settings: the cloud environment menu in the session's title bar, then Edit, then "Setup script". The result is cached for about seven days, or until this script or the network settings change. Canonical copy: https://github.com/BayanDocs/docs/blob/main/scripts/cloud-environment-setup.sh
 #
@@ -25,7 +25,7 @@ export NODE_EXTRA_CA_CERTS="${NODE_EXTRA_CA_CERTS:-$SYSTEM_CA}"
 # ---------------------------------------------------------------------------------------------------------------------
 # Pins. Update only in the monthly dependency session, checking each publish date (at least 24 hours old) and hash.
 # ---------------------------------------------------------------------------------------------------------------------
-SCRIPT_VERSION=2026-11-18.1
+SCRIPT_VERSION=2026-11-20.1
 APT_SNAPSHOT=20261116T000000Z    # Ubuntu archive as of 2026-11-16 00:00 UTC (snapshot.ubuntu.com); keep equal to the snapshot of bayan-desktop's deps/ubuntu-packages.lock
 APT_PACKAGES="libgl-dev libegl-dev libvulkan-dev libxkbcommon-dev libfontconfig-dev libdbus-1-dev shellcheck"
 RUST_STABLE=1.100.0              # released 2026-11-12; keep equal to rust-toolchain.toml in bayan-core and bayan-server
@@ -33,9 +33,9 @@ RUST_NIGHTLY=nightly-2026-11-16  # for fuzzing with cargo-fuzz and, with the com
 NODE_VERSION=24.22.3             # LTS security release of 2026-11-10 (high-severity fixes in HTTP/2, TLS and the HTTP parser); keep equal to bayan-core, bayan-server and bayan-web
 # SHA-256 of node-v24.22.3-linux-x64.tar.xz, from nodejs.org's SHASUMS256.txt for v24.22.3, whose signature by a Node.js release key was checked
 NODE_SHA256=4f2b175a6d53a5c617a80dba2676238a0688cef28c6da4eba35c7d844e66fcfb
-PNPM_VERSION=12.9.0              # released 2026-10-02; keep equal to bayan-web's packageManager; inside a repository, pnpm switches itself to that repository's pinned version
-# SHA-512 of pnpm's native Linux binary package, @pnpm/exe.linux-x64 12.9.0 (the npm registry's integrity sha512-ElANYUwQuMfWqMJR4m5L5h9zKjvGKcA8hi2put4J1DMx2smVaNGkGnxkgeIYgMjmF7UFxlZDcL4jItkScgsW4A==, in hex)
-PNPM_SHA512=12500d614c10b8c7d6a8c251e26e4be61f732a3bc629c03c862da9bade09d43331dac99568d1a41a7c6481e21880c8e617b505c6564370be2322d912720b16e0
+PNPM_VERSION=12.22.0             # released 2026-11-17; keep equal to bayan-web's packageManager; inside a repository, pnpm switches itself to that repository's pinned version
+# SHA-512 of pnpm's native Linux binary package, @pnpm/exe.linux-x64 12.22.0 (the npm registry's integrity sha512-iBAZAYCYoow6g0aObKmprKkIBGO72mK4KFfqIrY7jIdHRkAbN67tcN0zgaPE39UAEdMcrkLhLwEml+VMxf8h8Q==, in hex)
+PNPM_SHA512=881019018098a28c3a83468e6ca9a9aca9080463bbda62b82857ea22b63b8c874746401b37aeed70dd3381a3c4dfd50011d31cae42e12f012697e54cc5ff21f1
 QT_VERSION=6.12.0                # released 2026-09-30; LGPL modules only (ADR-0013)
 QT_ARCHIVES="qtbase qtdeclarative qtsvg qttranslations icu"
 
