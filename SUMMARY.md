@@ -26,6 +26,7 @@
 - [11 — Glossary](plan/11-glossary.md)
 - [12 — Orchestration: One Session Runs the Workflow](plan/12-orchestration.md)
 - [Architecture Review — 2026-10-27](plan/reviews/2026-10-27.md)
+- [Architecture Review — 2026-11-20](plan/reviews/2026-11-20.md)
 
 # Decisions
 
