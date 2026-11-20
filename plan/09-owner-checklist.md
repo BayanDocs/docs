@@ -35,12 +35,22 @@ Items 3–6a are applied by [scripts/github-settings.py](../scripts/github-setti
 
 ## Soon — before Wave 3 of Phase 0
 
-- [ ] **9. Set up the Word reference machine** for the Fidelity Lab (needed by LAB-002, LAB-005 and CORE-008). This is the only proprietary software the project uses, and only as a measuring instrument:
-  - a Windows 11 computer or virtual machine dedicated to the lab, holding no personal data, because the corpus will contain documents from the open internet;
-  - a Microsoft 365 subscription that includes desktop Word, with the Office build pinned (the Office Deployment Tool can pin a version) so measurements do not drift;
-  - LAB-002 lists the exact configuration (macros disabled, AutoSave and cloud integration off, a fixed font set).
-  - Optional later: a Mac with Word for spot checks of Word for Mac differences.
-- [ ] **10. Decide where the private corpus lives.** Real-world documents found online cannot be redistributed; they need private storage (for example a private S3-compatible bucket or a private repository with Git LFS). LAB-001 proposes options; you choose and create the account.
+- [ ] **9. Set up the Word reference machine** for the Fidelity Lab (needed by LAB-002, LAB-005 and CORE-008). This is the only proprietary software the project uses, and only as a measuring instrument. Agent sessions operate it for you and do the rest of its configuration; it opens only documents that passed an automatic safety check ([ADR-0031](../adr/0031-agent-operated-reference-machine.md)). Once, on a Windows 11 computer or virtual machine with a Microsoft 365 subscription that includes desktop Word:
+  - **A lab account with nothing personal in it.** Create a Windows account used only for the lab: a standard account, not an administrator, and a local account rather than one signed in with your Microsoft account. Keep personal files, mail, browser sign-ins and GitHub out of it.
+  - **Word activated there.** Install Microsoft 365's desktop apps, and sign in to Word in the lab account to activate it. If your subscription lets you, use a Microsoft account that is used for nothing else, so that no personal mail or files can be reached from the machine.
+  - **Internet access for that account**, which the Claude app, Word's activation and the downloads of public documents need.
+  - **The Claude desktop app, signed in**, installed in the lab account.
+  - **One folder shared through Remote Control:** in the app, under Settings, Claude Code, Remote Control, share a folder of the lab account, for example `BayanLab` in its user folder (not the user folder itself). On Windows not every version of the app can do this; if the setting is missing, tell the orchestrator.
+  - **Kept on, with the app running.** Leave the machine on and the app open. After Windows restarts, for example for updates, sign in to the lab account again so that the app starts.
+
+  Afterwards, the orchestrator asks you only for the following, and tells you each time what to do:
+  - **Approve its sessions' requests** to use the computer: only the requests it announced, and on your own device rather than on the lab machine.
+  - **Until your Claude account can use the folder from a cloud session** (it cannot yet), start one Claude Code session on the machine instead, in the lab account and the shared folder, with the prompt the orchestrator gives you, and allow the orchestrator to send it messages when your own device asks you to.
+  - **Wake the machine** when it does not answer.
+  - **Now and then, run a reviewed script as administrator**, for example the ones that pin the Office build and keep the machine awake, in the way the orchestrator describes: your elevated session fetches the script and its reviewed fingerprint from GitHub itself, so you never copy a script from the lab folder or type a hash.
+
+  Optional later: a Mac with Word for spot checks of Word for Mac differences.
+- [ ] **10. Decide where the private corpus lives.** Not needed until T2 returns: ADR-0031 postpones the private corpus, the real-world documents found on the open web, so nothing has to be stored yet. If a later decision brings T2 back, these documents cannot be redistributed and need private storage (for example a private S3-compatible bucket or a private repository with Git LFS); LAB-001 proposed options, and you would choose and create the account then.
 
 ## Before the first public release (Phase 1)
 
@@ -68,7 +78,7 @@ Several public programmes fund exactly this kind of open, sovereignty-focused so
 | Apple Developer Program | macOS signing and notarization | Annual membership fee | Phase 1 |
 | Windows code signing | SmartScreen reputation, user trust | Free through SignPath Foundation if accepted; otherwise a commercial certificate | Phase 1 |
 | Domain name and email | Security contact, website | Small | Now |
-| Private corpus storage | Lab | Small | Phase 0–1 |
+| Private corpus storage | Lab | Small | Only if T2 returns (ADR-0031) |
 | External security audits | Collaboration GA, 1.0 | Significant (usually five figures); grants may cover | Phase 3, Phase 6 |
 | Font commissioning (Aptos-compatible and other gaps) | Fidelity | Significant per family; grants may cover | Phase 1–4 |
 
