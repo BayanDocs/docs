@@ -42,7 +42,7 @@ A work package (WP) is a self-contained brief that one agent session can execute
 | [SRV-003](phase-0/SRV-003-threat-model.md) | Threat model v1 | docs | M | SRV-002, CORE-007 | 4 | Done |
 | [DOCS-002](phase-0/DOCS-002-contributor-onboarding.md) | Contributor onboarding guides | docs | S | Wave-1 scaffolds | 4 | Done |
 | [DESK-003](phase-0/DESK-003-real-engine-boundary-tests.md) | The desktop's tests and sanitizers against the real engine boundary | desktop | M | DESK-002, CORE-007 | 4 | Done |
-| [WEB-003](phase-0/WEB-003-automated-accessibility-rules.md) | Automated accessibility rules (axe) in the end-to-end tests | web | S | WEB-002 | 4 | Ready |
+| [WEB-003](phase-0/WEB-003-automated-accessibility-rules.md) | Automated accessibility rules (axe) in the end-to-end tests | web | S | WEB-002 | 4 | Done |
 
 ## Phase 1 — Faithful Viewer (drafts)
 
