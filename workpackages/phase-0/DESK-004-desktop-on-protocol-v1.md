@@ -38,7 +38,7 @@ bayan-desktop speaks protocol v1 as §14.1, §14.2, §14.3, §14.6 and item 1 of
 ### Out of scope
 
 - Replacing text, the caret, hit-testing, the clipboard and the accessibility tree's content (DESK-005).
-- Zoom keys: the shell binds none; Ctrl+=, Ctrl+− and Ctrl+0 reach the engine only once a manifest binds them (§14.3).
+- Zoom keys: in v1 no manifest binds Ctrl (Command on macOS) with Plus, Minus and 0, so the desktop does nothing with them yet. Current Word zooms with these keys; the manifest that first needs keyboard zoom adds the commands `view.zoom.in`, `view.zoom.out` and `view.zoom.reset` with a `shell_action` each, which the desktop then carries out with `view.set` ([spec §14.9](../../specs/engine-protocol.md#149-still-open)). This work package already makes the shell neither send the keys nor offer the command of a `shell_action` it does not know (§14.3).
 - The manual tests of DESK-002's validation gate.
 
 ## Deliverables
