@@ -14,5 +14,8 @@
 /scripts/tests/ @Gabrielc1925
 /lychee.toml @Gabrielc1925
 /typos.toml @Gabrielc1925
+# The website's code: site/mermaid/ holds the vendored Mermaid script that readers' browsers run, next to the checksums that the gate checks it against, so a pull request can change both together; book.toml can add scripts to every page.
+/site/mermaid/ @Gabrielc1925
+/book.toml @Gabrielc1925
 # The cloud environment's setup script: once pasted into the environment's settings, it runs as root in every agent session and installs the tools that sessions trust.
 /scripts/cloud-environment-setup.sh @Gabrielc1925
