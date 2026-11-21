@@ -7,7 +7,12 @@
 /.github/ @Gabrielc1925
 # Authorization: the organization's access and security settings, applied with an owner's token.
 /scripts/github-settings.py @Gabrielc1925
-# The verification gate: CI runs a pull request's own copy of it, so a change here can weaken the check that judges it.
+# The verification gate, its tools, tests and configuration: CI runs a pull request's own copy of them, so a change here can weaken the check that judges it. scripts/verify.sh is the gate; scripts/dev-setup.sh installs its pinned tools and checks their SHA-256 before it runs; scripts/link-report.py decides part of the external-link check; scripts/tests/ holds the scripts' unit tests, which also check that the shared CI files' pins equal the setup script's; lychee.toml and typos.toml configure the link and spelling checks.
 /scripts/verify.sh @Gabrielc1925
+/scripts/dev-setup.sh @Gabrielc1925
+/scripts/link-report.py @Gabrielc1925
+/scripts/tests/ @Gabrielc1925
+/lychee.toml @Gabrielc1925
+/typos.toml @Gabrielc1925
 # The cloud environment's setup script: once pasted into the environment's settings, it runs as root in every agent session and installs the tools that sessions trust.
 /scripts/cloud-environment-setup.sh @Gabrielc1925
