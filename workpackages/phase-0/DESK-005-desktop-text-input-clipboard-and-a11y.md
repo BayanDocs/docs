@@ -26,13 +26,13 @@ bayan-desktop uses every addition of CORE-014: input methods, autocorrect and sc
 
 ### In scope
 
-- **The pin** moves to the commit that completes CORE-014, with the header and schema copies and the stub engine following as far as the shell's tests use the new messages.
+- **The pin** moves to the commit that completes CORE-014, with the copies of the header, the schema and the conformance vectors (`engine.sdk_copies`, §15) and the stub engine following as far as the shell's tests use the new messages.
 - **Replacing text (§14.4):** input-method replacements (`QInputMethodEvent`'s replacement range, converted from the caret-relative range Qt gives into the mirrored node's offsets) and the editable-text interface's `insertText`, `deleteText` and `replaceText` send `input.text` with `replace`; `deleteAroundCaret` and its key presses removed.
 - **The caret and selection (§14.4):** `setCursorPosition`, `setSelection`, `addSelection` and `removeSelection` of Qt's text interface send `input.select`; `selection`, `selectionCount` and the caret answer from the engine's tree.
 - **Hit-testing (§14.4):** `offsetAtPoint` answered from the tree's character boxes, as the spec allows for interfaces that must answer at once; `query.hit` used wherever an answer can wait.
-- **Clipboard (§14.5):** `capabilities.clipboard_formats` listing what the shell can exchange through `QClipboard` as raw bytes; the platform's copy, cut and paste (`QKeySequence::Copy`, `Cut` and `Paste`, and the commands with `shell_action` from menus or the ribbon) sending `clipboard.copy` and `input.paste`; `QMimeData` read and written with `data()` and `setData()` for the formats in both lists only, text converted to UTF-8 and otherwise untouched, nothing decoded by Qt (ADR-0006 decision 3).
+- **Clipboard (§14.5):** `capabilities.clipboard_formats` listing what the shell can exchange through `QClipboard` as raw bytes; the platform's copy, cut and paste (`QKeySequence::Copy`, `Cut` and `Paste`, and the commands with `shell_action` from menus or the ribbon) sending `clipboard.copy` and `input.paste`; `QMimeData` read and written with `data()` and `setData()` for the formats in both lists only, text converted to UTF-8 and otherwise untouched, nothing decoded by Qt (ADR-0006 decision 3); a format that Qt makes by decoding another, such as the `image/png` it makes from a Windows bitmap or the `text/html` it cuts out of CF_HTML, is never passed on (§14.5).
 - **Accessible text (§14.7 item 2):** the text interface's attributes (`attributes()`, with the language and the writing direction of each run) and line boundaries (`textAtOffset` and its neighbours with `LineBoundary`) from `lang`, `dir`, `runs` and `line_starts`; the canvas's text direction from the document node's `dir`.
-- **Conformance vectors (§15):** the new `shell` and `desktop` cases of CORE-014 in the unit tests.
+- **Conformance vectors (§15):** the new `shell` and `desktop` cases of CORE-014 in the unit tests, read from the repository's copies as DESK-004 set them up.
 - `AGENTS.md`, `src/engine/README.md` and the docs repository's [bayan-desktop guide](../../developer/bayan-desktop.md) where they describe what changed (a linked docs pull request for the guide).
 
 ### Out of scope
@@ -49,8 +49,8 @@ bayan-desktop uses every addition of CORE-014: input methods, autocorrect and sc
 
 - [ ] AC-1 A replacement by an input method or through `replaceText` reaches the engine as one `input.text` with `replace` and changes exactly that range, also for characters outside the Basic Multilingual Plane; no Backspace or Delete is sent for it.
 - [ ] AC-2 Setting the caret or a selection through Qt's text interface reaches the engine as `input.select`, and the interface reports the engine's selection afterwards.
-- [ ] AC-3 `offsetAtPoint` gives the character whose box holds the point and -1 elsewhere, in agreement with `query.hit`'s `exact` for the same points (a test against the real engine).
-- [ ] AC-4 Copy, cut and paste work through `QClipboard` with the formats that both sides list, as raw bytes, from the keys and from the commands with `shell_action`; a test shows that a format the engine does not list is not read.
+- [ ] AC-3 `offsetAtPoint` gives the character whose box holds the point and -1 elsewhere, in agreement with `query.hit`'s `character` for the same points (a test against the real engine).
+- [ ] AC-4 Copy, cut and paste work through `QClipboard` with the formats that both sides list, as raw bytes, from the keys and from the commands with `shell_action`; tests show that a format the engine does not list is not read, and that a format Qt makes by decoding another is not passed on.
 - [ ] AC-5 Qt's text attributes and line boundaries for the mock document's Arabic paragraph report `rtl`, its language and its run in another language, and lines as `line_starts` gives them.
 - [ ] AC-6 The new conformance cases pass, and `cmake --workflow --preset verify`, the jobs against the real engine and the sanitizer jobs pass on all three platforms.
 

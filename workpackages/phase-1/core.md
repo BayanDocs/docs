@@ -134,7 +134,7 @@ Phase-1 goal: open common `.docx` files and lay them out like Word, render them 
 - **Scope:** bar, column, line, pie, area, scatter and combination charts from cached data; SmartArt from Word's stored drawing cache.
 
 ### CORE-128 — Accessibility tree v1
-- **Size:** M · **Depends on:** CORE-113 · **Decisions:** ADR-0020
+- **Size:** M · **Depends on:** CORE-113, CORE-014 · **Decisions:** ADR-0020
 - **Scope:** `bayan-a11y`: headings, paragraphs, lists, tables with headers, links, images with alternative text, comments and revisions, reading order, incremental updates; within the protocol's limits, with language, direction, line starts and the selection ([spec §14.7](../../specs/engine-protocol.md#147-accessibility-trees-limits-and-content)); and how the text of one node that is larger than a message is split (§14.9).
 
 ## Quality and security

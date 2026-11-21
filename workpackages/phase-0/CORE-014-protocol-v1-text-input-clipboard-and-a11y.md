@@ -26,7 +26,7 @@ The engine implements §14.4, §14.5 and item 2 of §14.7 on the mock document, 
 
 ### In scope
 
-- **Text input (§14.4):** `input.text` with `replace`; `input.select`; `query.hit`, with `exact`. The mock document's editable line gains a selection: `input.select` sets it, Shift with ArrowLeft, ArrowRight, Home and End extends it, typing, Backspace and Delete replace it, and `overlay.update` draws it.
+- **Text input (§14.4):** `input.text` with `replace`; `input.select`, with its errors; `query.hit`, with `caret` and `character`. The mock document's editable line gains a selection: `input.select` sets it, Shift with ArrowLeft, ArrowRight, Home and End extends it, typing, Backspace and Delete replace it, and `overlay.update` draws it.
 - **Clipboard (§14.5):** `welcome.clipboard_formats` (`text/plain`), `input.paste` (the richest format the engine reads inserted at the selection; formats the engine does not read ignored; the mock's limits for its editable text kept), and `clipboard.copy` with `cut` (the selection of the editable line as `text/plain`; empty items when nothing is selected).
 - **Accessible text (§14.7 item 2):** `lang` and `dir` on every node that sets them and always on the document node, `runs`, `line_starts`, and `selection` in replies to `query.a11y` and in `a11y.update`. The mock document gains one right-to-left paragraph in Arabic with a run in another language, so that both shells can test language, direction and runs end to end; its text is drawn as bars like the rest until the text pipeline exists.
 - Conformance cases (§15) for replacing text and for the selection where a shell's side can be checked without a platform, for example the `input.text` a shell sends for a given platform range in a given mirrored text; and `engine` cases for the same.
@@ -46,9 +46,9 @@ The engine implements §14.4, §14.5 and item 2 of §14.7 on the mock document, 
 
 ## Acceptance criteria
 
-- [ ] AC-1 `input.text` with `replace` replaces exactly the range, the caret ending after the new text; a range outside the node's text, in a node that is not editable, or with an end inside a surrogate pair is `invalid_request`; tests cover each.
-- [ ] AC-2 `input.select` sets a caret or a selection on the editable line, and the engine answers with `overlay.update` and `a11y.update`; Shift with the arrows, Home and End extends it; typing, Backspace and Delete replace it.
-- [ ] AC-3 `query.hit` returns the nearest position with `exact` as §14.4 says, and `null` off the pages; tests at character edges, between lines and between pages.
+- [ ] AC-1 `input.text` with `replace` replaces exactly the range, the caret ending after the new text; an unknown node is `not_found`, and a range outside the node's text, in a node that is not editable, or with an end inside a surrogate pair is `invalid_request`; tests cover each, with and without an `id`.
+- [ ] AC-2 `input.select` sets a caret or a selection on the editable line, and the engine answers with `overlay.update` and `a11y.update`; its errors are those of AC-1; Shift with the arrows, Home and End extends it; typing, Backspace and Delete replace it.
+- [ ] AC-3 `query.hit` returns `caret` and `character` as §14.4 says, and `null` off the pages; tests on both halves of a character, in left-to-right and right-to-left text, between lines and between pages.
 - [ ] AC-4 `input.paste` and `clipboard.copy` work as §14.5 says, raw bytes in and out, and the engine reads only the formats it lists in `welcome`.
 - [ ] AC-5 Every node of the mock's tree has its language and direction (inherited or its own), the Arabic paragraph is `rtl` with its run in another language, `line_starts` match the mock's lines, and the selection appears in both kinds of message.
 - [ ] AC-6 Every change is additive to CORE-013's v1 (§9): only new messages and new optional fields, so every message that CORE-013's engine accepted keeps its meaning; CORE-013's protocol tests pass unchanged, except where an expected message gains one of the new fields.
