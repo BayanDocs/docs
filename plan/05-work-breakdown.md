@@ -72,6 +72,14 @@ Briefs are in [workpackages/phase-0/](../workpackages/README.md#phase-0--bedrock
 | [DESK-003](../workpackages/phase-0/DESK-003-real-engine-boundary-tests.md) | The desktop's tests and sanitizers against the real engine boundary | desktop | M | DESK-002, CORE-007 | 4 |
 | [WEB-003](../workpackages/phase-0/WEB-003-automated-accessibility-rules.md) | Automated accessibility rules (axe) in the end-to-end tests | web | S | WEB-002 | 4 |
 | [X-005](../workpackages/phase-0/X-005-ubuntu-packages-in-ci.md) | Ubuntu packages in CI: exact files on a pinned base, from more than one source | desktop + web + docs | L | X-003, X-004; ADR-0017's amendment of 2026-11-05 (Accepted 2026-11-12) | 4 |
+| [CORE-013](../workpackages/phase-0/CORE-013-protocol-v1-session-keys-and-vectors.md) | Engine protocol v1, part 1: the session, keys, revisions, accessibility limits and the conformance vectors | core | L | CORE-007, CORE-010 | 5 |
+| [CORE-014](../workpackages/phase-0/CORE-014-protocol-v1-text-input-clipboard-and-a11y.md) | Engine protocol v1, part 2: replacing text, the caret, hit-testing, the clipboard and accessible text | core | L | CORE-013 | 6 |
+| [DESK-004](../workpackages/phase-0/DESK-004-desktop-on-protocol-v1.md) | The desktop on engine protocol v1: sessions, restarts through core, keys, revisions and accessibility limits | desktop | L | CORE-013, DESK-003 | 6 |
+| [WEB-004](../workpackages/phase-0/WEB-004-web-on-protocol-v1.md) | The web on engine protocol v1: sessions, restarts through core, keys, revisions, accessibility limits and the module's integrity | web | L | CORE-013, WEB-003 | 6 |
+| [DESK-005](../workpackages/phase-0/DESK-005-desktop-text-input-clipboard-and-a11y.md) | The desktop on protocol v1, part 2: replacing text, the caret, hit-testing, the clipboard and accessible text | desktop | L | DESK-004, CORE-014 | 7 |
+| [WEB-005](../workpackages/phase-0/WEB-005-web-text-input-clipboard-and-a11y.md) | The web on protocol v1, part 2: replacing text, the caret, hit-testing, the clipboard and accessible text | web | L | WEB-004, CORE-014 | 7 |
+
+Waves 5 to 7 carry out engine protocol v1, which the planning session PLAN-PROTO decided in [specs/engine-protocol.md §14](../specs/engine-protocol.md#14-protocol-v1-the-agreed-changes) after the architecture reviews' findings H5 and H8. They need not wait for the Phase-0 gate, and CORE-125, DESK-101, DESK-103, WEB-101 and WEB-102 build on them.
 
 ```mermaid
 flowchart LR
@@ -86,6 +94,15 @@ flowchart LR
   end
   subgraph W4["Wave 4"]
     CORE008[CORE-008]; LAB005[LAB-005]; SRV003[SRV-003]; DOCS002[DOCS-002]; DESK003[DESK-003]; WEB003[WEB-003]; X005[X-005]
+  end
+  subgraph W5["Wave 5"]
+    CORE013[CORE-013]
+  end
+  subgraph W6["Wave 6"]
+    CORE014[CORE-014]; DESK004[DESK-004]; WEB004[WEB-004]
+  end
+  subgraph W7["Wave 7"]
+    DESK005[DESK-005]; WEB005[WEB-005]
   end
   CORE001 --> CORE002 --> CORE003
   CORE001 --> CORE004
@@ -123,6 +140,17 @@ flowchart LR
   DESK002 --> DESK003
   CORE007 --> DESK003
   WEB002 --> WEB003
+  CORE007 --> CORE013
+  CORE010 --> CORE013
+  CORE013 --> CORE014
+  CORE013 --> DESK004
+  DESK003 --> DESK004
+  CORE013 --> WEB004
+  WEB003 --> WEB004
+  DESK004 --> DESK005
+  CORE014 --> DESK005
+  WEB004 --> WEB005
+  CORE014 --> WEB005
   GATE{{"Phase-0 gate review"}}
   CORE008 --> GATE
   LAB005 --> GATE
