@@ -26,6 +26,7 @@
 - [11 — Glossary](plan/11-glossary.md)
 - [12 — Orchestration: One Session Runs the Workflow](plan/12-orchestration.md)
 - [Architecture Review — 2026-10-27](plan/reviews/2026-10-27.md)
+- [Architecture Review — 2026-11-20](plan/reviews/2026-11-20.md)
 
 # Decisions
 
@@ -92,9 +93,13 @@
     - [CORE-010: Fuzz targets for the engine boundary and CRDT updates](workpackages/phase-0/CORE-010-fuzz-targets-engine-and-crdt.md)
     - [CORE-011: Retire the interim parsers — bayan-opc's metadata on bayan-xml, the lab's scanner on bayan-opc and bayan-xml](workpackages/phase-0/CORE-011-retire-interim-parsers.md)
     - [CORE-012: The outside world, part 2 — the rest of the standard library, the build environment and exemptions per item](workpackages/phase-0/CORE-012-outside-world-part-2.md)
+    - [CORE-013: Engine protocol v1, part 1 — the session, keys, revisions, accessibility limits and the conformance vectors](workpackages/phase-0/CORE-013-protocol-v1-session-keys-and-vectors.md)
+    - [CORE-014: Engine protocol v1, part 2 — replacing text, the caret, hit-testing, the clipboard and accessible text](workpackages/phase-0/CORE-014-protocol-v1-text-input-clipboard-and-a11y.md)
     - [DESK-001: Desktop scaffold and CI](workpackages/phase-0/DESK-001-desktop-scaffold.md)
     - [DESK-002: Spike — Qt Quick document canvas, input and accessibility](workpackages/phase-0/DESK-002-spike-qt-canvas.md)
     - [DESK-003: The desktop's tests and sanitizers against the real engine boundary](workpackages/phase-0/DESK-003-real-engine-boundary-tests.md)
+    - [DESK-004: The desktop on engine protocol v1 — sessions, restarts through core, keys, revisions and accessibility limits](workpackages/phase-0/DESK-004-desktop-on-protocol-v1.md)
+    - [DESK-005: The desktop on protocol v1, part 2 — replacing text, the caret, hit-testing, the clipboard and accessible text](workpackages/phase-0/DESK-005-desktop-text-input-clipboard-and-a11y.md)
     - [DOCS-001: Knowledge-base site (mdBook) and docs CI](workpackages/phase-0/DOCS-001-knowledge-base-site.md)
     - [DOCS-002: Contributor onboarding and development-environment guides](workpackages/phase-0/DOCS-002-contributor-onboarding.md)
     - [LAB-001: Corpus infrastructure and public corpus v1](workpackages/phase-0/LAB-001-corpus-infrastructure.md)
@@ -108,6 +113,8 @@
     - [WEB-001: Web scaffold and CI](workpackages/phase-0/WEB-001-web-scaffold.md)
     - [WEB-002: Spike — worker canvas, input bridge and accessibility mirror](workpackages/phase-0/WEB-002-spike-worker-canvas.md)
     - [WEB-003: Automated accessibility rules (axe) in the web app's end-to-end tests](workpackages/phase-0/WEB-003-automated-accessibility-rules.md)
+    - [WEB-004: The web on engine protocol v1 — sessions, restarts through core, keys, revisions, accessibility limits and the module's integrity](workpackages/phase-0/WEB-004-web-on-protocol-v1.md)
+    - [WEB-005: The web on protocol v1, part 2 — replacing text, the caret, hit-testing, the clipboard and accessible text](workpackages/phase-0/WEB-005-web-text-input-clipboard-and-a11y.md)
     - [X-001: Repository baseline — governance files, PR template, DCO, REUSE check](workpackages/phase-0/X-001-repository-baseline.md)
     - [X-002: CI security baseline — hardened workflows, workflow linting, Scorecard](workpackages/phase-0/X-002-ci-security-baseline.md)
     - [X-003: Supply-chain enforcement and the monthly update runbook](workpackages/phase-0/X-003-supply-chain-enforcement.md)
