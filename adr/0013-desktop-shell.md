@@ -1,6 +1,6 @@
 # ADR-0013: Desktop shell — Qt 6 Quick with thin C++
 
-- **Status:** Accepted — validation gate (DESK-002) open: canvas and bridges built and tested automatically on 2026-10-12; manual tests on Windows, macOS and Linux deferred by the owner on 2026-10-14; the screen-reader and input-method tests among them run after DESK-004 and WEB-004 have merged and before the accessibility work packages DESK-103 and WEB-102 start (owner, 2026-11-24)
+- **Status:** Accepted — validation gate (DESK-002) open: canvas and bridges built and tested automatically on 2026-10-12; manual tests on Windows, macOS and Linux deferred by the owner on 2026-10-14; the screen-reader and input-method tests among them run after DESK-004 and WEB-004 have merged and before the accessibility work packages start (CORE-128, DESK-103 and WEB-102), as the owner decided on 2026-11-24
 - **Date:** 2026-10-03
 - **Deciders:** Planner (the owner specified C++ and Qt)
 - **Related:** ARC-03, ARC-04, UI-01…UI-09, A11Y-02, PLT-01, ADR-0012, ADR-0019, DESK-001, DESK-002

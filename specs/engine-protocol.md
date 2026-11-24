@@ -66,7 +66,7 @@ BayanStatus bayan_render_tile(BayanEngine *engine, const uint8_t *request_json, 
                               size_t out_capacity, uint32_t width, uint32_t height, size_t stride, uint64_t *revision_out);
 ```
 
-These signatures adopt the provisional header that DESK-001 wrote for its stub engine, unchanged, and add `BAYAN_STATUS_WRONG_THREAD`. The header is plain ASCII, so it compiles with warnings as errors under any code page. Rules for callers:
+These signatures adopt the provisional header that DESK-001 wrote for its stub engine, unchanged, and add `BAYAN_STATUS_WRONG_THREAD`; protocol v1 added the last parameter of `bayan_render_tile`, `revision_out` (§14.6). The header is plain ASCII, so it compiles with warnings as errors under any code page. Rules for callers:
 
 - Pointers passed to the engine are borrowed for the duration of the call only. An input pointer (`config_json`, `json`, `bytes`, `request_json`) must point to that many initialized bytes, written and not only allocated, because the engine reads them as Rust byte slices; output buffers need not be initialized.
 - `bayan_engine_new` takes the engine configuration (§3.3); a null pointer with length 0 means the defaults. It returns NULL if the configuration is invalid or the engine thread cannot start.

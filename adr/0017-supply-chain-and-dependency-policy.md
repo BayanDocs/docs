@@ -213,7 +213,7 @@ Decided by the owner on 2026-11-24, answering L18 of the [architecture review of
 
 **Decision.** A container image's age is measured at the commit that pins it, as `check-lockfile-age` measures a crate's: the pinned tag must have been last pushed (`last_updated` in Docker Hub's tags API) at least 24 hours before that commit, and at least 24 hours before now, even if that was after the dependency session's cutoff. Item 1 of the amendment of 2026-11-05, and the "24-hour age" of the row that it adds to the mechanisms table, are read with this rule. Everything else stays: the image is pinned by digest, its date is stated in the pull request, and the snapshot date of an Ubuntu lock stays before the session's cutoff and on or after its base image's creation (item 2 of that amendment), so the base image of a lock must still have been created before the cutoff, even when its tag was pushed later.
 
-**Consequences.** A session can pin an image pushed after its cutoff once the image is old enough at the pinning commit, as bayan-server pull request 14 did, instead of waiting a month. No check measures container images' dates; the session checks them by hand when it commits the pin, as the runbook's rows for container images say.
+**Consequences.** A session can pin an image pushed after its cutoff once the image is old enough at the pinning commit, as bayan-server pull request 14 did, instead of waiting a month. No check measures a container image's age; the session checks it by hand when it commits the pin, as the runbook's rows for container images say.
 
 ## Amendment 2026-11-15: Python tools from wheels only
 
