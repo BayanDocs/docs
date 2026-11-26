@@ -46,7 +46,7 @@ A work package (WP) is a self-contained brief that one agent session can execute
 | [CORE-013](phase-0/CORE-013-protocol-v1-session-keys-and-vectors.md) | Engine protocol v1, part 1: the session, keys, revisions, accessibility limits and the conformance vectors | core | L | CORE-007, CORE-010 | 5 | Done |
 | [CORE-014](phase-0/CORE-014-protocol-v1-text-input-clipboard-and-a11y.md) | Engine protocol v1, part 2: replacing text, the caret, hit-testing, the clipboard and accessible text | core | L | CORE-013 | 6 | Done |
 | [DESK-004](phase-0/DESK-004-desktop-on-protocol-v1.md) | The desktop on engine protocol v1: sessions, restarts through core, keys, revisions and accessibility limits | desktop | L | CORE-013, DESK-003 | 6 | Done |
-| [WEB-004](phase-0/WEB-004-web-on-protocol-v1.md) | The web on engine protocol v1: sessions, restarts through core, keys, revisions, accessibility limits and the module's integrity | web | L | CORE-013, WEB-003 | 6 | Ready |
+| [WEB-004](phase-0/WEB-004-web-on-protocol-v1.md) | The web on engine protocol v1: sessions, restarts through core, keys, revisions, accessibility limits and the module's integrity | web | L | CORE-013, WEB-003 | 6 | Done |
 | [DESK-005](phase-0/DESK-005-desktop-text-input-clipboard-and-a11y.md) | The desktop on protocol v1, part 2: replacing text, the caret, hit-testing, the clipboard and accessible text | desktop | L | DESK-004, CORE-014 | 7 | Ready |
 | [WEB-005](phase-0/WEB-005-web-text-input-clipboard-and-a11y.md) | The web on protocol v1, part 2: replacing text, the caret, hit-testing, the clipboard and accessible text | web | L | WEB-004, CORE-014 | 7 | Ready |
 
