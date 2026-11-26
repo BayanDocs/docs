@@ -36,13 +36,19 @@ A work package (WP) is a self-contained brief that one agent session can execute
 | [CORE-011](phase-0/CORE-011-retire-interim-parsers.md) | Retire the interim parsers: bayan-opc's metadata on bayan-xml, the lab's scanner on bayan-opc and bayan-xml | core | M | CORE-005, CORE-006, LAB-001 | 3 | Done |
 | [CORE-012](phase-0/CORE-012-outside-world-part-2.md) | The outside world, part 2: the rest of std, the build environment, exemptions per item | core | M | CORE-009 | 3 | Done |
 | [X-004](phase-0/X-004-codeql-without-write-access.md) | CodeQL without write access: analysis and upload in separate jobs | all | S | X-002 | 3 | Done |
-| [X-005](phase-0/X-005-ubuntu-packages-in-ci.md) | Ubuntu packages in CI: exact files on a pinned base, from more than one source | desktop + web + docs | L | X-003, X-004; ADR-0017's amendment of 2026-11-05 (Accepted 2026-11-12) | 4 | Ready |
+| [X-005](phase-0/X-005-ubuntu-packages-in-ci.md) | Ubuntu packages in CI: exact files on a pinned base, from more than one source | desktop + web + docs | L | X-003, X-004; ADR-0017's amendment of 2026-11-05 (Accepted 2026-11-12) | 4 | Done |
 | [CORE-008](phase-0/CORE-008-font-audit.md) | Font audit and bundled-library proposal | core + docs | M | CORE-003, LAB-002 | 4 | Ready |
 | [LAB-005](phase-0/LAB-005-probes-and-first-study.md) | Probe generator and first Word study | core + docs | L | LAB-002, LAB-003, CORE-003 | 4 | Ready |
 | [SRV-003](phase-0/SRV-003-threat-model.md) | Threat model v1 | docs | M | SRV-002, CORE-007 | 4 | Done |
-| [DOCS-002](phase-0/DOCS-002-contributor-onboarding.md) | Contributor onboarding guides | docs | S | Wave-1 scaffolds | 4 | Ready |
-| [DESK-003](phase-0/DESK-003-real-engine-boundary-tests.md) | The desktop's tests and sanitizers against the real engine boundary | desktop | M | DESK-002, CORE-007 | 4 | Ready |
-| [WEB-003](phase-0/WEB-003-automated-accessibility-rules.md) | Automated accessibility rules (axe) in the end-to-end tests | web | S | WEB-002 | 4 | Ready |
+| [DOCS-002](phase-0/DOCS-002-contributor-onboarding.md) | Contributor onboarding guides | docs | S | Wave-1 scaffolds | 4 | Done |
+| [DESK-003](phase-0/DESK-003-real-engine-boundary-tests.md) | The desktop's tests and sanitizers against the real engine boundary | desktop | M | DESK-002, CORE-007 | 4 | Done |
+| [WEB-003](phase-0/WEB-003-automated-accessibility-rules.md) | Automated accessibility rules (axe) in the end-to-end tests | web | S | WEB-002 | 4 | Done |
+| [CORE-013](phase-0/CORE-013-protocol-v1-session-keys-and-vectors.md) | Engine protocol v1, part 1: the session, keys, revisions, accessibility limits and the conformance vectors | core | L | CORE-007, CORE-010 | 5 | Done |
+| [CORE-014](phase-0/CORE-014-protocol-v1-text-input-clipboard-and-a11y.md) | Engine protocol v1, part 2: replacing text, the caret, hit-testing, the clipboard and accessible text | core | L | CORE-013 | 6 | Done |
+| [DESK-004](phase-0/DESK-004-desktop-on-protocol-v1.md) | The desktop on engine protocol v1: sessions, restarts through core, keys, revisions and accessibility limits | desktop | L | CORE-013, DESK-003 | 6 | Done |
+| [WEB-004](phase-0/WEB-004-web-on-protocol-v1.md) | The web on engine protocol v1: sessions, restarts through core, keys, revisions, accessibility limits and the module's integrity | web | L | CORE-013, WEB-003 | 6 | Done |
+| [DESK-005](phase-0/DESK-005-desktop-text-input-clipboard-and-a11y.md) | The desktop on protocol v1, part 2: replacing text, the caret, hit-testing, the clipboard and accessible text | desktop | L | DESK-004, CORE-014 | 7 | Ready |
+| [WEB-005](phase-0/WEB-005-web-text-input-clipboard-and-a11y.md) | The web on protocol v1, part 2: replacing text, the caret, hit-testing, the clipboard and accessible text | web | L | WEB-004, CORE-014 | 7 | Ready |
 
 ## Phase 1 — Faithful Viewer (drafts)
 

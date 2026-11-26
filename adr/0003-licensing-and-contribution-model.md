@@ -124,6 +124,18 @@ The owner handed the running of the agent workflow to an orchestrator session ([
 - Implementer and reviewer sessions still never sign off (§5).
 - The owner can withdraw the delegation at any time, by stopping the orchestrator or by a later amendment.
 
+## Amendment 2026-11-24: MIT-0 for the shared supply-chain checker
+
+Decided by the owner on 2026-11-24, answering finding L2 of the [architecture review of 2026-10-27](../plan/reviews/2026-10-27.md#l2-the-shared-supply-chain-checker-is-gpl-in-one-repository-and-agpl-in-the-other) as that review recommended, and carried out by follow-up FU-26 ([BayanDocs/bayan-server#21](https://github.com/BayanDocs/bayan-server/pull/21), [BayanDocs/docs#73](https://github.com/BayanDocs/docs/pull/73)).
+
+**Context.** `xtask/src/supply_chain/` holds the supply-chain checks of ADR-0017 that Cargo and cargo-deny do not make, `cargo xtask check-exact-pins` and `cargo xtask check-lockfile-age` (work package X-003), with the recorded crates.io answers that their tests replay. It is the same code, byte for byte, in bayan-core and in bayan-server, and is changed in both together. Under §1 it took each repository's license: GPL-3.0-or-later with the BayanDocs App Store Permission in bayan-core, and AGPL-3.0-or-later in bayan-server. So, as with the shared contribution tooling before the amendment of 2026-10-06, a fix contributed to one copy would be licensed differently from the other copy, and could not be copied into it without its contributor's permission. The checker is build and review tooling: no BayanDocs program or container image includes it, so copyleft protects nothing there.
+
+**Decision.** The MIT-0 area of the amendment of 2026-10-06 extends to `xtask/src/supply_chain/**`, its test fixtures included, in bayan-core and in bayan-server. Each repository's `REUSE.toml` declares this after its default annotation: bayan-server's in BayanDocs/bayan-server#21, and bayan-core's in bayan-core's next follow-up. The rest of each repository's `xtask` crate keeps its repository's license under §1.
+
+**Timing.** As in the amendment of 2026-10-06, the owner is still the only copyright holder of these files, so the change needs nobody else's consent. After the first outside contribution to them, it would need that contributor's consent as well.
+
+**Consequences.** A fix to the checker can be copied between the two repositories as it is, and anyone may reuse the checker in any project, under any license.
+
 ## Revisit when
 
 An optional legal review of §4 recommends changes (ideally before the first outside contribution); the REUSE tool supports SPDX 3.0 `AdditionRef-` identifiers; the first outside contribution is about to be accepted (after which this decision is effectively permanent).
@@ -137,3 +149,4 @@ An optional legal review of §4 recommends changes (ideally before the first out
 - 2026-10-04 (DOCS-001): the owner chose MIT-0, as for `scripts/`, for the docs repository's configuration files and CI workflows (`book.toml`, `lychee.toml`, `typos.toml`, `.gitignore`, `.github/`) and the website's Mermaid loader script (`site/mermaid/mermaid-init.js`), because CC BY 4.0 is meant for prose rather than code; `REUSE.toml` lists the files.
 - 2026-10-06 (X-001 follow-up 7): the owner chose MIT-0 for the shared contribution tooling (`.github/`, `.editorconfig` and `.gitattributes`) in every repository; see the amendment of that date.
 - 2026-10-27: the owner delegated their sign-off for reviewed work of the project's agents to the orchestrator session; see the amendment of that date.
+- 2026-11-24: the owner chose MIT-0 for the supply-chain checker that bayan-core and bayan-server share (`xtask/src/supply_chain/`), answering L2 of the architecture review of 2026-10-27; see the amendment of that date.

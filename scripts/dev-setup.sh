@@ -79,7 +79,7 @@ read -r lychee_version lychee_url lychee_sha256 lychee_member <<<"$pin"
 typos_pin
 typos_url="https://files.pythonhosted.org/packages/py3/t/typos/typos-${typos_version}-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
 
-# True if the command on PATH reports the pinned version (for example "mdbook v0.5.4", "lychee 0.24.2", "typos-cli 1.50.3").
+# True if the command on PATH reports the pinned version (for example "mdbook v0.5.4", "lychee 0.24.2", "typos-cli 1.52.2").
 has_version() {
   local found
   command -v "$1" >/dev/null 2>&1 || return 1

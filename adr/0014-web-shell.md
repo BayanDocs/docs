@@ -1,6 +1,6 @@
 # ADR-0014: Web shell — React and TypeScript, engine in a Web Worker
 
-- **Status:** Accepted — validation gate (WEB-002), met in part on 2026-10-12 (see the amendment of that date): manual screen-reader, input-method and Safari passes outstanding
+- **Status:** Accepted — validation gate (WEB-002), met in part on 2026-10-12 (see the amendment of that date): manual screen-reader, input-method and Safari passes outstanding; the screen-reader and input-method passes run after DESK-004 and WEB-004 have merged and before the accessibility work packages start (CORE-128, DESK-103 and WEB-102), as the owner decided on 2026-11-24
 - **Date:** 2026-10-03
 - **Deciders:** Planner (the owner left the framework open among React, Vue and Svelte)
 - **Related:** ARC-03, ARC-05, SEC-10, A11Y-02, PERF-06, PLT-02, ADR-0012, ADR-0017, ADR-0019, WEB-001, WEB-002
