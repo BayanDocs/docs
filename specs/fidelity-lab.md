@@ -2,7 +2,7 @@
 
 - **Status:** v1. Built by LAB-001…LAB-005 in Phase 0 and LAB-101…LAB-109 in Phase 1.
 - **Owner stream:** LAB
-- **Related:** ADR-0004, ADR-0009, ADR-0025, [ADR-0031](../adr/0031-agent-operated-reference-machine.md) (the reference machine, Proposed), [word-behavior/](word-behavior/README.md), [coverage-matrix.md](coverage-matrix.md)
+- **Related:** ADR-0004, ADR-0009, ADR-0025, [ADR-0031](../adr/0031-agent-operated-reference-machine.md) (the reference machine), [word-behavior/](word-behavior/README.md), [coverage-matrix.md](coverage-matrix.md)
 
 ## 1. Purpose
 
@@ -45,7 +45,7 @@ flowchart LR
   Corpus --> engine --> compare --> report
 ```
 
-Only approved documents reach the reference machine (§3), and T2 never does. Word's PDFs stay there until the owner decides otherwise (§7).
+Only approved documents reach the reference machine (§3), and T2 never does. Word's PDFs stay there (§7).
 
 ## 3. Corpus tiers
 
@@ -119,7 +119,7 @@ LAB-004 built the comparisons; bayan-core's [`lab/compare.md`](https://github.co
 | **Algorithm fidelity** | The exact font files Word used (on the reference machine, under its license) | Reference machine only | Errors in our layout logic |
 | **Product fidelity** | BayanDocs' bundled and substitute fonts | Public CI | What users actually experience |
 
-Microsoft's font files never leave the reference machine. Until the owner decides otherwise, Word's PDFs, which embed subsets of the fonts a document uses, Microsoft's included, stay on the machine as well: `bayan-lab pdf-extract` runs there, and only the layout JSON, the layout skeleton, the metadata and re-saved copies without embedded fonts leave it. Whatever needs the PDFs themselves, such as rasterizing them for M5, runs on the machine too.
+Microsoft's font files never leave the reference machine. Word's PDFs, which embed subsets of the fonts a document uses, Microsoft's included, stay on the machine as well, as the owner decided on 2026-11-24: `bayan-lab pdf-extract` runs there, and only the layout JSON that it makes from them leaves the machine. The layout skeleton, the metadata and re-saved copies without embedded fonts, which do not come from the PDFs, leave it as before. Whatever needs the PDFs themselves, such as rasterizing them for M5, runs on the machine too.
 
 ## 8. Reverse engineering method (Word Behavior Notes)
 
