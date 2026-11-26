@@ -383,6 +383,7 @@ The engine treats every message as untrusted input and enforces these limits (AD
 | A tile rectangle's coordinates; its width and height | within ±2⁴⁰ BLU; 1 to 2⁴⁰ BLU |
 | A recording: entries; size as JSON | 100,000; 64 MiB |
 | Pixels rendered by one replay | 2³⁰ (as many as 64 tiles of the largest size) |
+| Nesting of the JSON that the engine reads into its types or a configuration | 127 levels (serde_json's own limit); values that a message's or recording's types skip are read without recursion, at any depth within the size limits |
 
 A message over a limit is refused with `limit_exceeded`, with the limit's name in `args.limit` (on the C interface, `BAYAN_STATUS_INVALID_ARGUMENT`). Messages are measured in UTF-8 bytes. The tile rectangle's range is not a resource limit but keeps the rasterizer's integer arithmetic exact, so a rectangle outside it is an invalid request (`invalid_request`, §12), like any value out of range. Fields the engine does not know are skipped without being stored, at any depth; they count only towards the message's size. The mock document adds its own limits for its editable text, listed in `bayan-engine`'s documentation.
 
