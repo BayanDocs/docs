@@ -3,8 +3,17 @@
 * @Gabrielc1925
 
 # Security-sensitive paths: parsers of untrusted input, cryptography, authentication, authorization, the FFI boundary, update mechanisms, and the CI workflows and the checks they run (docs/plan/07-quality-security-testing.md, section 3). A change to them needs a dedicated security review session in addition to the normal review. The work package that creates such a path adds it here.
+# Every line below names the same owner as the default above, so their order changes nothing today; but a later line that matched these paths with another owner, or with none, would take them over, because the last matching line wins.
 # CI and the checks that judge pull requests: a workflow triggered by a pull request runs that pull request's own copy of these files, so a change here can weaken the checks that judge it.
 /.github/ @Gabrielc1925
+# What every agent session that opens this repository loads and runs by itself, the orchestrator's among them, with the owner's GitHub access, with which the sessions push and the orchestrator merges: Claude Code runs the hooks of .claude/settings.json (a SessionStart hook at the start of every cloud session), takes settings, commands, agents and skills from .claude/ folders, and starts the MCP servers that .mcp.json names, which .claude/settings.json can approve in advance. A change here runs code with more access than any CI job, whose token can only read (the security review of bayan-core#61). Neither exists yet.
+**/.claude/ @Gabrielc1925
+/.mcp.json @Gabrielc1925
+# The instructions that Claude Code loads by itself into every agent session that opens this repository, the orchestrator's among them, from whatever folder (the root CLAUDE.md imports AGENTS.md); CLAUDE.local.md is meant to stay out of Git, but one that a pull request adds is loaded just the same: a change here changes what every later session is told to do, with the owner's GitHub access. AGENTS.md itself stays under the normal review only, because it changes in many pull requests and code-owning it would bring a security review to each of them (the orchestrator's decision on bayan-core#61, which the owner may change).
+**/CLAUDE.md @Gabrielc1925
+**/CLAUDE.local.md @Gabrielc1925
+# How Git shows and checks out files, in whatever folder (Git reads a .gitattributes in every folder): an attribute such as -diff, binary or linguist-generated hides a file's changes from git diff, which agent reviewers read, and from GitHub's review page, and text, eol or working-tree-encoding change the bytes that a checkout writes.
+**/.gitattributes @Gabrielc1925
 # Authorization: the organization's access and security settings, applied with an owner's token.
 /scripts/github-settings.py @Gabrielc1925
 # The verification gate, its tools, tests and configuration: CI runs a pull request's own copy of them, so a change here can weaken the check that judges it. scripts/verify.sh is the gate; scripts/dev-setup.sh installs its pinned tools and checks their SHA-256 before it runs; scripts/link-report.py decides part of the external-link check; scripts/tests/ holds the scripts' unit tests, which also check that the shared CI files' pins equal the setup script's; lychee.toml and typos.toml configure the link and spelling checks.
