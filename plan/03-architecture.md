@@ -55,15 +55,17 @@ Contracts between repositories are versioned specs: the [engine protocol](../spe
 
 ## 4. Inside bayan-core
 
-The core is a Cargo workspace of focused crates arranged in layers. A crate may depend only on crates in its own layer or below. Lower layers never know about higher ones, which keeps the engine testable and lets the server reuse the lower crates it needs (protocol, crypto, CRDT) without the layout engine.
+The core is a Cargo workspace of focused crates arranged in layers. A crate may depend only on crates in its own layer or below. Lower layers never know about higher ones, which keeps the engine testable and lets the server reuse the lower crates it needs (protocol, crypto, CRDT) without the layout engine. The Fidelity Lab's tools, the spikes and the build tools stand above all of them, in that order: they may use every crate of the engine, and no crate of the engine may depend on them. bayan-core's gate checks the layers against the table `LAYERS` in `xtask/src/verify.rs`.
 
 ```mermaid
 flowchart TB
+  subgraph LL["Fidelity Lab, spikes, build tools"]
+    lab["lab/*<br/>fidelity tools"]
+  end
   subgraph L6["Bindings & tools"]
     ffi["bayan-ffi<br/>C ABI"]
     wasm["bayan-wasm<br/>wasm-bindgen + worker host"]
     cli["bayan-cli"]
-    lab["lab/*<br/>fidelity tools"]
   end
   subgraph L5["Engine"]
     engine["bayan-engine<br/>protocol, session, scheduling, host services"]
@@ -107,7 +109,7 @@ flowchart TB
     opc["bayan-opc"]
     xml["bayan-xml"]
   end
-  L6 --> L5 --> L4 --> L3 --> L2 --> L1 --> L0 --> LF
+  LL --> L6 --> L5 --> L4 --> L3 --> L2 --> L1 --> L0 --> LF
 ```
 
 | Crate | Responsibility |

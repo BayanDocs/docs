@@ -53,7 +53,7 @@ The full list is [09-owner-checklist.md](09-owner-checklist.md). The first four:
 
 1. Open [workpackages/README.md](../workpackages/README.md). Wave 1 has six independent work packages; good first picks are CORE-001, SRV-001 and WEB-001.
 2. Follow the hand-off procedure and paste the prompt from [06-agent-workflow.md](06-agent-workflow.md#work-package-session).
-3. Review each pull request with a separate reviewer session ([prompt](06-agent-workflow.md#pull-request-review-session)), adding a security reviewer session ([prompt](06-agent-workflow.md#security-review-session)) when it changes a path that its repository's `CODEOWNERS` lists other than through its default rule `*`, and merge when CI is green and the reviewers approve.
+3. Review each pull request with a separate reviewer session ([prompt](06-agent-workflow.md#pull-request-review-session)), adding a security reviewer session ([prompt](06-agent-workflow.md#security-review-session)) when it changes a path that its repository's `CODEOWNERS` lists other than through its default rule `*`, or one that [plan/07 §3](07-quality-security-testing.md#3-security-program), item 2, names for all five repositories, and merge when CI is green and the reviewers approve.
 4. Run three to five work packages at a time so you can keep up with reviews.
 
 ## Reading order
