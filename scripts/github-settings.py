@@ -53,7 +53,8 @@ REPOSITORIES: Dict[str, List[str]] = {
         "CodeQL (rust)",
         *EVERY_REPOSITORY_CHECKS,
     ],
-    "bayan-web": ["pnpm verify (ubuntu-24.04)", "pnpm verify (macos-15)", "pnpm verify (macos-26-intel)", "CodeQL (javascript-typescript)", *EVERY_REPOSITORY_CHECKS],
+    # The three "pnpm verify" jobs wait for "Engine package (bayan-core.pin)", which builds the engine they test; a job that waits on a failed one is skipped, and GitHub counts a skipped required check as passing, so the engine job is required itself, as bayan-server's first job is (the architecture review of 2026-11-20, L17).
+    "bayan-web": ["Engine package (bayan-core.pin)", "pnpm verify (ubuntu-24.04)", "pnpm verify (macos-15)", "pnpm verify (macos-26-intel)", "CodeQL (javascript-typescript)", *EVERY_REPOSITORY_CHECKS],
     "bayan-desktop": [
         "Linux · verification gate",
         "Linux · AddressSanitizer and UndefinedBehaviorSanitizer",
